@@ -39,9 +39,13 @@ Based on [Udacity's Ultimate Skills Checklist](http://1onjea25cyhx3uvxgs4vu325.w
 
 ## Others
 ### Git
+
 [Personal notes] (Others/Git/git.md)
+
 [Git Reference] (http://gitref.org/index.html)
+
 [Git cheat sheet](http://rogerdudler.github.io/git-guide/files/git_cheat_sheet.pdf)
+
 [Git markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
 
 
