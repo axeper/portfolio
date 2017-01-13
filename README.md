@@ -1,6 +1,6 @@
-## Link summary
+## Personal Projects and Useful Links
 
-Here is a list of some of the assignments that I have done.
+Data Science is a field that moves extremely fast. Here is my attempt at gathering useful practical knowledge.
 
 
 ## Next Word Prediction App [R, Shiny, NLP]
