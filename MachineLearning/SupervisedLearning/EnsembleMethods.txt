@@ -1,0 +1,24 @@
+### Ensemble model
+
+Baggin vs Boosting: boosting needs less trees, slightly more risk of overfitting, cannot be parallelized. 
+That said, in a neck and neck contest between a well fit boosted model and a well fit bagged model, it's hard for the bagged model to win.
+
+### Bagging
+
+Resistant to outliers, do not overfit the data, can be parallelized, handle tons of decisions 
+
+A weak predictor is better than none. A predictor strength can be interpreted with node impurity (least is better). Impurity = 100% - (pregnant%)^2 - (not pregnant%)^2
+
+* Take sqrt(# predictors) and 2/3 of the rows
+* Build a weak predictor for each. Keep the purest one.
+* Repeat until you have a lot of predictors and the model is the vote. 
+
+random forest [rackage in R]
+
+
+### Boosting
+
+Use the whole dataset and on each iteration change the weights.
+* N data with initial weight 1/N
+* Find the feature with the lowest weighed error.
+* Adjust each weight: decrease the weight when correctly predicted, increase the weight when incorrectly predicted

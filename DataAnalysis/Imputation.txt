@@ -1,0 +1,17 @@
+Handling missing data
+
+
+If the missing values appears to be random, you can drop the rows
+
+
+Imputation with the median or mean. You can add a new variable, 0 for values and 1 for imputed values to signify that imputed values should not be quite trusted.
+mi package in R
+
+
+Train a glm to predict missing values
+
+
+Multiple imputation: use multiple statistical models to combine multiple regressions.
+
+
+KNN imputation

@@ -1,0 +1,20 @@
+## Gephi
+
+Open source visualization: https://gephi.org/
+
+Convert .xlsx to .csv, replace all (, with ;), Open Graph File
+
+
+## Analysis
+
+* From a matrix of relations, create cosine similarity 
+* Do some edge pruning with r-neighborhood graph (drop all edges less than x e.g. keep top 20% values), kNN graph: keeps k edges per person.
+* Apply modularity maximization: = pruned cosine value - (# connection A * # connection b / total connections)
+4) Find the right number of custers through aggolmerative clustering or divisive/hierarchical clustering to maximize the modularity score
+
+The Louvain method for community detection in large networks
+http://perso.uclouvain.be/vincent.blondel/research/louvain.html
+
+
+## Others
+igraph [python, R], neo4j, titan graph database

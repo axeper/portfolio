@@ -1,0 +1,46 @@
+### Tukey fences detection:
+
+Note: The data must be normally distributed (symmetric, no long tail) and one-dimensional 
+* Calculate the 25th and 75th quartiles. Obtain the Interquantile Range (IQR) by subtracting the third quantile by th first.
+* Lower inner fence, lower outer fence: First quartile - 1.5 * IQR, First quartile - 3 * IQR
+* Upper inner fence, upper outer fence: Third quartile + 1.5 * IQR, Third quartile + 3 * IQR
+* 1/100 is outside the inner fence but 1/500'000 is outside the outer fence
+
+
+### Using KNN to detect ouliers:
+
+Note: KNN do not provide a continuous measure but class of outliers.
+* Standardize the data
+* Create an NxN distance matrix using the euclidean distance
+* Rank the distance from 1 to N (or 0 to N-1 ?)
+* For a KNN with k=5, keep only the 5 first rank. An indegree is the count of the number of edges going into any node on a graph.
+* Try k = 5, 10, 20. If the sum of rank = 0 (indegrees = 0) for a data point, it means it is very distant from the others. It is either too good or too terrible.
+
+
+### Using k-distance
+
+Note: this method does not account well for the difference between local and global outliers.
+* The k-distance is the distance from an employee to their kth neighbor.
+* Sum the distance from a data to his k neighbors.
+
+
+### Local Outlier Factors
+
+You are an outlier if your k nearest neighbors consider you farther away than their neighbors consider them.
+
+The reachability distance of employee A with respect to employee B is just their ordinary distance, unless A is within B's k-distance neighborhood, in which case the reachability distance is just B's k-distance.
+In other words, if A is inside B's neighborhood, you round up A's distance to B to the size of B's neighborhood; otherwise, you leave it alone. MAX(distance, k-distance)
+The local outlier factor then for an employee is the average of the ratios of the employee's average reachability distance divided by the average reachability distances of each of their k neighbors.
+
+More http://www.siam.org/meetings/sdm10/tutorial3.pdf
+
+
+> CallCenter <- read.csv("CallCenter.csv")
+> install.packages("DMwR",dependencies=TRUE)
+> library(DMwR)
+# Data standardization
+> CallCenter.scale <- scale(CallCenter[2:11])
+> CallCenter.lof <- lofactor(CallCenter.scale,5)
+# Outliers are above 1
+> CallCenter[which(CallCenter.lof > 1.5),]
+

@@ -1,0 +1,47 @@
+
+
+Exponential smoothing techniques base a future forecast off of past data where the most recent observations are weighted more than older observations.
+
+
+### Simple Exponential Smoothing
+
+so = x0, or you can use an average (x0 = mean(x(first year)))
+st = alpha * xt + (1 - alpha) * st-1, with 0 < alpha < 1
+Not very good at following trend
+
+
+### Holt's Trend-Corrected Exponential Smoothing / double exponential smoothing
+
+Uses two smoothing coefficients: alpha (accounts for past data), gamma (accounts for trends)
+
+Are you accounting for seasonality? 
+Compute Holt's autocorrelation to find patterns
+Worry about the autocorrelations larger than 2/sqrt(number of data points)
+You will most likely find weekly, monthly, yearly autocorrelations, account for this using triple exponential smoothing
+
+
+### Multiplicative Holt-Winters Smoothing / triple exponential smoothing
+
+Three smoothing coefficients: alpha, gamma, delta (accounts for seasonality)
+
+* Smooth out the historical data using what's called a 2×12 moving average.
+i.e. take (MA month:1-12 + MA month:2-13) / 2
+You need two year of data for one year of smoothed data (the first six and last six months do not have data)
+* Compare a smoothed version of the time series to the original to estimate seasonality.
+A simple division original/skewed (take the mean when you have multiple month values) is enough. 
+* Using the initial seasonal estimates, deseasonalize the historical data. i.e. Divide Original by Seasonal estimate
+* Estimate the level and trend using a trendline on the deseasonalized data.
+Use the algorithm, optimize the three parameters
+
+Note: When forecasting, use prediction intervals
+A Monte Carlo simulation can be useful to draw the 2.5 and 97.5 quantiles
+Display in a fan chart (time series)
+
+> sword <- read.csv("SwordDemand.csv")
+> sword.ts <- ts(sword,frequency=12,start=c(2010,1))
+> install.packages("forecast",dependencies=TRUE)
+> library(forecast)
+> sword.forecast <- forecast(sword.ts)
+> sword.forecast$method
+[1] "ETS(M,A,M)"		# MAM stands for multiplicative error, additive trend, multiplicative seasonality.
+> plot(sword.forecast)

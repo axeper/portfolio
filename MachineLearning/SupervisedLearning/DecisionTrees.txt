@@ -1,0 +1,32 @@
+### Random Forest
+
+
+> install.packages("randomForest",dependencies=TRUE)
+> install.packages("ROCR",dependencies=TRUE)
+> library(randomForest)
+> library(ROCR)
+> PregnancyData <- read.csv("Pregnancy.csv")
+> PregnancyData.Test <- read.csv("Pregnancy_Test.csv")
+> PregnancyData$PREGNANT <- factor(PregnancyData$PREGNANT)
+> PregnancyData.Test$PREGNANT <- factor(PregnancyData.Test$PREGNANT)
+> Pregnancy.lm <- glm(PREGNANT ˜ ., data=PregnancyData,family=binomial("logit"))
+> summary(Pregnancy.lm)
+# Predict with the two models
+> Pregnancy.rf <- randomForest(PREGNANT˜.,data=PregnancyData,importance=TRUE)
+> PregnancyData.Test.rf.Preds <- predict(Pregnancy.rf,PregnancyData.Test,type="prob")
+> varImpPlot(Pregnancy.rf, type=2)
+# Compare the models in terms of true positive rate and false positive rate
+> PregnancyData.Test.lm.Preds <-
+predict(Pregnancy.lm,PregnancyData.Test,type="response")
+> PregnancyData.Test.rf.Preds <-
+predict(Pregnancy.rf,PregnancyData.Test,type="prob")
+> pred.lm <-
+prediction(PregnancyData.Test.lm.Preds,
+PregnancyData.Test$PREGNANT)
+> pred.rf <- 
+prediction(PregnancyData.Test.rf.Preds[,2],
+PregnancyData.Test$PREGNANT)
+> perf.lm <- performance(pred.lm,"tpr","fpr")
+> perf.rf <- performance(pred.rf,"tpr","fpr")
+> plot(perf.lm,xlim=c(0,1),ylim=c(0,1))
+> plot(perf.rf,xlim=c(0,1),ylim=c(0,1),lty=2,add=TRUE)
