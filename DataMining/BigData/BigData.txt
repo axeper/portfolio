@@ -1,0 +1,41 @@
+Big Data
+
+	3 V: Volume, Variety, Velocity (+ Veracity)
+	Definition: any data that is expensive to manage and hard to extract value from.
+	
+
+	A database is a collection of data organized to be manipulated efficiently.
+	Relational databases were designed with efficiency in mind:
+		Everything is a table
+		Every row has the same columns
+		Relationships are implicit (no pointers)
+
+		Basic operations 
+			Selection: select rows from a table 
+			Projection: select columns/attributes from a table
+			Join: combine rows from two or more tables
+				There are four kind of joins: inner, outer, left, right join
+	
+		A view is a a query with a name.
+	
+	
+	Scalable challenges:
+		SOLVED The data doesn't fit in memory
+		SOLVED The data fit in k computer
+		PROBLEM The data takes too long to go through
+	-> Use index
+	-> Use parallelization (use hash functions to spread)
+	
+	MapReduce:
+		Split the raw data into small sets
+		Map the functions into tidy data e.g (key, value) pairs.
+		Shuffle the data into bins (words, f1, f2, ..., fn).
+		Reduce the information into (words, ftotal)
+		
+	Programming model:
+		map(in_key, in_value) -> list(out_key, intermediate_value)
+		reduce(out_key, list(intermediate_value)) -> list(out_value)
+	
+
+	
+	

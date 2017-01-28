@@ -1,0 +1,157 @@
+# Data tables - faster and more efficient than data frames
+
+	library(data.table)
+	DF = data.frame(x=x, y=y, z=z)
+	DT = data.table(x=x, y=y, z=z)
+	tables()		# See all tables in memory
+	
+	DT[2,]			# Subset a row
+	DT[DT$y="a"]	# Extracts rows where only y="a"
+	
+	# Working with columns is different:
+	# Anything after the first comma is considered by R as an expression
+	DT[,list(mean(x), sum(z))]
+	DT[,table(y)]
+	
+	# Adding columns
+	DT[, newCol := z^2]
+	DT[, newCol := {tmp <- x+z; log2(tmp+5)}]
+	DT[, a := x > 0 ]
+	DT[, b := mean(x+w), by = a] 
+				# Puts mean(x+w) where a = TRUE and 
+				# Puts mean(x+w) where a = FALSE			
+	DT[, .N, by = x]
+				# Counts how many instance are in col x
+	setkey(DT, x)
+				# The key is set to the variable x
+	fread()		# Read a data table. It's 10 times faster as data frames			
+	
+	# Careful 
+	DT2 <- DT is a shallow copy. Any change of DT will be reported on DT2. Use copy()
+
+	# Further resources
+	* The latest development version [https://r-forge.r-project.org/scm/viewvc.php/pkg/NEWS?view=markup&root=datatable](https://r-forge.r-project.org/scm/viewvc.php/pkg/NEWS?view=markup&root=datatable)
+	* Here is a list of differences between data.table and data.frame[http://stackoverflow.com/questions/13618488/what-you-can-do-with-data-frame-that-you-cant-in-data-table](http://stackoverflow.com/questions/13618488/what-you-can-do-with-data-frame-that-you-cant-in-data-table)
+	* Notes based on Raphael Gottardo's notes [https://github.com/raphg/Biostat-578/blob/master/Advanced_data_manipulation.Rpres](https://github.com/raphg/Biostat-578/blob/master/Advanced_data_manipulation.Rpres), who got them from Kevin Ushey.
+
+	
+# Some R commands
+
+	# Subset with plyr
+	library(plyr)
+	arrange(X, desc(var1), var2)	# Sort in descending order along var1 and along var2 (if there are duplicates)
+
+	# Creates a classification matrix 
+	xtabs(a ~ b + c, data = D)
+	
+	# Creates a classification matrix for each var, then put it into a flat one
+	xt <- xtabs(a ~ ., data = D)
+	fltable(xt)	
+	
+	# Returns a vector based on test (warning coercion will happen)
+	ifelse(test, true, false)
+	ifelse(x < 0, TRUE, -x)
+	
+	# Divide a range into n break
+	cut(x, breaks = n)
+	
+	# Round a value to its n significant value
+	signif(x, digits = n)
+
+	# sapply with plyr
+	library(plyr)
+	ddply(InsectSprays, .(spray), summarize, sum=sum(count))
+	
+	# Merge two dataframes using the col "id" and "sol_id"
+	merge(x, y, by.x = "id", by.y = "sol_id", all = TRUE)
+	# It is not recommended to merge(x, y, all=TRUE) because intersect() will merge all the columns together, creating a huge object
+	
+	# Merge with plyr
+	arrange(join(df1,df2),id)
+	join_all(df1,df2,df3)
+	
+	
+
+# dplyr package (optimized for dataframes)
+
+	tbl <- tbl_df(df)
+		Dataframe to dataframe tbl
+	select(x, a:b)
+		Keeps only the columns a to b
+	select(x, -(a:b))
+		Keeps everything but the columns a to b
+	filter(x, a > 30)
+		Keeps the values of x where a > 30 (works like subset())
+	arrange(x, desc(date))
+		Sort, here in descending order, x along date
+	rename(x, newC = oldC, newC2 = oldC2)
+		Rename columns 
+	mutate(x, newC = col - mean(col))
+		Add a new column newC
+	summarise(x, a = mean(a), b = max(b), c = median(c))
+		Summarize x along what you ask. Works better when you use group_by() before.
+	mammals %>% arrange(adult_body_mass_g)
+		Pipeline operator, which avoids temp variable.
+	
+	
+	
+# Editing text variables
+
+	if(!file.exists("./data")){dir.create("./data")}
+	fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+	download.file(fileUrl,destfile="./data/cameras.csv",method="curl")
+	cameraData <- read.csv("./data/cameras.csv")
+	
+	# Change to lowercase ("crossStreet" -> "crossstreet")
+	tolower(names(cameraData))
+	
+	# Split names like "location.1" -> "location", "1" 
+	splitNames = strsplit(names(cameraData),"\\.")
+	
+	# Remove underscores "review_id" -> "reviewid"
+	sub("_","",names(reviews),)		# Replace one
+	gsub("_","",testName)			# Replace all
+	
+	# Find matching patterns
+	grep("Alameda",cameraData$intersection)	
+									# Returns the indices
+	grepl("Alameda",cameraData$intersection)
+									# Returns a logical array
+	grep("Alameda",cameraData$intersection,value=TRUE)
+									# Returns the strings
+	
+	# More useful string functions
+	library(stringr); 
+	nchar()							# Counts how many letters
+	substr("Jeffrey Leek",1,7)		# Keeps only the string from 1 to 7
+	paste("Jeffrey","Leek",sep)		# Paste two strings together (sep =" ")
+	paste0("Jeffrey","Leek")		# Paste two strings together (sep ="")
+	str_trim("Jeff      ")			# remove spaces
+
+
+# Working with dates
+
+	d1 = date()						# Returns character
+	d2 = Sys.Date()					# Returns Date
+	
+	format(d2,"%a %b %d")			# Reformat Dates
+	
+	# You can substract Dates
+	x = c("1jan1960", "2jan1960")
+	z = as.Date(x, "%d%b%Y")
+	as.numeric(z[1]-z[2])
+	
+	weekdays(d2)					# Gives the day of the week
+	months(d2)						# Gives the month
+	julian(d2)						# Gives the number of day since 1970-01-01
+	
+	
+	# lubridate caste a string to Date
+	library(lubridate)
+	ymd("20140108")					# Year Month Day
+	mdy("08/04/2013")				# Month Day Year
+	dmy("03-04-2013")				# Day Month Year
+	ymd_hms("2011-08-03 10:15:03",tz="Pacific/Auckland")
+									# Year Month Day Hour Minute Second with timezone
+	wday(x[1])						# Get weekday (integer)
+	wday(x[1],label=TRUE)			# Get weekday (factor)

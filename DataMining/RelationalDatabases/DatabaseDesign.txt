@@ -1,0 +1,119 @@
+Database design with UML and SQL, 3rd edition
+http://www.tomjewett.com/dbdesign/dbdesign.php?page=intro.html
+
+	Models and languages
+		 The Unified Modeling Language (UML) - tool for communicating with the client in terms that are used in the enterprise
+		 The Entity-Relationship (ER) - model to represent things that a business needs to remember to perform business processes.
+		 The Relational Model (RM) - formal model of a modern database
+		 Relational Algebra (RA) - formal language to symbollically manipulate objects of the relational model.
+		 The table - an informal set of terms for relational model objects. 
+		 The Structured Query Language (SQL) - declarative language to build and manipulate relational databases.
+		 
+	Basic structures
+		Design the UML class (ER: entity)
+			Describe the in plain language
+			List all attributes/properties
+			Keep the descriptive/natural attributes (name, phone but not ID)
+
+			__________
+			Customer		UML class name
+			__________
+			cFirstName		attributes names
+			cLastName
+			cPhone
+			cStreet
+			cZipCode
+			___________
+			___________		methods (empty here)
+						
+		Relation schemes (relational model)
+			Customers Scheme = {cFirstname, cLastname, cPhone, cStreet, cZipCode}
+			
+		Table structure (SQL syntax)
+			CREATE TABLE customers (custID INTEGER AUTOINCREMENT, cfristname VARCHAR(20) NOT NULL, ..., czipcode VARCHAR(5));
+		
+		Add constraints to define primary key and super key (multiple primary keys)
+			CONSTRAINT customers_pk PRIMARY KEY (custID);
+	
+		UML association (ER: relationship)
+			Each customer places zero or more orders <-> Each order is placed by one and only one customer
+			This is a one-to-many association.
+			
+			Derived attributes: attributes that are computed instead of being stored. Add a "/" before the name.
+			
+			Define the order table with a foreign key for each PK to keep the referential integrity of the db.
+			This can be done with a candidate key (a minimal super key) to avoid duplication:
+				surrogate PK (IDs, ...).
+				substitute PK (two-letter postal codes, ...)
+			NOTE: every table must have a candidate key (unique)
+			NOTE: do not add ID (surrogate PK) if there is already a candidate key, the table is already a parent, there is no candidate key small enough
+			
+	Design pattern:
+		What if we have a many-to-many association?
+		
+		Customers
+		custID(PK), cFirstName*, cLastName*, cPhone*, cStreet, cZipCode
+		|
+		Orders
+		custID(FK) (PK), orderDate(PK), soldBy, /total
+		|
+		OrderLines
+		custID (PK), orderDate(PK), UPC(PK) (FK), quantity, unitSalePrice
+		|
+		Products
+		UPC (PK), prodName, mfgr*, model*, unitListPrice, unitsInStock
+			
+		* are Candidate Key
+		
+		Full examples:
+		http://www.tomjewett.com/dbdesign/dbdesign.php?page=manymany.php
+		http://www.tomjewett.com/dbdesign/dbdesign.php?page=loan.php
+		
+		
+		subkeys: how can we prevent the duplication of data?
+		Primary Keys are always functional dependent. X (PK) -> y, or X uniquely determine Y.
+		A subkey is Z -> Y, when X -> Y. For example, name -> zipcode (Z) -> city.
+		
+		3-step way using the relation scheme:
+		1. Remove all of the attributes that are dependent on the subkey. Put them into a new scheme. 
+		2. Duplicate the subkey, it becomes the primary key of the new scheme. 
+		3. The duplicated subkey of the original scheme is now a foreign key (it is no longer a subkey).
+		This is called normalization (third normal form, 3NF)
+		
+		
+		multivalued attributes:
+		Don't use multiple values (like hobbies: reading, art, hockey). 
+		Create a separate table for that using an id as a PK/FK.
+		
+		A domain is the set of legal values that can be assigned to an attribute.
+		This is done through validation rule to achieve data integrity.
+		You can constrain an attribute with an enumerated domain.
+		Attribute domains that may be specified by a well-defined, reasonably-sized set of constant values are called enumerated domains.
+		
+		
+		subclass: when an attribute apply only to some individuals of a class.
+		It's also called specialization constraints (in opposition to cardinality/multiplictiy)
+			ex: studentClass may be an assistant
+		superclass: when two or more classes have many of the same attributes.
+		It's called generalization.
+			ex: a cityLot and a countryLot are both Lot.
+			
+		recursive association:
+		if an employee is managed by a manager, don't create a new class but add an attribute (e.g. managerID)
+		However, if an employee has more than one manager, create a table and not an attribute.
+		
+		Normalization/Normal forms:
+			First normal form (1NF)	
+				All attributes must be atomic
+				No repeating groups
+				Eliminate multi-valued attributes
+				Eliminate repeated attributes
+			Second normal form (2NF)
+				First normal form
+				No partial functional dependencies
+				Eliminate subkeys (where the subkey is part of a composite primary key)
+			Third normal form (3NF)
+				Second normal form
+				No transitive functional dependencies
+				Eliminate subkeys (where the subkey is not part of the primary key)
+		

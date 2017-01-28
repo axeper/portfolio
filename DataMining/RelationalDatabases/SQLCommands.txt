@@ -1,0 +1,281 @@
+http://use-the-index-luke.com/sql/table-of-contents
+
+
+
+
+
+
+
+
+W3 SQL tutorial		
+http://www.w3schools.com/sql/sql_intro.asp
+
+	QUICK REFERENCE:
+	http://www.w3schools.com/sql/sql_quickref.asp
+		
+	SQL keywords (nad queries) are NOT case sensitive: select is the same as SELECT
+	(we write all SQL keywords in upper-case)
+	Some database systems require a semicolon at the end of each SQL statement.
+	
+	Some of The Most Important SQL Commands
+		SELECT - extracts data from a database
+			SELECT column_name,column_name FROM table_name;
+			SELECT * FROM table_name;
+			SELECT DISTINCT column_name,column_name FROM table_name;
+			SELECT column_name FROM table_name WHERE column_name operator value;
+			SELECT column_name, column_name FROM table_name ORDER BY column_name ASC|DESC, column_name ASC|DESC;
+			SELECT TOP number|percent column_name(s) FROM table_name; 
+			(TOP is LIMIT in MySQL; WHERE ROWNUM <= number in Oracle)
+			SELECT * FROM table_name WHERE column_name NOT LIKE '%land%';
+			SELECT column_name(s) INTO newtable [IN externaldb] FROM table1;
+		UPDATE - updates data in a database
+			UPDATE table_name
+			SET column1=value1,column2=value2,...
+			WHERE some_column=some_value;
+			!Add the "WHERE" keywords, otherwise you will impact the whole db
+		DELETE - deletes data from a database
+			DELETE FROM table_name WHERE some_column=some_value;
+			!Add the "WHERE" keywords, otherwise you will impact the whole db
+			DELETE * FROM table_name;
+			!This deletes all rows without deleting the table's structure
+		INSERT INTO - inserts new data into a database
+			INSERT INTO table_name (column1,column2,column3,...)
+			VALUES (value1,value2,value3,...);
+			INSERT INTO table2 (column_name(s)) SELECT column_name(s) FROM table1;
+		CREATE DATABASE - creates a new database
+			CREATE DATABASE dbname;
+		ALTER DATABASE - modifies a database
+		CREATE TABLE - creates a new table
+			CREATE TABLE table_name (column_name1 data_type(size) constraint_name,
+			column_name2 data_type(size) constraint_name, ....);
+		ALTER TABLE - modifies a table
+			ALTER TABLE table_name ADD column_name datatype
+			ALTER TABLE table_name DROP COLUMN column_name
+			ALTER TABLE Persons ALTER COLUMN DateOfBirth year
+		DROP TABLE - deletes a table
+			DROP INDEX index_name ON table_name
+			DROP DATABASE database_name
+			TRUNCATE TABLE table_name (delete the data but not the table)
+		CREATE INDEX - creates an index (search key)
+			CREATE UNIQUE INDEX index_name ON table_name (column_name)
+		DROP INDEX - deletes an index
+			MS Access: DROP INDEX index_name ON table_name
+	
+	Operators:
+		WHERE CustomerID = 1  		(numeric)
+		WHERE Country = "Mexico"	(text)
+		=, <> (not equal, sometimes written !=), <, >, <=, >=
+		BETWEEN value1 AND value2 (define an in/exclusive range, depends on the db)
+		BETWEEN #07/04/1996# AND #07/09/1996# (dates)
+		LIKE (search for a pattern)
+		IN (value1,value2,...) (specify possible values)
+		AND, OR
+		TOP 50, TOP 50 PERCENT
+		IS NULL, IS NOT NULL
+		UNION (merge two select statement)
+		UNION ALL (merge two select statement but keep duplicates)	
+		ID Integer PRIMARY KEY AUTOINCREMENT (SQL autoincrementation)
+	
+	Datatypes
+		Dates and functions http://www.w3schools.com/sql/sql_dates.asp
+		General Data Types 	http://www.w3schools.com/sql/sql_datatypes_general.asp
+							http://www.w3schools.com/sql/sql_datatypes.asp
+							
+	SQL injection:
+		Simple case:		
+		uName = getRequestString("UserName");
+		uPass = getRequestString("UserPass");
+		sql = 'SELECT * FROM Users WHERE Name ="' + uName + '" AND Pass ="' + uPass + '"'
+		
+		This is dangerous.
+		If UserName = '" or ""="' and Password = '" or ""="'
+		-> SELECT * FROM Users WHERE Name ="" or ""="" AND Pass ="" or ""=""
+		This returns all rows from the table Users because the or always returns TRUE
+		
+		Even worse
+		uName = '105; DROP TABLE Suppliers'
+		This would delete the table Suppliers!
+		
+		Use SQL parameters/parametrized queries to be protected from this.
+		http://www.w3schools.com/sql/sql_injection.asp
+		
+	SQL wildcards:
+		%	A substitute for zero or more characters
+		_	A substitute for a single character
+		[charlist]	Sets and ranges of characters to match
+		[^charlist]	Matches only a character NOT specified within the brackets
+		or [!charlist]
+		Example: LIKE '[bsp]e[!qweasd]_i%' will match 'berlin'
+		
+	SQL Aliases:
+		There are more than one table involved in a query
+		Functions are used in the query
+		Column names are big or not very readable
+		Two or more columns are combined together
+
+		Columns: SELECT column_name AS alias_name FROM table_name;
+			SELECT CustomerName AS Customer, ContactName AS [Contact Person] FROM Customers;
+			Rename CustomerName into Customer and ContactName as Contact Person
+			Tip: use [] or "" or '' to have a new name with space.
+			
+			SELECT CustomerName, Address+', '+City+', '+Country AS Address FROM Customers;
+			This concatenates multiple column into a new one with an alias
+			MySQL: CONCAT(Address,', ',City,', ',PostalCode,', ',Country) 
+			
+		Tables:  SELECT column_name(s) FROM table_name AS alias_name;
+			SELECT Orders.OrderID, Orders.OrderDate, Customers.CustomerName
+			FROM Customers, Orders
+			WHERE Customers.CustomerName="Around the Horn" AND Customers.CustomerID=Orders.CustomerID;
+			can be aliased as
+			SELECT o.OrderID, o.OrderDate, c.CustomerName
+			FROM Customers AS c, Orders AS o
+			WHERE c.CustomerName="Around the Horn" AND c.CustomerID=o.CustomerID;
+
+	SQL Joins:
+		INNER JOIN: Returns all rows when there is at least one match in BOTH tables
+			SELECT column_name(s) FROM table1
+			INNER JOIN table2 ON table1.column_name=table2.column_name;
+		
+		LEFT JOIN: Return all rows from the left table, and the matched rows from the right table
+			SELECT column_name(s) FROM table1
+			LEFT JOIN table2 ON table1.column_name=table2.column_name;
+		
+		RIGHT JOIN: Return all rows from the right table, and the matched rows from the left table
+			SELECT column_name(s) FROM table1
+			RIGHT JOIN table2 ON table1.column_name=table2.column_name;
+		
+		FULL JOIN: Return all rows when there is a match in ONE of the tables
+			SELECT column_name(s) FROM table1
+			FULL OUTER JOIN table2 ON table1.column_name=table2.column_name;
+	
+	SQL constraints:
+		NOT NULL - Indicates that a column cannot store NULL value
+		UNIQUE - Ensures that each row for a column must have a unique value
+		PRIMARY KEY - A combination of a NOT NULL and UNIQUE. Ensures that a column (or combination of two or more columns) have a unique identity which helps to find a particular record in a table more easily and quickly
+		FOREIGN KEY - Ensure the referential integrity of the data in one table to match values in another table
+		CHECK - Ensures that the value in a column meets a specific condition
+		DEFAULT - Specifies a default value for a column
+		
+		MySqL example:
+			CREATE TABLE Persons
+			(
+			P_Id int NOT NULL,
+			LastName varchar(255) NOT NULL,
+			FirstName varchar(255),
+			Address varchar(255),
+			City varchar(255) DEFAULT 'Sandnes',
+			Date data DEFAULT GETDATE(),
+			O_Id int NOT NULL,
+			PRIMARY KEY (P_Id),
+			FOREIGN KEY (O_Id) REFERENCES Orders(O_Id),
+			CHECK (P_Id>0)
+			)
+			
+	SQL Views:
+		A view is a virtual table, an encapsulation of a query
+		CREATE VIEW view_name AS SELECT column_name(s)
+		FROM table_name
+		WHERE condition
+		
+	SQL Functions:
+		SQL aggregate functions return a single value, calculated from values in a column.
+		AVG() - Returns the average value
+		COUNT() - Returns the number of rows
+		FIRST() - Returns the first value
+		LAST() - Returns the last value
+		MAX() - Returns the largest value
+		MIN() - Returns the smallest value
+		SUM() - Returns the sum
+			SELECT FUN(column_name) FROM table_name;
+
+		GROUP BY - group the result of the aggregate function by one or more columns
+			SELECT column_name, aggregate_function(column_name) 
+			FROM table_name
+			WHERE column_name operator value 
+			GROUP BY column_name;
+			example:
+			SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders
+			LEFT JOIN Shippers ON Orders.ShipperID=Shippers.ShipperID 
+			GROUP BY ShipperName;
+		
+		HAVING - the WHERE keyword can not be used with aggregate functions. 
+			WHERE deals with each value separately, HAVING with the aggregation value.
+			SELECT column_name, aggregate_function(column_name) 
+			FROM table_name
+			WHERE column_name operator value 
+			GROUP BY column_name
+			HAVING aggregate_function(column_name) operator value;
+			example:
+			SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders FROM (Orders
+			INNER JOIN Employees
+			ON Orders.EmployeeID=Employees.EmployeeID)
+			GROUP BY LastName
+			HAVING COUNT(Orders.OrderID) > 10;
+
+		SQL scalar functions return a single value, based on the input value.
+		UCASE() - Converts a field to upper case
+			SELECT UCASE(column_name) FROM table_name;
+		LCASE() - Converts a field to lower case
+			SELECT LCASE(column_name) FROM table_name;
+		MID() - Extract characters from a text field (SUBSTR in other languages)
+			SELECT MID(column_name,start,length) AS some_name FROM table_name;
+		LEN() - Returns the length of a text field
+			SELECT LEN(column_name) FROM table_name;
+		ROUND() - Rounds a numeric field to the number of decimals specified
+			SELECT ROUND(column_name,decimals) FROM table_name;
+		NOW() - Returns the current system date and time
+			SELECT NOW() FROM table_name;
+		FORMAT() - Formats how a field is to be displayed
+			SELECT FORMAT(column_name,format) FROM table_name;
+	
+	SQL Hosting
+		Popular for database-driven web sites with high traffic
+			MS SQL Server, Oracle
+			MySQL (less expensive)
+			Access (simplest database)
+	
+	Views and indexes
+		A view is simply any SELECT query that has been given a name and saved in the database. (also called named or stored query)
+			CREATE OR REPLACE VIEW <viewname> AS SELECT <any valid select query>;
+			DROP VIEW <viewname>;
+		Materialized views are disk based and are updated periodically based upon the query definition.
+
+		An index is a data structure that the database uses to find records within a table more quickly.
+			CREATE UNIQUE INDEX <indexname> ON <tablename> (<column>, <column>...);
+			DROP INDEX <indexname>
+			
+		
+	
+	
+	
+Khan Academy
+https://www.khanacademy.org/computing/computer-programming/sql
+		
+	Using CASE:
+	SELECT COUNT(*),
+		CASE 
+			WHEN a > 3 THEN "above max"
+			WHEN a > 2 THEN "above target"
+			WHEN a > 1 THEN "within target"
+			ELSE "below target"
+		END as "hr"
+	FROM logs
+	GROUP BY hr;
+	
+	Self-join:
+	SELECT students.first_name, students.last_name, buddies.email as buddy_email
+    FROM students
+    JOIN students buddies
+    ON students.buddy_id = buddies.id;
+	
+	Muliple joins:	
+	SELECT a.fullname, b.fullname
+	FROM friends
+	JOIN persons a
+	ON a.id = friends.person1_id
+	JOIN persons b
+	ON b.id = friends.person2_id;
+	
+
+
+	

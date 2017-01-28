@@ -1,0 +1,461 @@
+# Rules
+
+	P(A or B) = P(A) + P(B) - P(A and B)
+	P(A|B) = P(A and B) / P(B)			
+	P(A|B) = P(A) if A and B are independent
+	P(B|A) = P(A|B)P(B) / [ P(A|B)P(B) + P(A|~B)P(~B) ]
+	
+	
+# Definitions
+
+	Random variables 	
+		Numerical outcome of an experiment (discrete or continuous)
+	
+	Probability mass function (pmf)
+		Probability that a discrete random variables takes a values
+		Note: p(x) >= 0 and sum(p(x)) == 1
+		Example: Bernoulli distribution)
+			p(x) = theta^x (1 - theta)^(1-x)
+	
+	Probability density function (pdf)
+		Probability that a continuous random variables takes a range of values (= area of a pdf)
+		Note: p(x) >= 0 and the integral of the pdf must be one
+		Example: Beta distribution
+			B(a,b) = G(a)G(b) / G(a+b)
+			
+	Cumulative distribution function (cdf)
+		Probability that the random variable is less than or equal to the value of x
+		F(x) = P(X <= x)
+		
+	Survival function 
+		Probability that the random variable is greater than the value of x
+		S(x) = P(X > x)
+		Note: S(x) = 1 - F(x)
+
+	Quantiles
+		The alpha quantile of a cumulativedistribution F is the point x_alpha so that
+			F(x_alpha) = alpha
+		A percentile is a quantile using alpha as a percentile
+		Example: the median is the 50th percentile
+		
+	Independence
+		A and B are independent if P(A and B) = P(A)P(B)
+		Note: independence implies that P(A|B) = P(A)
+		Note: {A, A^c} and {B, B^c} are all independent
+		
+	IID random variables
+		Random variables that are independent (i.e. statistically unrelated) and
+		identically distributed (i.e. drawn from the same population distribution)
+		
+	
+# Diagnostic testing
+
+	Sensitivity P(+|D)
+		Probability of True Positives 
+	Specificity P(-|D^c)
+		Probability of False Negatives
+	Positive predictive value P(D|+)
+		Probability of Positives True
+	Negative predictive value P(D^c|-)
+		Probability of Negatives False
+	Diagnostic likelihood ratio of a positive test DLR_+ = P(+|D) / P(+|D^c)
+		i.e. how much a positive test is supported by the data
+		sensitivity/(1 - specificity)
+	Diagnostic likelihood ratio of a negative test DLR_- = P(-|D) / P(-|D^c)
+		i.e. how much an error of the test is supported by the data
+		(1 - sensitivity)/specificity
+			
+	Then
+	P(D|+) = P(+|D)P(D) / [ P(+|D)P(D) + P(+|D^c)P(D^c) ]
+	P(D|+) = sensitivity P(D) / [ P(+|D)P(D) + {1 - specificity} P(D^c) ]
+	P(D|-) = P(+|D^c)P(D^c) / [ P(+|D)P(D) + P(+|D^c)P(D^c) ]
+	
+	P(D|+) / P(D^c|+) = P(+|D) / P(+|D^c) * P(D) / P(D^c)
+	post-test odds    = DLR_+             * pre-test odds
+	
+	
+# Expectations
+
+	Expected value (or population mean) is the center of mass of population
+		E[X] = sum(x p(x))			# use the pmf 
+	The sample mean is the estimator of the population mean, it's the center of mass of the observed data
+		"X = sum(x_i p(x_i))		# p(x_i) = 1/n, every sample weights the same
+		Note: this estimator is unbiased
+	Sample variance 
+		Var[X] = E[X^2] - E[X]^2 
+	
+	E[a1 x + a2 y + b] = a1*mu_x + a2*mu_y + b
+	
+	
+# Variance
+
+	Measures the spread of the dataset
+		Var[x] = E[(X- mu)^2] = E[X^2] - E[X]^2
+		sd = sqrt(Var)
+	The sample variance is the estimator of the population variance
+		S^2 = sum(X_i - "X)^2 / (n - 1)
+		
+	An average of random sample from a population is itself a random variable.
+		E["X] = mu		Var("X) = sigma^2/n
+	The standard error S/sqrt(n) (it's the estimator of the standard deviation?) 
+	
+	Var[a1 x + a2 y + b] = a1^2 * sigma_x^2 + a2^2 * sigma_y^2 + 2*a1*a2*sigma_xy
+	
+
+# Distributions
+
+	# Bernoulli distribution
+	Random variables take values X = 1 ("success", probability p) and X = 0 ("failure", probability 1- p)
+	P(X = x) = p^x (1 - p)^(1 - x)		# PMF
+	mean = p	variance = p(1 - p)
+	
+	# Binomial trials (binom)
+	Sum of iid Bernoulli trials (X = sum(X_i))
+	P(X = x) = (n choose x) p^x (1 - p)^(n - x)
+			(n choose x) = n! / (x!(n-x)!)
+	
+	# Normal distribution (norm)
+	X ~ N(mu, sigma^2)
+	p(x) = sqrt(2 pi sigma^2) exp(-(x - mu)^2 / 2 sigma^2) 
+	if mu = 0 and sigma = 1, it's called the standard normal distribution
+	To change from X ~ N(mu, sigma^2) <-> Z ~ N(0, 1),
+		(X - mu) / sigma			# normalize to ~ N(0, 1)
+		mu + sigma Z				# normalize to ~ N(mu, sigma^2)
+	
+	68%, 95% and 99% of the normal density lies within 1, 2 and 3 standard deviation from the mean, respectively
+	-2.33, -1.96, -1.645, -1.28, 1.28, 1.645, 1.96, 2.33 are the 1, 2.5, 5, 10, 90, 95, 97.5, 99 percentiles of the standard normal distribution
+	
+	# Poisson (pois)
+	P(X = x, lambda) = lambda^x exp(-lambda) / x!
+	mean = lamda	variance = lambda
+	X ~ Poisson(lambda t) where
+		lambda = E[X/t] is the expected count per unit of time
+		t is the total monitoring time
+		
+	if n is large and p is small, the Poisson distribution can accurately approximate the binomial distribution
+	X ~ Binomial(n,p) with lambda = np
+	
+
+# Asymptotics
+
+	Law of Large Numbers: the average of the results obtained from a large number of trials should be close to the expected value, and will tend to become closer as more trials are performed.
+	This can be accepted only if the estimator is consistent (i.e. it converges to what you want to estimate). The sample mean, variance and standard deviation of iid random variables are consistent.
+
+	# Central Limit Theorem
+	The CLT states that, given certain conditions, the arithmetic mean of a sufficiently large number of iterates of independent random variables, each with a well-defined (finite) expected value and finite variance, will be approximately normally distributed, regardless of the underlying distribution.
+	The distribution of averages iid variables (properly normalized) becomes that of a normal distribution as the sample size increases.
+	Averages are normal distribution centered on mean, with standard deviation equal to the standard error.
+	
+	("X_n - mu) / (sigma / sqrt(n)) = sqrt(n) ("X_n - mu) / sigma = (Estimate - Mean of estimate) / Std. Err. of estimate
+	Or, "X_n is approximately N(mu, sigma^2/n)
+	
+	
+# Intervals
+
+	A Confidence Interval CI for the mean is 
+		the mean +- relevant normal quantile * the SE (i.e. 2 SE is 95%)
+	
+	# Binomial
+	An interval for binomial distribution is
+	^p +- z_(1 - alpha/2) sqrt(p (1 - p) / n)
+		Example: with ^p = 0.56, n = 100 and alpha = 5%
+		0.56 + c(-1,1) * qnorm(0.975) * sqrt(0.56 * 0.44 / 100)		
+		Or
+		Use binom.test(56, 100)$conf.int 				# Not using CLT
+	
+	For a 95% CI in a binomial event, ^p +- 1/sqrt(n)
+	
+	"Add 2 sucesses and 2 failures" - The Agresti-Coull interval is also another approximate binomial confidence interval.
+
+	
+	
+	# Poisson
+	X ~ Poisson(lambda t) then	^lambda = X/t	Var(^lambda) = lambda/t
+	The intervals can be estimated (x=5, t=94.32, 95% CI, lambda=x/t)
+		lambda + c(-1,1) * qnorm(0.975) * sqrt(lambda/t)
+		Or
+		poisson.test(5, T=94.43)$conf
+		
+		
+# T Confidence Intervals
+
+	The T distribution has thicker tail than the normal.
+	It is indexed by a degree of freedom (if df is high, it behaves like a normal).
+	(bar(X) - mu) / (S / sqrt(n))
+	
+	Note: the data must be roughly symmetric and with a bell curve. 
+	Discrete data and skewed distributions violates the t assumptions. You can take the log.
+	
+	The CLT intervals	Est +- quantile(normal) * standard error(estimated) 
+	The T intervals		Est +- quantile(T) * standard error(estimated) 
+
+	Assuming Paired data:
+		g1; g2; difference <- g2 - g1
+		mn <- mean(difference); s <- sd(difference); n <- 10
+		mn + c(-1, 1) * qt(.975, n-1) * s / sqrt(n)
+		or
+		t.test(difference)
+		or
+		t.test(g2, g1, paired = TRUE)
+	
+	If we assume constant variance accross the two groups, but not paired:
+		A confidence interval (1 - alpha/2) for mu_y - mu_x is
+		bar(Y) - bar(X) +- t_{n_x + n_y - 2, 1 - alpha/2} * S_p * sqrt(1/n_x + 1/n_y)
+		The pooled variance estimator is
+		S_p^2 = {(n_x - 1) * S_x^2 + (n_y - 1) * S_y^2} / (n_x + n_y - 2)
+
+		n1 <- length(g1); n2 <- length(g2)
+		sp <- sqrt( ((n1 - 1) * sd(x1)^2 + (n2-1) * sd(x2)^2) / (n1 + n2-2))
+		md <- mean(g2) - mean(g1); semd <- sp * sqrt(1 / n1 + 1/n2)
+		md + c(-1, 1) * qt(.975, n1 + n2 - 2) * semd
+		or
+		t.test(g2, g1, paired = FALSE, var.equal = TRUE)$conf
+
+	If we can't assumme constant variance or pairing:
+		bar(Y) - bar(X) +- t_{df} * sqrt(s_x^2/n_x + s_y^2/n_y)
+		with
+		df = (S_x^2/n_x + S_y^2/n_y)^2 /
+			[ (S_x^2/n_x)^2 / (n_x - 1) + (S_y^2/n_y)^2 / (n_y - 1) ]
+
+		t.test(g2, g1, paired = FALSE, var.equal = FALSE)$conf
+
+		
+# Hypothesis testing
+
+	H_0 i the null hypothesis. It is assumed true and evidence is required to reject it and accept H_a.
+	
+	Truth | Decide | Result |
+	$H_0$ | $H_0$  | Correctly accept null |
+	$H_0$ | $H_a$  | Type I error |
+	$H_a$ | $H_a$  | Correctly reject null |
+	$H_a$ | $H_0$  | Type II error |
+	
+	Reject H_0 when bar(X) >= C
+	C = mu_0 + standardError * quantile(0.95)
+		standardError = sd_0 / sqrt(n)
+	Or
+	sqrt(n) * (bar(X) - mu_0) / s > Z_1-alpha
+		Z_1-alpha = 1.645 for 95%
+		Use qt(.95, degreesOfFreedom) for t-test
+		
+	Two sided test at 95% must be splitted into 2.5% on each tail
+		qt(.025, degreesOfFreedom) < H_0 < qt(.975, degreesOfFreedom)
+	
+	in R:
+		library(UsingR); data(father.son)
+		t.test(father.son$sheight - father.son$fheight)
+		or
+		t.test(father.son$sheight, father.son$fheight, paired = TRUE)
+		
+	H_0: mu = mu_0 	H_a: mu != mu_0
+
+	H_0: mu_1 = mu_2
+	
+	
+# P-values
+	
+	The P-value is the probability under the null hypothesis, which measures how extreme the observation is.
+	
+	Approach:
+	1. Define the hypothetical distribution of a data summary (statistic) when "nothing is going on" (H_0)
+	2. Calculate the summary/statistic with the data we have (test statistic)
+	3. Compare what we calculated to our hypothetical distribution and see if the value is "extreme" (p-value)
+	
+	A p-value of 0.99: if you ran your experiment 100 times, you would see the effect 99 times just due to chance alone, and not actually due to whatever you're testing.
+	
+	If the P-value is less than alpha you reject the null hypothesis. 
+	For two sided hypothesis test, double the smaller of the two one sided hypothesis test Pvalues.
+
+	Then the p-value is an updated alpha.
+	
+	
+# Power
+
+	Power is the probability of rejecting the null hypothesis when it is false.
+	A type II error (beta) is failing to reject the null hypothesis when it's false.
+	High power is certainty of rejecting the H0 (good), low power is bad.
+	Power = 1 - beta
+	
+	We reject if (bar(X) - mu)/(sigma /sqrt(n)) > z_(1-\alpha)    
+		Equivalently  bar(X) > mu + z_(1-alpha) * (sigma / sqrt(n))
+	Under H_0: bar(X) ~ N(mu_0, sigma^2 / n)
+	Under H_a: bar(X) ~ N(mu_0, sigma^2 / n)
+	
+	In other words:
+	1 - beta = P(bar(X) > mu + z_(1-alpha) * (sigma / sqrt(n)) ; mu = mu_a )
+	Unknowns: mu_a, sigma, n, beta
+	Knowns: mu_0, alpha
+	If H_a is mu < mu_0, the test is similar.
+	If H_a is mu != mu_0, use alpha/2
+	
+	Power increases on alpha, n, mu_a (far from mu_0), sqrt(n)*(mu_a-mu_0)\sigma
+	(mu_a-mu_0)\sigma is called the effect size and it's unitfree.
+
+	in R:
+	# you can omit one argument (power, n, delta, sd)
+	power.t.test(n = 16, delta = 2, sd = 4, type = "one.sample",  alt = "one.sided")$power
+	power.t.test(power = .8, delta = 2, sd = 4, type = "one.sample",  alt = "one.sided")$n
+	
+	alpha = 0.05; mu0 = 30; mua = 32; sigma = 4; n = 16
+	z = qnorm(1 - alpha)
+	pnorm(mu0 + z * sigma / sqrt(n), mean = mu0, sd = sigma / sqrt(n), lower.tail = FALSE)
+	pnorm(mu0 + z * sigma / sqrt(n), mean = mua, sd = sigma / sqrt(n), lower.tail = FALSE)
+	
+	# Graphic understanding of power
+		library(manipulate)
+		mu0 = 30
+		myplot <- function(sigma, mua, n, alpha){
+			g = ggplot(data.frame(mu = c(27, 36)), aes(x = mu))
+			g = g + stat_function(fun=dnorm, geom = "line", 
+								  args = list(mean = mu0, sd = sigma / sqrt(n)), 
+								  size = 2, col = "red")
+			g = g + stat_function(fun=dnorm, geom = "line", 
+								  args = list(mean = mua, sd = sigma / sqrt(n)), 
+								  size = 2, col = "blue")
+			xitc = mu0 + qnorm(1 - alpha) * sigma / sqrt(n)
+			g = g + geom_vline(xintercept=xitc, size = 3)
+			g
+		}
+		manipulate(
+			myplot(sigma, mua, n, alpha),
+			sigma = slider(1, 10, step = 1, initial = 4),
+			mua = slider(30, 35, step = 1, initial = 32),
+			n = slider(1, 50, step = 1, initial = 16),
+			alpha = slider(0.01, 0.1, step = 0.01, initial = 0.05)
+		)
+
+		
+# Multiple testing
+	
+	First era: do we have enough data; second era: how do we compare data;
+	Our era: too many variables, which is one the most relevant?
+
+	With a 5% error, if we test 20 non-relevant variables, we may have one positive test.
+	
+						|   beta=0    |   beta!=0      |  Hypotheses
+	--------------------|-------------|----------------|---------
+	Claim beta  = 0     |       U     |       T        |   m-R 
+	Claim beta != 0     |       V     |       S        |   R 
+		Claims          |      m_0    |       m-m_0    |   m 
+
+	Type I error or false positive (V): Say that the parameter does not equal zero when it does; True H0 but reject it (False Positive)
+	Type II error or false negative (T): Say that the parameter equals zero when it doesn't; False H0 but fail to reject it (False Negative)
+
+	# Error rates
+	False positive rate - The rate at which false results (beta = 0) are called significant: E[V/m_0]
+	
+	Family wise error rate (FWER) - The probability of at least one false positive Pr(V >= 1)
+	# Controlling FWER
+	At 10k tests (P < 0.05), we expect 500 false positives. How to control that?
+	The Bonferroni correction is the oldest multiple testing correction: 
+		Suppose you do m tests
+		You want to control FWER at level alpha so Pr(V >= 1) < alpha
+		Calculate P-values normally
+		Set alpha_fwer = alpha/m
+		Call all P-values less than alpha_{fwer} significant
+	Pros: Easy to calculate, conservative
+	Cons: May be very conservative
+	
+	False discovery rate (FDR) - The rate at which claims of significance are false E[V/R]
+	# Controlling false discovery rate (FDR)
+	Benjamini-Hochberg, most popular correction when performing lots of tests say in signal-processing disciplines:
+		Suppose you do m tests
+		You want to control FDR at level alpha so E[V/R]
+		Calculate P-values normally
+		Order the P-values from smallest to largest $_(1),...,P_(m)
+		Call any P_(i) <= alpha * i/m significant
+	Pros: Still pretty easy to calculate, less conservative (maybe much less)
+	Cons: Allows for more false positives, may behave strangely under dependence
+
+	# Adjusted P-values
+	Adjust the threshold alpha or calculate "adjusted p-values"
+	They are not p-values anymore but they can be used directly without adjusting alpha: 
+	Suppose P-values are P_1,...,P_m
+	You could adjust them by taking P_i^{fwer} = max(m * P_i,1) for each P-value.
+	Then if you call all P_i^{fwer} < alpha significant you will control the FWER. 
+
+	in R:
+	# No true positive
+		set.seed(1010093)
+		pValues <- rep(NA,1000)
+		for(i in 1:1000){
+		  y <- rnorm(20)
+		  x <- rnorm(20)
+		  pValues[i] <- summary(lm(y ~ x))$coeff[2,4]
+		}
+		# Controls false positive rate
+		sum(pValues < 0.05)
+		# Controls FWER 
+		sum(p.adjust(pValues,method="bonferroni") < 0.05)
+		# Controls FDR 
+		sum(p.adjust(pValues,method="BH") < 0.05)
+	
+	# 50% true positives
+		set.seed(1010093)
+		pValues <- rep(NA,1000)
+		for(i in 1:1000){
+		  x <- rnorm(20)
+		  # First 500 beta=0, last 500 beta=2
+		  if(i <= 500){y <- rnorm(20)}else{ y <- rnorm(20,mean=2*x)}
+		  pValues[i] <- summary(lm(y ~ x))$coeff[2,4]
+		}
+		trueStatus <- rep(c("zero","not zero"),each=500)
+		table(pValues < 0.05, trueStatus)
+
+		# Controls FWER (no true positives, but some false positives)
+		table(p.adjust(pValues,method="bonferroni") < 0.05,trueStatus)
+		# Controls FDR (less true positives)
+		table(p.adjust(pValues,method="BH") < 0.05,trueStatus)
+	
+	
+# Bootstrap
+
+	Let's say you have a frequency for each X_1, ..., X_n. 
+	You can redraw a distribution using these frequencies.
+	If you do it with replacement, it's called bootstrap.
+	
+	Suppose that I have a statistic that estimates some population parameter, but I don't know its sampling distribution.
+	The bootstrap principle suggests using the distribution defined by the data to approximate its sampling distribution.
+	
+	Bootstrap procedure for calculating confidence interval for the median from a data set of n observations:
+	- Sample n observations with replacement from the observed data resulting in one simulated complete data set.
+	- Take the median of the simulated data set.
+	- Repeat these two steps B times, resulting in B simulated medians.
+	- These medians are approximately drawn from the sampling distribution of the median of n observations; therefore we can
+		- Draw a histogram of them.
+		- Calculate their standard deviation to estimate the standard error of the median.
+		- Take the 2.5 and 97.5 percentiles as a confidence interval for the median.
+		
+	in R:
+	library(UsingR); data(father.son)
+	x <- father.son$sheight; n <- length(x); B <- 10000
+	resamples <- matrix(sample(x, n * B, replace = TRUE), B, n)
+	medians <- apply(resamples, 1, median)
+	sd(medians)
+	quantile(medians, c(.025, .975))
+
+	
+# Permutation testing
+
+	Consider the null hypothesis that the distribution of the observations from each group is the same
+	Then, the group labels are irrelevant
+	Consider a data frome with count and spray
+	Permute the spray (group) labels 
+	Recalculate the statistic
+		Mean difference in counts
+		Geometric means
+		T statistic
+	Calculate the percentage of simulations where the simulated statistic was more extreme (toward the alternative) than the observed
+	
+	in R:
+	subdata <- InsectSprays[InsectSprays$spray %in% c("B", "C"),]
+	y <- subdata$count
+	group <- as.character(subdata$spray)
+	testStat <- function(w, g) mean(w[g == "B"]) - mean(w[g == "C"])
+	observedStat <- testStat(y, group)
+	# Here
+	permutations <- sapply(1 : 10000, function(i) testStat(y, sample(group)))
+	# Global mean difference
+	observedStat
+	# Extreme simulations
+	mean(permutations > observedStat)

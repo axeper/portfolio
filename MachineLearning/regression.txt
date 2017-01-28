@@ -1,0 +1,528 @@
+# Notations
+
+	X_i - observation
+	bar(X) - empirical mean, bar(X) = 1/n * sum(X_i)
+	tilde(X) - data with mean = 0, tilde(X_i) = X_i - bar(X)
+	Var(X) = 1/(n-1) * sum( (X_i - bar(X))^2 ) = 1/(n-1) * sum((X_i)^2 - n*bar(X)^2)
+	Standard deviation = sqrt(Var(x)) = sqrt(S^2) = S
+	
+	centering = removing the mean (getting tilde(X_i))
+	scaling = setting the standard deviation to 1 (computing X_i / S)
+	normalizing = data with mean 0 and sd 1 (Z_i = (X_i - bar(X)) / S)
+	
+	!normalizing is in fact a standardization!
+	!Normalization is Z_i = (x_i - min(x)) / (max(x) - min(x))!
+	
+	Cov(X,Y) = 1/n-1 * sum((X_i - bar(X)) (Y_i -bar(Y))) 
+			 = 1/n-1 * sum(X_i * Y_i - n * bar(X) * bar(Y))
+	Cor(X,Y) = Cov(X,Y) / (S_x * S_Y)
+	Cov(X,Y) and Cor(X,Y) tells you how much the change in X are associated with changes in Y. Cor() is standardized while Cov() isn't.
+	-1 <= Cor(X,Y) <= 1
+	
+	Find mu to minimize sum(w_i*(x_i - mu)^2)
+	sum(x * w) / sum(w)
+	
+	
+# Introduction to least squares
+ 
+	Minimize 
+		S = sum{ [y_i - (beta_0 + beta_1 * x_i)]^2 }
+	Fit the line (beta_0 + beta_1 * x_i) through the data pairs (X_i, Y_i) where
+		^beta_1 = Cor(Y,X) * Sd(Y) / Sd(X)
+		^beta_0 = bar(Y) - ^beta_1 * bar(X)
+		
+	In R:
+		beta1 <- cor(y, x) *  sd(y) / sd(x); beta0 <- mean(y) - beta1 * mean(x);
+	OR
+		coef(lm(y ~ x))
+		
+	
+	Regression to the origin (i.e. get the slope):
+		yc <- y - mean(y); xc <- x - mean(x); beta1 <- sum(yc * xc) / sum(xc ^ 2);
+	Or
+		coef(lm(y ~ x))[2]
+	Or
+		coef(lm(formula = yc ~ xc -1))
+		coef(lm(formula = y ~ x -1))
+		
+	
+# Regression line
+
+	Y_i = beta_0 + beta_1 * X_i + epsilon_i
+	
+	E[Y | X = x] = beta_0 + beta_1 * x
+	Var(Y | X = x) = sigma^2
+	epsilon_i ~ N(0, sigma^2)
+	
+	When modifying the intercept, the slope doesn't change
+	Y_i = tilde(beta_0) + beta_1 * (X_i - a) + epsilon_i
+	When multiplying X_i by a, we divide beta_1 by a
+	Y_i = beta_0 + tilde(beta_1) * (X_i * a) + epsilon_i
+
+	# Plot of the data
+	library(ggplot2); library(UsingR); data(diamond)
+	g = ggplot(diamond, aes(x = carat, y = price))
+	g = g + xlab("Mass (carats)")
+	g = g + ylab("Price (SIN $)")
+	g = g + geom_point(size = 7, colour = "black", alpha=0.5)
+	g = g + geom_point(size = 5, colour = "blue", alpha=0.2)
+	g = g + geom_smooth(method = "lm", colour = "black")
+	g
+
+	# Fitting the linear regression model
+		fit <- lm(price ~ carat, data = diamond)
+		Slope is price per carat, intercept is price of 0 carat
+		fit2 <- lm(price ~ I(carat - mean(carat)), data = diamond)
+		Slope is price per carat, intercept is expected price of average diamond
+		fit3 <- lm(price ~ I(carat * 10), data = diamond)
+		Slope is price per 1/10 carat, intercept is price of 0 carat
+
+	# Predicting the price of diamonds
+	newx <- c(0.16, 0.27, 0.34)
+	coef(fit)[1] + coef(fit)[2] * newx
+	Or
+	predict(fit, newdata = data.frame(carat = newx))
+	
+
+# Residuals
+
+	Y_i = beta_0 + beta_1 * X_i + epsilon_i
+	hat(Y_i) = hat(beta_0) + hat(beta_1) * X_i
+	
+	Residuals are the difference between the observed and predicted outcome
+	e_i = Y_i - \hat Y_i
+	sum(e_i)= 0 	E[e_i] = sum(e_i * x_i) = 0
+
+	in R:
+		data(diamond); y <- diamond$price; x <- diamond$carat; n <- length(y)
+		fit <- lm(y ~ x)
+		e <- resid(fit)
+		yhat <- predict(fit)
+	Plotting residuals:
+		g = ggplot(data.frame(x = x, y = resid(lm(y ~ x))), aes(x = x, y = y))
+		g = g + geom_hline(yintercept = 0, size = 2); 
+		g = g + geom_point(size = 7, colour = "black", alpha = 0.4)
+		g = g + geom_point(size = 5, colour = "red", alpha = 0.4)
+		g = g + xlab("X") + ylab("Residual")
+		g
+	
+	Estimating residuals:	
+		fit <- lm(y ~ x)
+		summary(fit)$sigma
+		Or
+		sqrt(sum(resid(fit)^2) / (n - 2))
+
+	Total variability = Error var (error not included in the model) + Regression var (error of the model) 
+	sum(Y_i - bar(Y))^2 = sum(Y_i - hat(Y_i))^2 + sum(hat(Y_i) - bar(Y))^2 
+	
+	# R squared
+	R^2 = sum((hat(Y_i) - bar(Y))^2 / sum((Y_i - bar(Y))^2
+	Or
+	summary(fit)$r.squared
+	
+	R^2 is the percentage of variation explained by the regression model (how close the data are to the fitted regression line)
+	0 < = R^2 <= 1
+	R^2 can be misleading (see example(anscombe))
+	
+	Variance of the slope:
+	sigma_hat(beta_1) ^2 = Var(hat(beta_1)) = sigma^2 / sum(X_i - bar(X))^2
+	
+	Variance of the intercept:
+	sigma_hat(beta_0) ^2 = Var(hat(beta_0)) = 1/n + ( bar(X)^2 / sum (X_i - bar(X))^2 ) * sigma^2
+	
+	hat(beta_j) - beat_j / hat(sigma_hat(beta_j)) follows a t distribution n-2 dof
+	
+	In r:
+		library(UsingR); data(diamond)
+		y <- diamond$price; x <- diamond$carat; n <- length(y)
+		beta1 <- cor(y, x) * sd(y) / sd(x)
+		beta0 <- mean(y) - beta1 * mean(x)
+		e <- y - beta0 - beta1 * x
+		sigma <- sqrt(sum(e^2) / (n-2)) 
+		ssx <- sum((x - mean(x))^2)
+		seBeta0 <- (1 / n + mean(x) ^ 2 / ssx) ^ .5 * sigma 
+		seBeta1 <- sigma / sqrt(ssx)
+		tBeta0 <- beta0 / seBeta0; tBeta1 <- beta1 / seBeta1
+		pBeta0 <- 2 * pt(abs(tBeta0), df = n - 2, lower.tail = FALSE)
+		pBeta1 <- 2 * pt(abs(tBeta1), df = n - 2, lower.tail = FALSE)
+		Or
+		fit <- lm(y ~ x); summary(fit)$coefficients
+
+	Prediction at x_0:
+	hat(beta_0) + hat(beta_1) * x_0
+	There's a distinction between intervals for the regression line at point x_0 and the prediction of what a y would be at point x_0. 
+		Line at x_0 se: 
+			hat(sigma) * sqrt(1/n + (x_0 - bar(X))^2 / sum(X_i - bar(X))^2 )
+	Prediction interval se at x_0: 
+			hat(sigma) * sqrt(1 + 1/n + (x_0 - bar(X))^2 / sum(X_i - bar(X))^2 )
+
+
+# Multivariate quizz
+
+	The mean of a variable is equal to its regression against the constant, 1.
+	
+	Q: Suppose we were given a multivariable regression problem involving an outcome and N regressors, where N > 1. Using only single-variable regression, how can the problem be reduced to a problem with only N-1 regressors?
+	A: Pick any regressor and replace the outcome and all other regressors by their residuals against the chosen on.
+	
+
+# Multivariable regression analysis
+
+	How do you compare likes with likes and account for other variables?
+	The interpretation of a multivariate regression coefficient is the expected change in the response per unit change in the regressor, holding all of the other regressors fixed.
+	
+	The general linear model extends simple linear regression (SLR) by adding terms linearly into the model.
+	Y_i =  beta_1 X_1i + beta_2 X_2i + ... + beta_p X_pi + epsilon_i 
+	= sum(X_ik * beta_j + epsilon_i)
+	
+	Least squares (and hence ML estimates under iid Gaussianity of the errors) minimizes
+	sum ((Y_i - sum(X_{ik * beta_j)^2)
+	
+	Note, the important linearity is linearity in the coefficients.
+	
+	# Result
+	hat(beta_1) = sum(e_{i, Y | X_2} * e_{i, X_1 | X_2}) / (sum(e_{i, X_1 | X_2})^2)
+	The regression estimate for beta_1 is the regression through the origin estimate having regressed X_2 out of both the response and the predictor.
+	More generally, multivariate regression estimates are exactly those having removed the linear relationship of the other variables from both the regressor and response.
+	
+	# Example
+	We fit all others X through 
+	hat(beta_1) = [ ... ] = Cor(X, Y) \frac{Sd(Y)}{Sd(X)}
+	
+	# in R:
+	n = 100; x = rnorm(n); x2 = rnorm(n); x3 = rnorm(n)
+	y = 1 + x + x2 + x3 + rnorm(n, sd = .1)
+	ey = resid(lm(y ~ x2 + x3))
+	ex = resid(lm(x ~ x2 + x3))
+	sum(ey * ex) / sum(ex ^ 2)
+	coef(lm(ey ~ ex - 1))
+	coef(lm(y ~ x + x2 + x3)) 
+
+	# Fitted values, residuals and residual variation
+	All of our SLR quantities can be extended to linear models
+	* Model 
+		Y_i = sum(X_ik * beta_k) + epsilon_i where epsilon_i ~ N(0,sigma^2)
+	* Fitted responses 
+		hat(Y_i) = sum(X_ik * hat(beta_k))
+	* Residuals 
+		e_i = Y_i - hat(Y_i)
+	* Variance estimate 
+		hat(sigma^2) = 1/(n-p) * sum(e_i^2)
+	* To get predicted responses at new values, x_1, ..., x_p, simply plug them into the linear model sum(x_k * hat(beta_k)
+	* Coefficients have standard errors, hat(sigma_hat(beta_k)), and
+	(hat(beta_k) - beta_k) / (hat(sigma_hat(beta_k)))
+	follows a T distribution with n-p degrees of freedom.
+	* Predicted responses have standard errors and we can calculate predicted and expected response intervals.
+	
+	# Example 1 - single variable against multivariable approach
+		require(datasets); data(swiss); require(GGally); require(ggplot2)
+		
+		# Pair plot
+		g = ggpairs(swiss, lower = list(continuous = "smooth"),params = c(method = "loess"))
+		
+		# Understanding coefficients
+		summary(lm(Fertility ~ . , data = swiss))
+		* Estimate is -0.1721.
+		* Our models estimates an expected 0.17 decrease in standardized fertility for 	every 1% increase in percentage of males involved in agriculture in holding the remaining variables constant.
+		* The t-test for $H_0: \beta_{Agri} = 0$ versus $H_a: \beta_{Agri} \neq 0$ is  significant (0.018)
+		
+		# Adjustement for other variables can REVERSE the sign of an effect
+		summary(lm(Fertility ~ Agriculture , data = swiss))$coefficients
+		* Estimate is +0.19
+		
+		If you see NA in coefficients, you have redundant information.
+		
+	# Example 2 - using factors
+		require(datasets);data(InsectSprays); require(stats); require(ggplot2)
+
+		# Violin plot
+		g = ggplot(data = InsectSprays, aes(y = count, x = spray, fill  = spray))
+		g = g + geom_violin(colour = "black", size = 2)
+		g = g + xlab("Type of spray") + ylab("Insect count")
+
+		# Using factors
+		summary(lm(count ~ spray, data = InsectSprays))$coef
+			The estimates are all proportional to sprayA 
+			(i.e. sprayB = estimate_intercept + estimate_sprayB)
+			summary(lm(count ~ 
+				 I(1 * (spray == 'B')) + I(1 * (spray == 'C')) + 
+				 I(1 * (spray == 'D')) + I(1 * (spray == 'E')) +
+				 I(1 * (spray == 'F'))
+           , data = InsectSprays))$coef
+			Note: including `+ I(1 * (spray == 'A'))` would give NA
+		# Omit the intercept to avoid this:
+		summary(lm(count ~ spray - 1, data = InsectSprays))$coef
+		# Reorder the levels
+		spray2 <- relevel(InsectSprays$spray, "C")
+		summary(lm(count ~ spray2, data = InsectSprays))$coef
+
+	# Example 3 - interractions between variables
+	library(datasets); data(swiss); library(dplyr); 
+	swiss = mutate(swiss, CatholicBin = 1 * (Catholic > 50))
+	
+	# Plot
+	g = ggplot(swiss, aes(x = Agriculture, y = Fertility, colour = factor(CatholicBin)))
+	g = g + geom_point(size = 6, colour = "black") + geom_point(size = 4)
+	g = g + xlab("% in Agriculture") + ylab("Fertility")
+		
+	# No interractions (Parallel lines)
+	fit = lm(Fertility ~ Agriculture + factor(CatholicBin), data = swiss)
+	g1 = g
+	g1 = g1 + geom_abline(intercept = coef(fit)[1], slope = coef(fit)[2], size = 2)
+	g1 = g1 + geom_abline(intercept = coef(fit)[1] + coef(fit)[3], slope = coef(fit)[2], size = 2)
+	
+	# With interractions (Lines are no more parallel)
+	fit2 = lm(Fertility ~ Agriculture * factor(CatholicBin), data = swiss)
+	g2 = g
+	g2 = g2 + geom_abline(intercept = coef(fit2)[1], slope = coef(fit2)[2], size = 2)
+	g2 = g2 + geom_abline(intercept = coef(fit2)[1] + coef(fit2)[3], 
+							  slope = coef(fit2)[2] + coef(fit2)[4], size = 2)
+	
+	# One-liner
+	summary(lm(Fertility ~ Agriculture + Agriculture : factor(CatholicBin), data = swiss))$coef
+
+	
+# Adjustment
+
+	Simpson paradox
+	* Modeling multivariate relationships is difficult. Expertise is required.
+	* Play around with simulations to see how the inclusion or exclusion of another variable can change analyses.
+	* The results of these analyses deal with the impact of variables on associations.
+		* Ascertaining mechanisms or cause are difficult subjects to be added on top of difficulty in understanding multivariate associations.
+
+		
+# Residuals and Diagnostics
+
+	# Plotting residuals
+	data(swiss); par(mfrow = c(2, 2))
+	fit <- lm(Fertility ~ . , data = swiss); plot(fit)
+
+	# Influential, high leverage and outlying points
+	Leverage: how far from the center of the axis the data point is.
+	Influence: whether or not the leverage is acted upon.
+	
+	?influence.measures include:
+		rstandard - standardized residuals, residuals divided by their standard deviations)
+		rstudent - standardized residuals, residuals divided by their standard deviations, where the ith data point was deleted in the calculation of the standard deviation for the residual to follow a t distribution
+		hatvalues - measures of leverage
+		dffits - change in the predicted response when the $i^{th}$ point is deleted in fitting the model.
+		dfbetas - change in individual coefficients when the $i^{th}$ point is deleted in fitting the model.
+		cooks.distance - overall change in teh coefficients when the $i^{th}$ point is deleted.
+		resid - returns the ordinary residuals
+		resid(fit) / (1 - hatvalues(fit)) where `fit` is the linear model fit returns the PRESS residuals, i.e. the leave one out cross validation residuals - the difference in the response and the predicted response at data point $i$, where it was not included in the model fitting.
+	Don't rely blindly on stats
+	
+	# Examples 
+	n <- 100; x <- c(10, rnorm(n)); y <- c(10, c(rnorm(n)))
+	plot(x, y, frame = FALSE, cex = 2, pch = 21, bg = "lightblue", col = "black")
+	abline(lm(y ~ x))            
+	fit <- lm(y ~ x)
+	round(dfbetas(fit)[1 : 10, 2], 3)
+	round(hatvalues(fit)[1 : 10], 3)
+
+	x <- rnorm(n); y <- x + rnorm(n, sd = .3)
+	x <- c(5, x); y <- c(5, y)
+	plot(x, y, frame = FALSE, cex = 2, pch = 21, bg = "lightblue", col = "black")
+	fit2 <- lm(y ~ x)
+	round(dfbetas(fit2)[1 : 10, 2], 3)
+	round(hatvalues(fit2)[1 : 10], 3)
+
+
+# Model Selection
+
+	Known knowns: Regressors that we know we should check to include in the model and have.
+	Known Unknowns: Regressors that we would like to include in the model, but don't have.
+	Unknown Unknowns: Regressors that we don't even know about that we should have included in the model.
+
+	# General rules
+	* Omitting variables results in bias in the coeficients of interest - unless their regressors are uncorrelated with the omitted ones.
+	* Including variables that we shouldn't have increases standard errors of the regression variables.
+	* Actually, including any new variables increasese (actual, not estimated) standard errors of other regressors. So we don't want to idly throw variables into the model.
+	* The model must tend toward perfect fit as the number of non-redundant regressors approaches $n$.
+	* $R^2$ increases monotonically as more regressors are included.
+	* The SSE decreases monotonically as more regressors are included.
+	
+	# Variance inflation factors
+	* When the other regressors are actually orthogonal to the regressor of interest, then there is no variance inflation.
+	* The variance inflation factor (VIF) is the increase in the variance for the ith regressor compared to the ideal setting where it is orthogonal to the other regressors. Real vs ideal case.
+	
+	# Example
+	data(swiss); library(car)
+	fit <- lm(Fertility ~ . , data = swiss)
+	vif(fit); sqrt(vif(fit)) #I prefer sd 
+
+	# Covariate selection (feature selection)
+	* The space of models explodes quickly as you add interactions and polynomial terms.
+	* Principal components or factor analytic models on covariates are often useful for reducing complex covariate spaces.
+	* Good design can often eliminate the need for complex model searches at analyses; though often control over the design is limited.
+	* My favoriate approach is as follows. Given a coefficient that I'm interested in, I like to use covariate adjustment and multiple models to probe that effect to evaluate it for robustness and to see what other covariates knock it out.  This isn't a terribly systematic approach, but it tends to teach you a lot about the the data as you get your hands dirty.
+	
+	in R:
+	fit1 <- lm(Fertility ~ Agriculture, data = swiss)
+	fit3 <- update(fit, Fertility ~ Agriculture + Examination + Education)
+	fit5 <- update(fit, Fertility ~ Agriculture + Examination + Education + Catholic + Infant.Mortality)
+	anova(fit1, fit3, fit5)
+	
+	
+# GLM
+
+	Involves three components:
+		1) An exponential family model for the response.
+		2) A systematic component via a linear predictor.
+		3) A link function that connects the means of the response to the linear predictor.
+	Example for linear models
+		1) Y_i ~ N(mu_i, sigma^2)
+		2) eta_i = sum(X_ik * beta_k)
+		3) g(mu) = eta
+	Example for logistic regression
+		1) Y_i ~ Bernoulli(mu_i), E[Y_i] = mu_i
+		2) eta_i = sum(X_ik * beta_k)
+		3) g(mu) = eta = log(mu / (1 - mu))
+	Example for Poisson regression
+		1) Y_i ~ Poisson(mu_i), E[Y_i] = \mu_i
+		2) eta_i = sum(X_ik * beta_k)
+		3) g(mu) = eta = log(Mu)
+		
+	sum(y_i * eta_i) = sum(y_i * sum(X_ik * beta_k)) = sum(beta_k * sum(X_ik y_i))
+	After derivation:
+	0 = sum((Y_i - mu_i) / Var(Y_i) * W_i)
+	where W_i are the derivative of the inverse of the link function.
+		For the linear model, Var(Y_i) = sigma^2 is constant.
+		For Bernoulli case, Var(Y_i) = mu_i * (1 - mu_i)
+		For the Poisson case, Var(Y_i) = mu_i 
+	
+	
+# Generalized linear models, binary data
+
+	Called binary, Bernoulli or 0/1 outcomes 
+	A collection of exchangeable binary outcomes for the same covariate data are called binomial outcomes.
+	
+	Model:
+	RW_i = b_0 + b_1 RS_i + e_i
+	
+	RW_i, 1 for win or 0 else
+	RS_i, Number of points Ravens scored
+	b_0, probability to win if with 0 points
+	b_1, increase in probability to win for each additional point
+	e_i, residual variation due
+	
+	Binary Outcome 0/1
+		RW_i
+	Probability (0,1)
+		Pr(RW_i | RS_i, b_0, b_1 ) = P
+	Odds (0, Inf)
+		P / (1 - P)
+	Log odds (-Inf, Inf)
+		log(P / (1 - P))
+	
+	Linear
+		RW_i = b_0 + b_1 RS_i + e_i
+		E[RW_i | RS_i, b_0, b_1] = b_0 + b_1 RS_i
+	Logistic
+		Pr(RW_i | RS_i, b_0, b_1 ) = exp(b_0 + b_1 RS_i) / (1 + exp(b_0 + b_1 RS_i))
+		log(P / (1 - P)) = b_0 + b_1 RS_i
+		
+	b_0, Log odds of a win with zero points
+	b_1, Log odds ratio of win probability for each more point
+	exp(b_1), Odds ratio of win probability for each more point scored
+
+	Note: odds is Y/X = p/(1-p). If a game is fair, you have 1 (p=.5).
+	
+	in R:
+	logRegRavens <- glm(ravensData$ravenWinNum ~ ravensData$ravenScore, family="binomial")
+	summary(logRegRavens)
+	plot(ravensData$ravenScore,logRegRavens$fitted,pch=19,col="blue",xlab="Score",ylab="Prob Ravens Win")
+	
+	exp(logRegRavens$coeff)
+	exp(confint(logRegRavens))
+
+	anova(logRegRavens,test="Chisq")
+
+	
+# Generalized linear models, Poisson count
+
+	Useful model for counts and rates (count per some monitoring time)
+
+	For X ~ Poisson(t * lambda), if t * lambda is large, poisson tends to a normal
+	The Poisson mass function
+		P(X = x) = (t * lambda)^x * e^(-t * lambda) / x!
+	Mean
+		E[X] = t * lambda, E[X/t] = lambda
+	Variance
+		Var(X) = t * lambda
+
+	Linear
+		RW_i = b_0 + b_1 JD_i + e_i
+		E[RW_i | JD_i, b_0, b_1] = b_0 + b_1 JD_i
+	Poisson / log-linear
+		log(E[NH_i | JD_i, b_0, b_1]) = b_0 + b_1 JD_i 
+		E[NH_i | JD_i, b_0, b_1] = exp(b_0 + b_1 JD_i) = exp(b_0) * exp(b_1 JD_i)
+	
+	[Regression models for count data in R](http://cran.r-project.org/web/packages/pscl/vignettes/countreg.pdf)
+	
+	
+# Hodgepodge
+		
+	You can fit non-linear continuous (like sinus) functions with piecewise GLM.
+	
+	The collection of regressors is called a basis.
+	Single knot point terms can fit hockey stick like processes.
+	These bases can be used in GLMs as well.
+	An issue with these approaches is the large number of parameters introduced. 
+		Requires some method of so called regularization.	
+	
+	# Example
+	n <- 500; x <- seq(0, 4 * pi, length = n); y <- sin(x) + rnorm(n, sd = .3)
+	knots <- seq(0, 8 * pi, length = 20); 
+	splineTerms <- sapply(knots, function(knot) (x > knot) * (x - knot))
+	xMat <- cbind(1, x, splineTerms)
+	yhat <- predict(lm(y ~ xMat - 1))
+	plot(x, y, frame = FALSE, pch = 21, bg = "lightblue", cex = 2)
+	lines(x, yhat, col = "red", lwd = 2)
+		
+	# Example with squared terms
+	splineTerms <- sapply(knots, function(knot) (x > knot) * (x - knot)^2)
+	xMat <- cbind(1, x, x^2, splineTerms)
+	yhat <- predict(lm(y ~ xMat - 1))
+	plot(x, y, frame = FALSE, pch = 21, bg = "lightblue", cex = 2)
+	lines(x, yhat, col = "red", lwd = 2)
+
+	# Harmonics using linear models
+	# Chord finder, playing the white keys on a piano from octave c4 - c5
+	notes4 <- c(261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25)
+	t <- seq(0, 2, by = .001); n <- length(t)
+	c4 <- sin(2 * pi * notes4[1] * t); e4 <- sin(2 * pi * notes4[3] * t); 
+	g4 <- sin(2 * pi * notes4[5] * t)
+	chord <- c4 + e4 + g4 + rnorm(n, 0, 0.3)
+	x <- sapply(notes4, function(freq) sin(2 * pi * freq * t))
+	fit <- lm(chord ~ x - 1)
+
+	plot(c(0, 9), c(0, 1.5), xlab = "Note", ylab = "Coef^2", axes = FALSE, frame = TRUE, type = "n")
+	axis(2)
+	axis(1, at = 1 : 8, labels = c("c4", "d4", "e4", "f4", "g4", "a4", "b4", "c5"))
+	for (i in 1 : 8) abline(v = i, lwd = 3, col = grey(.8))
+	lines(c(0, 1 : 8, 9), c(0, coef(fit)^2, 0), type = "l", lwd = 3, col = "red")
+
+	# -> One liner
+	a <- fft(chord); plot(Re(a)^2, type = "l")
+		
+	
+	
+Variation Inflation Factors
+	The VIF's show, for each regression coefficient, the variance inflation due to including all the others.
+	VIF is the square of standard error inflation.
+	vif()
+	
+	deviance(fit) calculate RSS (like ANOVA table)
+	F-stat:
+		d <- deviance(fit3) / 43		#43 is df
+		n <- (deviance(fit1) - deviance(fit3)) / 2
+		n/d
+	p-value:
+		pf(n/d, 2, 43, lower.tail=FALSE)# 2 is param of F
+	
+	Shapiro-Wilk normality test	
+		shapiro.test(fit3$residuals)
+	
+	
+		
+		

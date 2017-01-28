@@ -1,0 +1,152 @@
+Databases Fundamentals:
+(Database Fundamentals - Introduction to Core Database Concepts)
+
+	A relational database is a collection of tables of data that are formally
+	described and organized accrding to the relation model.
+
+	Primary Key:
+		identify uniquely every row. Cannot be null or duplicate.
+	Foreign Key:
+		create relationship between two tables. Can be null or duplicate.
+	Note: a foreign key can become a primary key depending on the table.
+		
+	DBMS (Data Base Management System):
+		Stores and retrieves information as files
+	RDBMS (Relational DBMS):
+		Stores and retrieves information in a tabular form (Primary Key)
+	http://www.javatpoint.com/difference-between-dbms-and-rdbms
+	
+	
+	
+	Normalization (strategy to clean the data and reduce data redundancy):
+		1. Eliminate Repeating Groups
+			Do not use multiple field. 
+		2. Eliminate Redundant Data
+			If some data is redundant, create a new table so that it only
+			depends on the Primary Key
+		3. Eliminate Columnns Not Dependent on Key
+			If some data depends on another key, split the table into two
+		4. Isolate Independent Multiple Relationships (optional)
+			BCNF - no overlapping candidate keys
+		5. Isolate Semantically Related Multiple Relationships (optional)
+		
+	Example:
+		Unnormalized data -> 
+		Abstract into redundancy -> 
+		Split to remove redundancy ->
+		Split table so that data always depends on the primary key
+		
+	Referential Integrity (RI):
+		Concept used to synchronize database tables during data modification.
+		Methods to maintain RI:
+			Primary key constraint
+			Foreign key constraint
+			Unique constraint
+			Indexes
+			Triggers
+		A composite key is an index or constraint using more than one column.
+		To preserve unicity, it may be necessary to create a unique value.
+	
+		Common kinds of constraints are:
+			not null: each value in a column must not be NULL
+			unique: value(s) in specified column(s) must be unique for each row in a table
+			primary key: value(s) in specified column(s) must be unique for each row in a table and not be NULL; normally each table in a database should have a primary key - it is used to identify individual records
+			foreign key: value(s) in specified column(s) must reference an existing record in another table (via it's primary key or some other unique constraint)
+			check: an expression is specified, which must evaluate to true for constraint to be satisfied
+
+
+
+	Data types:
+		Money: currency values (8 bits)
+		Int: integer data (4 bytes)
+		Float: approximate number (depends)
+		Datetime: date range (8 bytes)
+		Char: fixed length non-unicode string data (n bytes)
+		Varchar: variable length non-unicode string (length + 2 bytes)
+		Bit: integer 0 or 1 (1 byte for every 8 but columns)
+		http://www.w3schools.com/sqL/sql_datatypes_general.asp
+		
+		Switch between data types using CAST (standard) or CONVERT (more complex)
+	
+	Data objects:
+		Stored Procedures: 
+			Set of precompiled SQL statements to perform a special task
+		User-Defined Functions (udf):
+			Routines that takes zero or more parameters and return a value
+			Three types: scalar, table-valued, system (SQL default)
+		Functions are computed values and cannot perform permanent environmental changes to SQL Server (i.e. no INSERT or UPDATE statements allowed).
+
+	DDL is Data Definition Language 
+	Used to define data structures (e.g. create table, alter table, ...)
+		1. CREATE - to create objects in the database
+		2. ALTER - alters the structure of the database 
+		3. DROP - delete objects from the database
+		4. TRUNCATE - remove all records from a table, including all spaces allocated for the records are removed
+		5. COMMENT - add comments to the data dictionary
+		6. RENAME - rename an object
+		
+		
+		
+	DML is Data Manipulation Language
+	Used to manipulate data itself (e.g. insert, update, delete, ... )
+		1. SELECT - retrieve data from the a database 
+		SELECT * FROM tablename
+		2. INSERT - insert data into a table UPDATE - updates existing data within a table
+		INSERT INTO P.Unit 
+		VALUES(N'FT', N'Feet', '20080414',
+			   N'FT2', N'Feet Square', '20080413')
+		3. DELETE - deletes all records from a table, the space for the records remain
+		4. MERGE - UPSERT operation (insert or update)
+		5. CALL - call a PL/SQL or Java subprogram    
+		6. EXPLAIN PLAN - explain access path to data 
+		7. LOCK TABLE - control concurrency
+		
+	Example code:
+		--Comment
+		UNION/EXCEPT/INTERSECT
+		SELECT ID, B, C FROM HR.Ee WHERE ID <= 50 OR/AND/NOT C BETWEEN 75 AND 100
+		ORDER BY C DESC
+		INNER JOINS/OUTER JOINS/CROSS JOINS
+		SELECT COUNT (DISTINCT ID) AS Orders
+			AVG/MIN/MAX(price) AS Avg_price FROM Detail;
+	
+	Triggers:
+		CREATE TRIGGER InsertSuccess
+		ON P.Unit
+		AFTER UPDATE
+		AS RAISEERROR ("txt", 16, 10)
+		GO
+		
+		
+	
+	Database security:
+		Securables are the server, database and objects of the database
+		Principals are the individuals, groups and processes granted access to SQL Server
+		Permissions are granted to a principal for every securable
+	
+	Accessing content:
+		1. Login / Authentification (access to SQL Server)
+		2. Database user (Database access)
+		3. Permissions (Object access)
+		
+	Fixed server roles:
+		Sysadmin (perform any activity)
+		Dbcreator (create, alter, drop, restore databases)
+		Securityadmin (manage logins and their properties)
+	Fixed database roles:
+		db_owner (perform all configuration activities)
+		db_datareader (read data from all user tables)
+		db_datawriter (add, delete, change data)
+	You can also create user-defined roles.
+	
+	Guest accounts are enabled by default.
+	
+	Object permissions:
+		Grant (provides a level of access to the object)
+		Deny (overrides any grant permission)
+		Revoke (removes the previous permission, whether grant or deny)
+		
+	Database backups:
+		Full backup
+		Differential backup (bigger but fewer backup)
+		Incremental backup (smaller but more numerous backup)

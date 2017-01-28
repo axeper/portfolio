@@ -6,33 +6,39 @@ Data Science is a field that moves extremely fast. Here is my attempt at gatheri
 Based on [Udacity's Ultimate Skills Checklist](http://1onjea25cyhx3uvxgs4vu325.wpengine.netdna-cdn.com/wp-content/uploads/2014/12/UdacityUltimateSkillChecklistForYourFirstDataAnalystJob.pdf):
 
 
-https://github.com/josephmisiti/awesome-machine-learning#elixir
+
+
+
+
+
+
+
 
 ## Programming
 
-
-
-
 ### R
-
-[Personal notes] (Programming/R/r.md)
 
 [Learn R in Y minutes](https://learnxinyminutes.com/docs/r/)
 
+[Personal notes] (Programming/R/R.md)
 
-#### Package
+[Plot] (Programming/R/Plot.txt)
 
-ggplot2
 
-dplyr
+#### Important Packages
 
-ggally
+[Awesome Machine Learning - R package](https://github.com/josephmisiti/awesome-machine-learning#r)
 
-ggpairs
+ggplot2, 
+dplyr,
+ggally,
+ggpairs,
+reshape2,
+data.table
 
-reshape2
 
-#### References
+
+
 
 
 
@@ -45,31 +51,31 @@ reshape2
 
 [Python 2.7 Quick Reference](http://benyoonline.com/pqr/pqr27/PQR2.7.html)
 
-#### Package
+#### Important Packages
 
-numpy
+[Awesome Machine Learning - Python package](https://github.com/josephmisiti/awesome-machine-learning#python)
 
 [Numpy Basics](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Numpy_Python_Cheat_Sheet.pdf)
 
-pandas
-
-matplotlib
-
-scipy
-
-scikit-learn
-
-ipython notebooks
-
+pandas,
+matplotlib,
+scipy,
+scikit-learn,
+ipython notebooks,
 seaborn
 
 
-#### References
+
+
+
 
 
 
 ### More to learn
 JavaScript, d3.js, jQuery, SAS, C/C++, Java, Julia, SAS, Hadoop, Hive, Spark, Scala
+
+
+
 
 
 
@@ -90,9 +96,7 @@ Test for significance
 
 Z-test, t-test, Mann-Whitney Chi-squared and ANOVA testing
 
-References
 
-Projects
 
 
 
@@ -111,9 +115,8 @@ Confidence level
 
 SMART experiments: Specific, Measurable, Actionable, Realistic, Timely
 
-References
 
-Projects
+
 
 
 
@@ -125,6 +128,12 @@ Projects
 ## Machine Learning
 
 [Rules of Machine Learning: Best Practices for ML Engineering](http://martin.zinkevich.org/rules_of_ml/rules_of_ml.pdf)
+
+[A Visual Introduction to Machine Learning](http://www.r2d3.us/visual-intro-to-machine-learning-part-1/)
+
+[Approaching (Almost) Any Machine Learning Problem](https://www.linkedin.com/pulse/approaching-almost-any-machine-learning-problem-abhishek-thakur)
+
+[7 Steps to Mastering Machine Learning With Python](http://www.kdnuggets.com/2015/11/seven-steps-machine-learning-python.html)
 
 ### Supervised Learning
 
@@ -145,6 +154,9 @@ Ensemble methods
 
 
 
+
+
+
 ### Unsupervised Learning
 
 Clustering Algorithms
@@ -154,6 +166,9 @@ Principal Component Analysis (PCA)
 Singular Value Decomposition (SVD)
 
 Independent Component Analysis (ICA) 
+
+
+
 
 
 
@@ -170,6 +185,26 @@ Genetic Algorithms
 
 
 
+### Deep Learning
+
+
+
+
+
+
+
+
+
+
+## Natural Language Processing
+
+[Text mining infrastucture in R](https://www.jstatsoft.org/article/view/v025i05)
+[Lecture Slides from the NLP Stanford Coursera course](http://web.stanford.edu/~jurafsky/NLPCourseraSlides.html)
+
+
+
+
+
 
 ## Data Mining, Processing, Wrangling
 
@@ -177,11 +212,33 @@ Genetic Algorithms
 Parsing common file formats such as csv and xml files
 Regular Expressions
 
-### Database Systems
-Relational databases such as PostgreSQL, mySQL, Netezza, Oracle, etc.
-Optional: Hadoop, Spark, MongoDB
+### R
 
-### SQL
+(Personal Notes)[DataMining/R/DataMining.txt]
+
+### Database Systems
+
+[RDBMS Fundamentals](DataMining/RelationalDatabases/DatabasesFundamentals.txt)
+
+[Database Design](DataMining/RelationalDatabases/DatabaseDesign.txt)
+
+[SQL Commands](DataMining/RelationalDatabases/SQLCommands.txt)
+
+
+### Big Data
+
+
+
+
+
+
+## Data Analysis
+
+Cluster Analysis
+
+Outliers
+
+Standardization
 
 
 
@@ -196,24 +253,23 @@ matplotlib, ggplot, seaborne, d3.js
 
 ### Communication
 
-### Crafting a story for presentation
-
 [All scientists should be storytellers](http://venpopov.com/2017/01/09/all-scientists-should-be-storytellers/)
 
+[What Makes a Good Visualization?](http://www.informationisbeautiful.net/visualizations/what-makes-a-good-data-visualization)
+
+[Listopia - Speaking, Presenting and Presentation Design](https://www.goodreads.com/list/show/20975.Speaking_Presenting_and_Presentation_Design)
+
+[Listopia - Books that'll help you deliver stunning presentations](https://www.goodreads.com/list/show/17347.Books_that_ll_help_you_deliver_stunning_presentations)
 
 
-## Data Analysis
+## Business Knowledge
 
-Cluster Analysis
-
-Outliers
-
-Standardization
+[Four Problems in Using CRISP-DM and How To Fix Them](http://www.kdnuggets.com/2017/01/four-problems-crisp-dm-fix.html?utm_content=buffer481d4&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)
 
 
-## Thinking like a data scientist
-### Project Management 
-### Industry Knowledge
+
+
+
 
 
 
@@ -238,27 +294,42 @@ Standardization
 
 [Personal notes](Others/Git/git.md)
 
-Projects
-
-
 
 ### Coding Interview
 
-[Personal notes]()
+[Personal notes](Others/CodingInterview/CodingInterview.md)
+
+
+### Best practices for Scientific Computing
+
+[Personal notes](Others/BestPractices/BestPractices.md)
+
+### Datasets
+
+[List of open data sets](http://www.datapure.co/open-data-sets)
+
+[Link repository](Others/Datasets/Datasets.md)
 
 
 
-
-
-
-
-Missing: NLP, deep learning, business, social, more ressources
 
 
 
 
 ## References
-Foreman, John W. Data Smart: Using Data Science to Transform Information into Insight
+
+Foreman, J. W. Data Smart: Using Data Science to Transform Information into Insight
+data business
+
+Forta, B.: Sams Teach Yourself SQL in 10 Minutes
+
+James, G., Witten, D., Hastie, T. and Tibshirani R.: An Introduction to Statistical Learning with Applications in R
+
+Jewett, Tom: Database design with UML and SQL
+
+Provost, Foster and Fawcett, Tom: Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking
+
+Wheelan, Charles: Naked Statistics: Stripping the Dread from the Data
 
 
 
@@ -269,14 +340,9 @@ Foreman, John W. Data Smart: Using Data Science to Transform Information into In
 
 
 
+## Projects
 
-
-
-
-
-
-
-## Next Word Prediction App [R, Shiny, NLP]
+### Next Word Prediction App [R, Shiny, NLP]
 
 App that predicts the next word usign the previous ones.
 
@@ -289,7 +355,7 @@ http://rpubs.com/moya/214769
 
 
 
-## Precious Metals Prices App [R, Shiny]
+### Precious Metals Prices App [R, Shiny]
 
 App that displays the prices of precious metals.
 

@@ -1,0 +1,186 @@
+# Principles
+
+	Show comparison: evidence is relative, ask "compared to what?"
+	Present a causality, mechanism, explanation
+	Present multivariate data
+	Integrate evidence (use images, diagrams, and different modes of integration)
+	Label the data correctly
+	Content is king
+	
+	# Exploratory graphs
+	summary()	boxplot()	hist() + rug()	barplot()	
+	use abline() to add straight line to show median, sd
+	
+	# Examples of 2D plots
+	boxplot()
+	par(mfrow = c(2,1), mar = c(4,4,2,1))
+	hist(subset())
+	with(var, plot(x,y))
+	
+	# Plot systems
+
+	Base plot - intuitive, integrated into R. Everything needs to be controlled.
+	
+	lattice (xyplot, bwplot) - good for putting multiple plots at the same time. Not very intuitive.
+		library(lattice)
+		xyplot(Life.Exp ~ Income | region, data = state, layout = c(4,1))
+	
+	gg2plot - good compromise betweeen base and lattice. 
+		library(ggplot2)
+		qplot(displ, hwy, data = mpg)
+
+		
+# Graphics Device
+
+	dev.cur()		# Currently active graphics device
+	dev.set()		# Set another graphics device as active. Use only integers >= 2.
+	dev.copy()		# Copy a plot to another device
+	dev.copy2pdf()	# Specifically copy a plot to a pdf file
+	dev.off()		# Don't forget to disconnect
+	
+	?Devices		# See what graphics devices are available
+	windows()		# Send to the screen device (only on Windows)
+	pdf, svg, win.metafile, postscript	# vector format
+	png, jpeg, tiff, bmp#				# graphic format
+		
+	# Create a plot on a file device
+	pdf(file = "plot.pdf"); plot(x,y); ...; dev.off();
+	
+	
+# Base plot System	
+	
+	Key parmeters:
+		pch (plotting symbol)
+		lty (line type)
+		lwd (line width)
+		col (plotting color)
+		xlab, ylab (x-axis, y-axis label)
+		
+	Global parameters (access with par("las")):
+		las (orientation of the labels on the plot)
+		bg (background color)
+		mar (margin size)
+		oma (outer margin size)
+		mfrow (number of plots per row)
+		mfcol (number of plots per column)
+		
+	Base functions:
+		plot (scatterplot)
+		lines (add lines to a plot)
+		points (add points to a plot)
+		text (add text labels using x, y coordinates)
+		title (add annotations to x, y labels, title, subtitle, outer margin)
+		mtext (add text to the margins)
+		axis (add axis ticks/labels)
+		legend (add legends to the plot)
+		abline (add regresion models)
+		
+	example(points) 	# Go through some templates
+	
+	
+# Lattice plot System	
+	
+	library(lattice)
+	
+	# Formula notation: y is on y-axis, x on x-axis, both belong to df
+	# f and g are conditioning variables: plot y ~ x for each(f,g)
+	# If you saved the plot to p, use print(p) to display it
+	p <- xyplot(y ~ x | f * g, df)
+	
+	# Custom panel
+	xyplot(y ~ x | f , panel(x,y,...) {
+		panel.xyplot(x ,y , ...)
+		panel.abline(h = median(y), lty = 2)	# horizontal line
+		panel.lmline(x, y, col = 2)				# regression line
+	})
+	
+	Lattice functions:
+		xyplot (basic scatterplot)
+		bwplot (boxplots)
+		histogram (histograms)
+		stripplot (boxplot with points)
+		dotplot (plot dots on "violin string")
+		splom (scatterplot matrix, like pairs() in base plot)
+		levelplot, contourplot (plot "image" data)
+	
+		
+# ggplot2
+
+	library(ggplot2)
+	
+	qplot2:
+		# Basic scatterplot, color is a variable, geom is a regression line
+		qplot(x, y, data = df, col = z, shape =zz, geom = c("point", "smooth"))
+		
+		# qplot makes histograms with only one variable, color is z
+		qplot(x, data = df, fill = z)
+		qplot(x, data = df, geom = "density", col = z)
+		
+		# Facets (~= multiplots)
+		# binwidth = 2 is vertical plotting
+		qplot(x, y, data = df, facets = .~z, binwidth = 2)
+		
+		# You can add a regression line
+		qplot() + geom_smooth(method = "lm")
+		
+	ggplot:
+	data (dataframe) + aesthetics (color, size) + geoms (points, lines, shapes) +
+	facets (conditional plots) + stats (binning, quantiles) + scales (color scales) +
+	coordinate system
+		
+		# Display a plot
+		g <- ggplot(x, aes(y,z))
+		summary(g)
+		
+		# Add geom (mandatory for plotting)
+		g + geom_point() // + geom_line() // + geom_smooth() // + geom_smooth("lm")
+		# Add facets
+		g + facet_grid(.~bmicat)
+		# Add theme (global change)
+		g + theme(legend.position = "none")
+		# Change theme (theme_gray() or theme_bw())
+		g + theme_bw(base_family = "Times")
+		# Add labels
+		xlab(), ylab(), labs(), ggtitle()
+		# Modifying aesthetics
+		g + geom_point(aes(color = z, size =4, alpah = 1/2))
+		# Limit the axis (remove outliers)
+		g + ylim(-3,3)
+		# Limit the axis (outliers included)
+		g + coord_cartesian(ylim = c(-3,3))
+		
+		# Example
+		# Setup ggplot with data frame
+		g <- ggplot(maacs, aes(logpm25, NocturnalSympt))
+
+		## Add layers
+		g + geom_point(alpha = 1/3) + 
+		  facet_wrap(bmicat ~ no2tert, nrow = 2, ncol = 4) + 
+		  geom_smooth(method="lm", se=FALSE, col="steelblue") + 
+		  theme_bw(base_family = "Avenir", base_size = 10) + 
+		  labs(x = expression("log " * PM[2.5])) + 
+		  labs(y = "Nocturnal Symptoms") + 
+		  labs(title = "MAACS Cohort")
+
+		  
+# Colors
+	
+	The function colors() lists the names of colors you can use in any plotting function.
+	
+	colorRamp: Take a palette of colors and return a function that takes valeus between 0 and 1, indicating the extremes of the color palette (e.g. see the 'gray' function)
+	p1 <- colorRamp(c("red","blue")); p1(seq(0,1,len=10));
+	
+	colorRampPalette: Take a palette of colors and return a function that takes integer arguments and returns a vector of colors interpolating the palette (like heat.colors or topo.colors)
+	p2 <- colorRampPalette(c("red","yellow")); p2(6);
+	
+	library(RColorBrewer); p3 <- brewer.pal(3, "BuGn")
+	pal <- colorRampPalette(p3); pal(20);
+	
+	rgb(r,g,b,alpha)
+	smoothScatter(x,y)		# Useful with tons of points
+	
+	
+
+	
+	
+	
