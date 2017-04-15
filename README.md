@@ -1,4 +1,4 @@
-## Personal Projects and Useful Links
+## Personal Notes, Projects and Useful Links
 
 Data Science is a field that moves extremely fast. Here is my attempt at gathering useful practical knowledge.
 
@@ -16,38 +16,12 @@ Based on [Udacity's Ultimate Skills Checklist](http://1onjea25cyhx3uvxgs4vu325.w
 
 ## Programming
 
-### R
-
-[Learn R in Y minutes](https://learnxinyminutes.com/docs/r/)
-
-[Personal notes] (Programming/R/R.md)
-
-[Plot] (Programming/R/Plot.txt)
-
-
-#### Important Packages
-
-[Awesome Machine Learning - R package](https://github.com/josephmisiti/awesome-machine-learning#r)
-
-ggplot2, 
-dplyr,
-ggally,
-ggpairs,
-reshape2,
-data.table
-
-
-
-
-
-
+[Best practices for Scientific Computing](Programming/BestPractices.txt)
 
 
 ### Python
 
-[Personal notes] (Programming/Python/python.md)
-
-[Learn Python in Y minutes](https://learnxinyminutes.com/docs/python/)
+[Personal notes] (Programming/Python/Python.txt)
 
 [Python 2.7 Quick Reference](http://benyoonline.com/pqr/pqr27/PQR2.7.html)
 
@@ -55,14 +29,46 @@ data.table
 
 [Awesome Machine Learning - Python package](https://github.com/josephmisiti/awesome-machine-learning#python)
 
-[Numpy Basics](https://s3.amazonaws.com/assets.datacamp.com/blog_assets/Numpy_Python_Cheat_Sheet.pdf)
+[Top 20 Python Machine Learning Open Source Projects](http://www.kdnuggets.com/2015/06/top-20-python-machine-learning-open-source-projects.html)
 
-pandas,
+More:
 matplotlib,
 scipy,
 scikit-learn,
 ipython notebooks,
 seaborn
+
+
+
+
+
+
+
+
+### R
+
+[Personal notes] (Programming/R/R.txt)
+
+[The R Manuals](https://cran.r-project.org/manuals.html)
+
+[R for Beginners](https://cran.r-project.org/doc/contrib/Paradis-rdebuts_en.pdf)
+
+
+#### Important Packages
+
+[Awesome Machine Learning - R package](https://github.com/josephmisiti/awesome-machine-learning#r)
+
+[Caret](Programming/R/Caret.txt)
+
+[Packages] (Programming/R/Packages.txt)
+
+[Plot] (Programming/R/Plot.txt)
+
+More:
+ggally,
+ggpairs,
+reshape2,
+ggraph
 
 
 
@@ -80,39 +86,28 @@ JavaScript, d3.js, jQuery, SAS, C/C++, Java, Julia, SAS, Hadoop, Hive, Spark, Sc
 
 
 
-
-
-
-
 ## Statistics
+
+[simpleR – Using R for Introductory Statistics](https://cran.r-project.org/doc/contrib/Verzani-SimpleR.pdf)
+
+[Practical Regression and Anova using R](https://cran.r-project.org/doc/contrib/Faraway-PRA.pdf)
+
 
 ### Descriptive and Inferential statistics
 
-Distributions
+[Experimental Design](Statistics/ExperimentalDesign.txt)
 
-Hypothesis testing 
+[Statistics](Statistics/Statistics.txt)
 
-Test for significance
-
-Z-test, t-test, Mann-Whitney Chi-squared and ANOVA testing
-
-
-
-
-
-
-### Experimental design
-
-A/B Testing
-
-Controlling variables and choosing good control and testing groups
-
-Sample Size and Power law
-
-Hypothesis Testing, test hypothesis
-
-Confidence level
-
+More:  
+Mann-Whitney Chi-squared,
+ANOVA testing,
+A/B Testing, 
+Controlling variables and choosing good control and testing groups, 
+Sample Size and Power law, 
+Hypothesis Testing, 
+Test Hypothesis, 
+Confidence Level,
 SMART experiments: Specific, Measurable, Actionable, Realistic, Timely
 
 
@@ -131,26 +126,32 @@ SMART experiments: Specific, Measurable, Actionable, Realistic, Timely
 
 [A Visual Introduction to Machine Learning](http://www.r2d3.us/visual-intro-to-machine-learning-part-1/)
 
-[Approaching (Almost) Any Machine Learning Problem](https://www.linkedin.com/pulse/approaching-almost-any-machine-learning-problem-abhishek-thakur)
+[Basics](MachineLearning/Basics.txt)
 
-[7 Steps to Mastering Machine Learning With Python](http://www.kdnuggets.com/2015/11/seven-steps-machine-learning-python.html)
 
 ### Supervised Learning
 
-Decision trees
+[Decision trees](MachineLearning/SupervisedLearning/DecisionTrees.txt)
 
-Naive Bayes classification
+[Dimension Reduction](MachineLearning/SupervisedLearning/DimensionReduction.txt)
 
-Ordinary Least Squares regression
+[Ensemble methods](MachineLearning/SupervisedLearning/EnsembleMethods.txt)
 
-Logistic regression
+[kNN](MachineLearning/SupervisedLearning/kNN.txt)
+
+[Logistic regression, LDA](MachineLearning/SupervisedLearning/LogisticRegressionLDA.txt)
+
+[Naive Bayes][(MachineLearning/SupervisedLearning/NaiveBayes.txt)
+
+[Non Linear Regression](MachineLearning/SupervisedLearning/NonLinearRegression.txt)
+
+[Ordinary Least Squares regression](MachineLearning/SupervisedLearning/OLSRegression.txt)
+
+[Regularization](MachineLearning/SupervisedLearning/Regularization.txt)
+
+[Support vector machines](MachineLearning/SupervisedLearning/SVM.txt)
 
 Neural networks
-
-Support vector machines
-
-Ensemble methods
-
 
 
 
@@ -159,14 +160,11 @@ Ensemble methods
 
 ### Unsupervised Learning
 
-Clustering Algorithms
+[Clustering Algorithms](MachineLearning/UnsupervisedLearning/Clustering.txt)
 
-Principal Component Analysis (PCA)
+[Dimension Reduction](MachineLearning/UnsupervisedLearning/DimensionReduction.txt)
 
-Singular Value Decomposition (SVD)
-
-Independent Component Analysis (ICA) 
-
+Independent Component Analysis
 
 
 
@@ -185,9 +183,33 @@ Genetic Algorithms
 
 
 
+
 ### Deep Learning
 
 
+
+
+
+
+
+
+## Data Mining, Processing, Wrangling
+
+### Big Data
+
+[Personal Notes](DataMining/BigData/BigData.txt)
+
+### Data Wrangling
+
+[Personal Notes in R](DataMining/DataWrangling/R.txt)
+
+### Relational Databases
+
+[RDBMS Fundamentals](DataMining/RelationalDatabases/DatabasesFundamentals.txt)
+
+[Database Design](DataMining/RelationalDatabases/DatabaseDesign.txt)
+
+[SQL Commands](DataMining/RelationalDatabases/SQLCommands.txt)
 
 
 
@@ -199,33 +221,12 @@ Genetic Algorithms
 ## Natural Language Processing
 
 [Text mining infrastucture in R](https://www.jstatsoft.org/article/view/v025i05)
+
 [Lecture Slides from the NLP Stanford Coursera course](http://web.stanford.edu/~jurafsky/NLPCourseraSlides.html)
 
+[Personal Notes](NLP/NLP.txt)
 
 
-
-
-
-## Data Mining, Processing, Wrangling
-
-### Python
-Parsing common file formats such as csv and xml files
-Regular Expressions
-
-### R
-
-(Personal Notes)[DataMining/R/DataMining.txt]
-
-### Database Systems
-
-[RDBMS Fundamentals](DataMining/RelationalDatabases/DatabasesFundamentals.txt)
-
-[Database Design](DataMining/RelationalDatabases/DatabaseDesign.txt)
-
-[SQL Commands](DataMining/RelationalDatabases/SQLCommands.txt)
-
-
-### Big Data
 
 
 
@@ -234,40 +235,44 @@ Regular Expressions
 
 ## Data Analysis
 
-Cluster Analysis
+[Association Rules](DataAnalysis/AssociationRules.txt)
 
-Outliers
+[Cluster Analysis](DataAnalysis/ClusterAnalysis.txt)
 
-Standardization
+[Time Series](DataAnalysis/TimeSeries.txt)
 
+[Imputation](DataAnalysis/Imputation.txt)
 
+[Outliers Detection](DataAnalysis/OutliersDetection.txt)
 
+[RecommenderSystems](DataAnalysis/RecommenderSystems.txt)
 
-
-
-
-## Data Visualization
-
-matplotlib, ggplot, seaborne, d3.js
+[Standardization](DataAnalysis/Standardization.txt)
 
 
-### Communication
+
+
+
+
+
+
+## Communication
+
+[Personal Notes](Communication/Basics.txt)
+
+### Business Knowledge
+
+[Personal notes](BusinessKnowledge/BusinessKnowledge.txt)
+
+### Visualization
 
 [All scientists should be storytellers](http://venpopov.com/2017/01/09/all-scientists-should-be-storytellers/)
 
 [What Makes a Good Visualization?](http://www.informationisbeautiful.net/visualizations/what-makes-a-good-data-visualization)
 
-[Listopia - Speaking, Presenting and Presentation Design](https://www.goodreads.com/list/show/20975.Speaking_Presenting_and_Presentation_Design)
+[Prototyping In R](Communication/PrototypingInR.txt)
 
-[Listopia - Books that'll help you deliver stunning presentations](https://www.goodreads.com/list/show/17347.Books_that_ll_help_you_deliver_stunning_presentations)
-
-
-## Business Knowledge
-
-[Four Problems in Using CRISP-DM and How To Fix Them](http://www.kdnuggets.com/2017/01/four-problems-crisp-dm-fix.html?utm_content=buffer481d4&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)
-
-
-
+[Tableau](Communication/Tableau.txt)
 
 
 
@@ -279,36 +284,26 @@ matplotlib, ggplot, seaborne, d3.js
 
 ## Others
 
-### Git
-
-[Personal notes] (Others/Git/Git.md)
-
-[Git Reference] (http://gitref.org/index.html)
-
-[Git cheat sheet](http://rogerdudler.github.io/git-guide/files/git_cheat_sheet.pdf)
-
-[Git markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
-
-
-### Excel
-
-[Personal notes](Others/Git/git.md)
-
-
 ### Coding Interview
 
-[Personal notes](Others/CodingInterview/CodingInterview.md)
-
-
-### Best practices for Scientific Computing
-
-[Personal notes](Others/BestPractices/BestPractices.md)
+[Personal notes](Others/CodingInterview/CodingInterview.txt)
 
 ### Datasets
 
-[List of open data sets](http://www.datapure.co/open-data-sets)
+[Link repository](Others/Datasets/Datasets.txt)
 
-[Link repository](Others/Datasets/Datasets.md)
+### Excel
+
+[Personal notes](Others/Excel/Excel.txt)
+
+### Git
+
+[Personal notes](Others/Git/Git.txt)
+
+[Git Reference](http://gitref.org/index.html)
+
+[Git markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet)
+
 
 
 
@@ -318,21 +313,32 @@ matplotlib, ggplot, seaborne, d3.js
 
 ## References
 
-Foreman, J. W. Data Smart: Using Data Science to Transform Information into Insight
-data business
+### Books
+
+Foreman, J. W.: Data Smart: Using Data Science to Transform Information into Insight
 
 Forta, B.: Sams Teach Yourself SQL in 10 Minutes
 
+EMC Education Services: Data Science and Big Data Analytics: Discovering, Analyzing, Visualizing and Presenting Data
+ 
 James, G., Witten, D., Hastie, T. and Tibshirani R.: An Introduction to Statistical Learning with Applications in R
 
-Jewett, Tom: Database design with UML and SQL
+Jewett, T.: Database design with UML and SQL
 
-Provost, Foster and Fawcett, Tom: Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking
+Morris, D.: Bayes Theorem: A Visual Introduction For Beginners
 
-Wheelan, Charles: Naked Statistics: Stripping the Dread from the Data
+Provost, F. and Fawcett, T.: Data Science for Business: What You Need to Know about Data Mining and Data-Analytic Thinking
+
+Wheelan, C.: Naked Statistics: Stripping the Dread from the Data
 
 
+### Online resources
 
+[Johns Hopkins University's Data Science Specialization](https://www.coursera.org/specializations/jhu-data-science)
+
+[Stanford's Statistical Learning](https://lagunita.stanford.edu/courses/HumanitiesSciences/StatLearning/Winter2016/about)
+
+[Python for Data Science and Machine Learning Bootcamp](https://www.udemy.com/python-for-data-science-and-machine-learning-bootcamp/)
 
 
 
@@ -368,7 +374,7 @@ http://rpubs.com/moya/208370
 
 
 
-### Small assignments [R]
+### Small Assignments [R]
 
 Harmfulness and Economic Consequences of Atmospheric Events in the U.S.
 http://rpubs.com/moya/207046

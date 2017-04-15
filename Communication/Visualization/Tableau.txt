@@ -1,0 +1,32 @@
+Visualization
+
+	Note: Tableau has online videos and how-to's
+	
+	The picture superiority effect refers to the phenomenon in which pictures and images are more likely to be remembered than words.
+	
+	A visualization has three goals:
+		Discovery, understanding, informed decisions
+		Big picture, comparing values, finding patterns
+	
+	Tableau import:
+	Start in cell A1, First line are headers, Each row are consistent and no total at the bottom
+	
+	Tableau Data Extract or Live?
+	Use live connection when TDE is not possible, too slow, too many records/volume, not supporting calculations or complexity. 	http://drawingwithnumbers.artisart.org/tde-or-live-when-to-use-tableau-data-extracts/
+	
+	Think about the audience:
+		What do you need the audience to know/do? 
+		How can you present the message?
+
+	A big idea is unique, has stakes (i.e. numbers and somekind of drama), is a complete sentence.
+	
+	A story is a question + data.
+	
+	Persuasive presentation:
+		big idea/story 
+		genuine and authentic emotions 
+		the audience is the hero (not you, humility/egoless)
+		clear structure (setting, conflict, resolution + short beginning and end)
+		
+		
+		

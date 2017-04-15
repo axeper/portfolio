@@ -23,7 +23,7 @@ Big Data
 		SOLVED The data doesn't fit in memory
 		SOLVED The data fit in k computer
 		PROBLEM The data takes too long to go through
-	-> Use index
+	-> Use an index
 	-> Use parallelization (use hash functions to spread)
 	
 	MapReduce:
@@ -38,4 +38,33 @@ Big Data
 	
 
 	
+	
+MapReduce and the Hadoop Ecosystem
+
+	Hadoop Distributed File System (HDFS) is a file system that provides the capability to distribute data across a cluster to take advantage of the parallel processing of MapReduce.
+		To manage the data access, HDFS utilizes three Java daemons (background processes): NameNode, DataNode, and Secondary NameNode. Running on a single machine, the NameNode daemon determines and tracks where the various blocks of a data file are stored. The DataNode daemon manages the data stored on each machine. If a client application wants to access a particular file stored in HDFS, the application contacts the NameNode, and the NameNode provides the application with the locations of the various blocks for that file. The application then communicates with the appropriate DataNodes to access the file. 
+		Thus, the NameNode is viewed as a single point of failure in the Hadoop environment. To minimize the chance of a NameNode failure and to improve performance, the NameNode is typically run on a dedicated machine.
+		A third daemon, the Secondary NameNode, provides the capability to perform some of the NameNode tasks to reduce the load on the NameNode. Such tasks include updating the file system image with the contents of the file system edit logs. It is important to note that the Secondary NameNode is not a backup or redundant NameNode.
+
+	Pig: The main benefit of using Pig is to utilize the power of MapReduce in a distributed system, while simplifying the tasks of developing and executing a MapReduce job. In most cases, it is transparent to the user that a MapReduce job is running in the background when Pig commands are executed. This abstraction layer on top of Hadoop simplifies the development of code against data in HDFS and makes MapReduce more accessible to a larger audience.
+
+	Hive: Similar to Pig, Apache Hive enables users to process data without explicitly writing MapReduce code. One key difference to Pig is that the Hive language, HiveQL (Hive Query Language), resembles Structured Query Language (SQL) rather than a scripting language. Consider using Hive when the following conditions exist:
+		Data easily fits into a table structure.
+		Data is already in HDFS. (Note: Non-HDFS files can be loaded into a Hive table.)
+		Developers are comfortable with SQL programming and queries.
+		There is a desire to partition datasets based on time. (For example, daily updates are added to the Hive table.)
+		Batch processing is acceptable.
+
+	HBase, described in Google's Bigtable paper, is commonly used for results from a web crawler. It stores key/values in column families
+
+	
+	
+	
+NoSQL
+	
+	NoSQL benefits from scaling by adding additional machine to the distributed system. Tools:
+		Redis, Voldemort for Key/value stores like ID pairing
+		CouchDB, mongoDB for Document like stored log data
+		Cassandra, HBase for Column family like blog entries, tags, various page metrics
+		FlockDB, Neo4j for Graph like social networks or geospatial
 	

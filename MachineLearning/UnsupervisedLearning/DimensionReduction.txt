@@ -1,0 +1,90 @@
+## Dimension reduction
+
+PCA: Find a new set of multivariate variables that are uncorrelated and explain as much variance as possible. (statistical goal)
+	
+SVD: Putting all the variables together in one matrix, we want to find the best matrix created with fewer variables that explains the original data. (data compression goal)	
+		
+	
+### PCA
+
+- The principal component directions are directions in feature space along which the original data are highly variable.
+- The first principal component of a set of features X1,X2, . . . , Xp is the normalized linear combination of the features:
+  - Z1 = φ11X1 + φ21X2 + . . . + φp1Xp, with sum(φi1^2) = 1 the loadings of the first principal components
+  - We assume that the variables in X have been centered to have mean zero. Then maximizing mean(Zi) is the same as maximizing the sample variance.
+  
+Interpretation 1: the principal components explain the substructures of the correlated data
+
+Interpretation 2: find the best projection of the data into a lower dimensional (hyper)plane
+
+#### Algorithm
+- Preprocessing (standardization): PCA is sensitive to the relative scaling of the original variable
+- Compute covariance matrix Σ
+- Compute eigenvectors of Σ
+- Choose k principal components so as to retain x% of the variance (typically x=99)
+
+- There are in general min(n − 1, p) informative principal components in a data set with n observations and p variables.
+- Principal components are unique (up to a sign flip). Two different packages will yield the same PC although the sign might change.
+- How good is a Principal components? Measure the PVE (proportion of variance explained). PVE is a positive percent, and the total variance explained is the cumulative sum of all PVE.
+- How many components do we choose? Scree plots as an elbow curve. Remember: unsupervised learning is subjective, so the elbow curve approach is not necessarily a good metric.
+
+#### Applications
+1) Compression: reduce disk/memory needed to store data; speed up learning algorithm. Warning: mapping should be defined only on training set and then applied to test set
+2) Visualization: 2 or 3 principal components, so as to summarize data
+
+#### Limitations:
+- PCA is not scale invariant. The results obtained when we perform PCA depends on whether the variables have been individually scaled (each multiplied by a different constant). This is in contrast to some other supervised and unsupervised learning techniques, such as linear regression, in which scaling the variables has no effect.
+- The directions with largest variance are assumed to be of most interest
+- Only considers orthogonal transformations (rotations) of the original variables
+- PCA is only based on the mean vector and covariance matrix. Some distributions (multivariate normal) are characterized by this but some are not
+- If the variables are correlated, PCA can achieve dimension reduction. If not, PCA just orders them according to their variances
+
+
+### SVD: 
+If X is a matrix with each variable in a column and each observation in a row then the SVD is a "matrix decomposition"
+X = U * D * transpose(V)
+where the columns of U are orthogonal (left singular vectors), the columns of V are orthogonal (right singluar vectors) and D is a diagonal matrix (singular values). As they have lower ranks, it's easier to compute/store/etc...
+
+
+```{R}
+svd1 <- svd(scale(dataMatrixOrdered))
+par(mfrow=c(1,3))
+image(t(dataMatrixOrdered)[,nrow(dataMatrixOrdered):1])
+plot(svd1$u[,1],40:1,,xlab="Row",ylab="First left singular vector",pch=19)
+plot(svd1$v[,1],xlab="Column",ylab="First right singular vector",pch=19)
+
+par(mfrow=c(1,2))
+plot(svd1$d,xlab="Column",ylab="Singular value",pch=19)
+plot(svd1$d^2/sum(svd1$d^2),xlab="Column",ylab="Prop. of variance explained",pch=19)
+
+# If there are missing values, use imputing
+library(impute)  ## Available from http://bioconductor.org
+dataMatrix2 <- dataMatrixOrdered
+dataMatrix2[sample(1:100,size=40,replace=FALSE)] <- NA
+dataMatrix2 <- impute.knn(dataMatrix2)$data
+svd1 <- svd(scale(dataMatrixOrdered)); svd2 <- svd(scale(dataMatrix2))
+par(mfrow=c(1,2)); plot(svd1$v[,1],pch=19); plot(svd2$v[,1],pch=19)
+
+# Approximating a face with SVD
+svd1 <- svd(scale(faceData))
+approx1 <- svd1$u[,1] %*% t(svd1$v[,1]) * svd1$d[1]
+approx5 <- svd1$u[,1:5] %*% diag(svd1$d[1:5])%*% t(svd1$v[,1:5]) 
+approx10 <- svd1$u[,1:10] %*% diag(svd1$d[1:10])%*% t(svd1$v[,1:10]) 
+
+par(mfrow=c(1,4))
+image(t(approx1)[,nrow(approx1):1], main = "(a)")
+image(t(approx5)[,nrow(approx5):1], main = "(b)")
+image(t(approx10)[,nrow(approx10):1], main = "(c)")
+image(t(faceData)[,nrow(faceData):1], main = "(d)")  ## Original data
+	
+# SVD
+svd1 = svd(scale(sub1[, -c(562,563)]))
+par(mfrow = c(1,2))
+plot(svd1$u[, 1], col = sub1$activity, pch = 19)
+plot(svd1$u[, 2], col = sub1$activity, pch = 19)
+```
+
+
+### Alternatives
+- [Factor analysis](http://en.wikipedia.org/wiki/Factor_analysis)
+- [Independent components analysis](http://en.wikipedia.org/wiki/Independent_component_analysis)
+- [Latent semantic analysis](http://en.wikipedia.org/wiki/Latent_semantic_analysis)

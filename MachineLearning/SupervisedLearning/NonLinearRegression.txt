@@ -1,0 +1,66 @@
+## Non Linear Regression
+
+### Basis functions
+The idea is to have at hand a family of functions or transformations that can be applied to a variable X:  b1(X), b2(X), . . . , bK(X). Instead of fitting a linear model in X, we fit the model: yi = β0 + β1(xi) + β2(xi)^2 + β3(xi)^3 + . . . + βd(xi)^d + epsilon_i.
+
+#### Polynomial regression
+Extends linear model by raising predictors to a power
+- f(x0) = hat(β0) + hat(β1)x0 + hat(β2)x0^2+ hat(β3)x0^3
+
+Logistic regression can also be extended:
+- Pr(yi > 250|xi) = exp(β0 + β1xi + β2xi^2 + . . . + βdxi^D) / (1 + exp(β0 + β1xi + β2xi^2 + . . . + βdxi^D)
+
+#### Step function
+Cut the range into K regions and fit a piecewise constant functions
+we create cutpoints c1, c2, . . . , cK in the range of X, and then construct K + 1 new variables
+- C0(X) = I(X < C1)
+- C1(X) = I(c1 <= X < c2)
+- ...
+- Ck(X) = I(ck <= X)
+
+Fit a least squares using C0(X), C1(X), ... Ck(X) as predictors
+- yi = β0 + β1C1(xi) + β2C2(xi) + . . . + βkCK(xi) + epsilon_i.
+
+
+### Regressions splines
+Fitting polynomials into K knots so that they join smoothly. Use CV to choose K with the lowest MSE.
+
+#### Piecewise polynomials
+Degree 3, with a single knot at c
+- yi = β01 + β11xi + β21x2i + β31x3i if xi < c
+- yi = β02 + β12xi + β22x2i + β32x3  if xi ≥ c
+
+Constraints:
+- Must be continuous in c
+- Both the first and second derivatives of the piecewise polynomials are continuous derivative at c
+  - yi has 8 degrees of freedom but if we put the 3 constraints, we end up with 5 dof. In general, a cubic spline with K knots uses a total of 4 + K degrees of freedom
+- A natural spline is a regression spline with additional boundary constraints: the function is required to be linear at the boundary (in the region where X is s smaller than the smallest knot, or larger than the largest knot).
+
+Polynomials use a high degree to produce flexible fits, whereas splines introduce flexibility by increasing the number of knots but keeping the degree fixed. Generally, this approach produces more stable estimates and superior results. 
+The extra flexibility in the polynomial produces undesirable results at the boundaries, like wild oscillations, while the natural cubic spline still provides a reasonable fit to the data as they always extrapolate linearly.
+
+
+### Smoothing splines
+Regression splines trying to minimize a residual sum of squares:
+- minimize g: sum((yi - g(xi))^2) + lambda * integral(g''(t)^2)
+  - Loss + penalty on the total variation of the roughness
+  - If lambda is high, g will be very smooth
+  - lambda can be chosen with LOOCV, as there is a very efficient formula to compute RSS for smoothing splines
+
+  
+### Local regression
+Overlapping splines
+Choose s a span of points, a weighting function K and the type of regression (linear, quadratic. 
+Fit a weighted least squares according to the point in the span s, their weight according to K 
+
+### Generalized additive models (GAMs)
+General framework for extending a standard linear model by allowing non-linear functions of each of the variables, while maintaining additivity. Just like linear models, GAMs can be applied with both quantitative and qualitative responses.
+- yi = β0 + sum( fj(xij)) + epsilon, where every fi is a model
+  - example: wage =  β0 + f1(year) + f2(age) + f3(education) + epsilon
+
+Pros: GAMs allows non-linear fits while still examine the effects of each predictors individually.
+
+Cons: as GAMs is only additive, we might miss interaction between terms
+
+For classification (qualitative outcomes), we get 
+- log(p(X) / (1 - p(X)) = β0 + f1(X1) + f2(X2) + · · · + fp(Xp)

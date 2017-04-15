@@ -1,17 +1,12 @@
-Handling missing data
+## Handling missing data
 
+Strategies :
+- Deletion: if the missing values appears to be random, you can drop them. This has no bias effect, but decreases the power of the analysis by decreasing the effective sample size.
+- Imputation with the median or mean (bad practice). Note: you can add a new variable, 0 for values and 1 for imputed values to signify that imputed values should not be quite trusted.
+- Train a glm to predict missing values
+- Multiple imputation: use multiple statistical models to combine multiple regressions.
+- KNN imputation
+- Gaussian mixture imputation
 
-If the missing values appears to be random, you can drop the rows
-
-
-Imputation with the median or mean. You can add a new variable, 0 for values and 1 for imputed values to signify that imputed values should not be quite trusted.
-mi package in R
-
-
-Train a glm to predict missing values
-
-
-Multiple imputation: use multiple statistical models to combine multiple regressions.
-
-
-KNN imputation
+Check: mi package in R
+[Tutorial on 5 Powerful R Packages used for imputing missing values](https://www.analyticsvidhya.com/blog/2016/03/tutorial-powerful-packages-imputing-missing-values/?utm_content=buffer6d891&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)

@@ -1,0 +1,197 @@
+## Projects
+
+
+### What is the life cycle of a data science project ?
+- Data acquisition: Acquiring data from both internal and external sources, including social media or web scraping. In a steady state, data extraction and routines should be in place, and new sources, once identified would be acquired following the established processes. Explore the data and become familiar with it.
+- Data preparation (data wrangling): cleaning the data and shaping it into a suitable form for later analyses. Involves exploratory data analysis, feature extraction, detecting outliers, treating missing values, transforming variables, etc.
+- Hypothesis & modelling: Like in data mining but not with samples, with all the data instead. Applying machine learning techniques to all the data. A key sub-step: model selection. This involves preparing a training set for model candidates, and validation and test sets for comparing model performances, selecting the best performing model, gauging model accuracy and preventing overfitting. 
+- Evaluation & interpretation: iterate the previous steps until the best possible outcome is achieved. As the understanding of data and business becomes clearer and results from initial models and hypotheses are evaluated, further tweaks are performed.
+- Deployment. Start implementing the model and track the result to analyse the performance of the model over the period of time.
+- Operations: Regular maintenance and operations. Includes performance tests to measure model performance, and can alert when performance goes beyond a certain acceptable threshold
+- (optional) Optimization: Can be triggered by failing performance, or due to the need to add new data sources and retraining the model or even to deploy new versions of an improved model
+	Note: with increasing maturity and well-defined project goals, pre-defined performance can help evaluate feasibility of the data science project early enough in the data-science life cycle. This early comparison helps the team refine hypothesis, discard the project if non-viable, change approaches.
+
+	
+### Replication
+Replication is the ultimate standard but hard to do. Reproducibility is validation of the data analysis:
+1) Analytic data is available
+2) Analytic code is available
+3) Documentation of code and data
+4) Standard means of distribution
+In one sententence: write everything down.
+	
+Choose an appropriate dataset. Quote the reference and the date it was accessed.
+- Descriptive - a whole population
+- Exploratory - a random sample with many variables measured
+- Inferential - the right population, randomly sampled
+- Predictive - a training and test data set from the same population
+- Causal - data from a randomized study
+- Mechanistic - data about all components of the system
+	
+The most common mistakes are simple but often hidden:
+- Confounding in the Experimental Design
+- Mixing up the sample labels
+- Mixing up the gene labels
+- Mixing up the group labels
+- (Most mixups involve simple switches or offsets)
+- Incomplete documentation
+
+
+### Organising results
+People are busy, breakdown the results of an analysis into different levels of detail:
+Abstract -> Body / Results -> Supplementary Materials -> Code / Data
+
+Check list:
+- Don't do things by hands: teach a computer to do so that it is reproducible and/or automated. Otherwise, document it precisely.
+- Use as few interractive software as possible.
+- (so that it is reproducible)
+- Use version control in small chunks
+- Detail your software environmment (from OS to external dependencies). sessionInfo() in R.
+- Set the seed
+- Have we saved any output that we cannot reconstruct from original the start? Thgink about the complete pipeline: raw data -> processed data -> analysis -> report
+
+	
+### Example of analysis with spam classification
+- Lead with the question
+  - Can I use quantitative characteristics of the emails to classify them as SPAM/HAM?
+- Describe the approach
+  - Collected data from UCI -> created training/test sets
+  - Explored relationships
+  - Choose logistic model on training set by cross validation
+  - Applied to test, 78% test set accuracy
+- Interpret results
+  - Number of dollar signs seems reasonable, e.g. "Make money with Viagra $ $ $ $!"
+- Challenge results
+  - 78% isn't that great
+  - I could use more variables
+  - Why logistic regression?
+
+```{r}
+# Create train and test set
+library(kernlab); data("spam"); set.seed(3435);
+trainIndicator = rbinom(4601, size = 1, prob = 0.5)
+trainSpam = spam[trainIndicator == 1, ]
+testSpam = spam[trainIndicator == 0, ]
+
+# Which predictor has minimum cross-validated error?
+trainSpam$numType = as.numeric(trainSpam$type) - 1
+costFunction = function(x, y) sum(x != (y > 0.5))
+cvError = rep(NA, 55)
+library(boot)
+for (i in 1:55) {
+	lmFormula = reformulate(names(trainSpam)[i], response = "numType")
+	glmFit = glm(lmFormula, family = "binomial", data = trainSpam)
+	cvError[i] = cv.glm(trainSpam, glmFit, costFunction, 2)$delta[2]
+}
+names(trainSpam)[which.min(cvError)]
+
+# Use the best model from the group (charDollar)
+predictionModel = glm(numType ~ charDollar, family = "binomial", data = trainSpam)
+
+# Get predictions on the test set
+predictionTest = predict(predictionModel, testSpam)
+predictedSpam = rep("nonspam", dim(testSpam)[1])
+
+# Classify as `spam' for those with prob > 0.5
+predictedSpam[predictionModel$fitted > 0.5] = "spam"
+
+## Classification table
+table(predictedSpam, testSpam$type)
+## Error rate
+(TN + FP)/(TP + TN + FP + FN)
+```	
+
+
+	
+### Markdown
+	
+	*italics*, **bold**
+	## secondary header		### tertiary header
+	- item1		- item2		- item3
+	1. item1	2. item2	3. item3
+	[link](URL)
+	Advanced URl like [this][1]!
+	[1]: http://wwww.google.com "google"
+	newlines are double spaces		
+	
+	R code options
+		```{r nameofthechunk, echo=FALSE, results="hide"}
+		R code
+		```
+	For plots, you have options like fig.width, fig.height
+	For tables, use xtable
+		```{r showtable, results="asis"}
+		library(xtable)
+		xt <- xtable(summary(fit))
+		print(xt, type = "html")
+		```
+	Global options
+		```{r setoptions, echo=FALSE}
+		opts_chunk$set(echo = FALSE, results = "hide")
+		```
+	Caching
+		cache=TRUE
+		Note: dependencies are not checked explicitly!!
+	You can use inline text computations
+		`r time`, `r rand`
+
+	
+	# knitr
+	Literate programming for R and documentation (Rmarkdown, LateX, HTML).
+	Can export to PDF, HTML.
+	
+	.Rmd -> .md -> .html
+	In Rstudio:
+		R studio -> new R markdown -> saves as .Rmd -> knit to HTML
+	R code:
+		library(knitr); setwd();
+		knit2html("doc.Rmd")
+		browseURL("doc.html")
+		
+	
+	# Rpubs
+	To publish .html code from R, you can use Rpubs. 
+	After knitr -> html, RStudio has a publish icon that will link to Rpubs.
+
+	
+	# Caching (cacher package)
+	Evaluates code and store intermediate results
+	Uses SHA-1 hash to track changes
+	Allows others to clone an analysis
+	Package file is zipped and can be distributed
+	Allows transparent inspection of the analysis
+	Efficiently loads only the necessary data objects
+	
+	# Example
+		library(cacher)
+		clonecache(id = "092dcc7dda4b93e42f23e038a60e1d44dbec7b3f”)
+		clonecache(id = “092d”) # Same as above
+		
+		# The cache was cloned, now load it
+		showfiles()
+		sourcefile("top20.R")
+		
+		# Examining code (forward approach)
+		code()
+		graphcode()
+		
+		# Get the code that made the data (backwards approach)
+		objectcode(“data”)
+
+	# runcode()
+	Executes code in the source file
+	Expression resulting in objects are not run but lazy-loaded
+	Expression not resulting in objects are evaluated
+	
+	# checkcode()
+	Evaluates all expressions from scratch (no lazy-loading)
+		Setting seeds is critical
+	
+	# Example
+	loadcache()
+	ls()
+	cities	# will transfer from cache
+	
+	
+
+	

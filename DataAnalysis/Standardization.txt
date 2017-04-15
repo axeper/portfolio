@@ -1,15 +1,18 @@
-Subtract the mean, divide by the standard deviation
-Sometimes the mean is incorrect because of outliers, then use more robust measures
+## Standardizing 
 
-Standardizing Using Robust Measures of Centrality and Scale
+Subtract the mean, divide by the standard deviation
+But sometimes the mean is incorrect because of outliers
+
+### Standardizing Using Robust Measures of Centrality and Scale
 
 Centrality calculations that work better against one-dimensional outliers than the mean:
-* Median — The 50th percentile.
-* Midhinge — The average of the 25th and 75th percentiles.
-* Trimean — The average of the median and the midhinge.
-* Trimmed/truncated mean — The mean, but you throw away the top and bottom N points or top and bottom percentage of points. If you throw away the top and bottom 25 percent and average the middle 50 percent of the data, that has its own name: the interquartile mean (IQM).
-* Winsorized mean — Like the trimmed mean, but instead of throwing away points that are too large or too small, you replace them with a limit.
+- Median: The 50th percentile.
+- Midhinge: The average of the 25th and 75th percentiles.
+- Trimean: The average of the median and the midhinge.
+- Trimmed/truncated mean: The mean, but you throw away the top and bottom N points or top and bottom percentage of points. If you throw away the top and bottom 25 percent and average the middle 50 percent of the data, that has its own name: the interquartile mean (IQM).
+- Winsorized mean: Like the trimmed mean, but instead of throwing away points that are too large or too small, you replace them with a limit.
 
-Robust measures of scale instead of the standard deviation:
-* Interquartile range — The 75th percentile minus the 25th percentile in the data. You can use other n-tiles too. For example, the 90th and 10th percentilesis the interdecile range.
-* Median absolute deviation (MAD) — Take the absolute value of the difference of each point from the median.
+### Robust measures of scale instead of the standard deviation:
+
+- Interquartile range: The 75th percentile minus the 25th percentile in the data. You can use other n-tiles too. For example, the 90th and 10th percentilesis the interdecile range.
+- Median absolute deviation (MAD): Take the absolute value of the difference of each point from the median.

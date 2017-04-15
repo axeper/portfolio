@@ -1,0 +1,69 @@
+## Logistic Regression
+
+Linear regression is not interpretable for binary classification (it has < 0 and > 1 values). On the other hand, logistic function haas boundaries between 0 and 1.
+
+Logistic regression, logit regression, logit model is a regression model where the dependent variable (DV) is categorical (success/fail). A presidential election is a good example.
+
+### Algorithm 
+From probabilities, we get odds, then we get log-odds/logit. This transforms categorical data into a somewhat linear transformation.
+- Linear regression: P(X) = b0 + b1 * X
+- Logistic function: P(X) = exp(b0 + b1 * X) / (1 + exp(b0 + b1 * X))
+  - Odds: P(X) / (1 - P(X)) = exp(b0 + b1 * X)
+  - Odds = 1 is equality, Odds -> Inf or 0 indicate very high or very low probabilities
+- Logit: log(P(X) / (1 - P(X))) = b0 + b1 * X
+- We fit the model with maximum likelihood
+  - likelihood: l(b0, b1) = prod(P(xi)) * prod(1 - P(xi))
+  - b0 and b1 will be optimized so that the likelihood will be maximized
+- Note: the logistic function and the likelihood can be generalized to p predictors
+
+Classification can be done with a threshold: p(x = True | X) if P(X) > 0.5 or even with a lower threshold P(X) > 0.1
+
+Confounding: When you doing a regression, you may have inverse results when comparing a single predictor vs multiple predictor! Because of correlation between the predictors.
+
+
+### Evaluation
+- Since logistic regression is used to predict probabilities, we can use AUC-ROC curve along with confusion matrix to determine its performance.
+- Also, the analogous metric of adjusted R-squared in logistic regression is AIC. AIC is the measure of fit which penalizes model for the number of model coefficients. Therefore, we always prefer model with minimum AIC value.
+- Null Deviance indicates the response predicted by a model with nothing but an intercept. Lower the value, better the model. Residual deviance indicates the response predicted by a model on adding independent variables. Lower the value, better the model.
+
+
+### Logistic vs tree
+Trees split the space perpendicularily where as classifier defines a boundary
+Trees use divide and conquer recursive strategy whereas linear regression split the space
+
+
+
+
+## Linear discriminant analysis
+
+LDA classifier results from assuming that the observations within each class come from a normal distribution with a class-specific mean vector and a common variance σ2.
+- If we assume the functions to follow a density function f_k(x), then Bayes says that
+  - p_k(x) = f_k(x) / sum(f_k(x))
+- Taking the log and assuming normal distributions, we keep the class for which d_k(x) is max
+  - d_k(x) = x * mu_k / sigma^2 - mu_k^2 / (2 * sigma^2) + log(pi_k)
+- LDA approximates as follows
+  - mu_k = 1 / n_k sum(x_i)
+  - sigma^2 = 1 / (n - K) sum( sum(xi - mu_k)^2 ))
+  - pi_k = n_k / n
+  - Note: this can be generalized to multivariate gaussians.
+  
+### Reasons to prefer LDA to logistic regression
+- When the classes are well-separated, the parameter estimates for the logistic regression model are surprisingly unstable. Linear discriminant analysis does not suffer from this problem.
+- If n is small and the distribution of the predictors X is approximately normal in each of the classes, the linear discriminant model is again more stable than the logistic regression model.
+- Linear discriminant analysis is popular when we have more than two response classes.
+
+
+### QDA
+QDA is a version of LDA, that assumes that the observations from each class are drawn from a Gaussian distribution, and plugging estimates for the parameters into Bayes’ theorem in order to perform prediction. However, unlike LDA, QDA assumes that each class has its own covariance matrix.
+
+- QDA vs LDA is a bias/variancve trade-off:
+  - If the Bayes method is non linear, QDA will perform better. In a linear Bayes separation, LDA will perform better.
+  - Roughly speaking, LDA tends to be a better bet than QDA if there are relatively few training observations and so reducing variance is crucial. In contrast, QDA is recommended if the training set is very large, so that the variance of the classifier is not a major concern, or if the assumption of a common covariance matrix for the K classes is clearly untenable.
+
+
+### What about KNN regression?
+- Logistic regression can outperform LDA if these Gaussian assumptions are not met
+- Hence KNN is a completely non-parametric approach: no assumptions are made about the shape of the decision boundary. Therefore, we can expect this approach to dominate LDA and logistic regression when the decision boundary is highly non-linear.
+- When the true decision boundaries are linear, then the LDA and logistic regression approaches will tend to perform well.
+- When the boundaries are moderately non-linear, QDA may give better results.
+- Finally, for much more complicated decision boundaries, a non-parametric approach such as KNN can be superior.

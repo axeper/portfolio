@@ -1,0 +1,49 @@
+## NLP
+
+Challenges:
+- Unstructured data
+- Curse of dimensionality 
+- Text on the internet is deeply flawed.
+- Context is important. ("So bad, it's good." is it a positive or negative statement?)
+
+Definitions:
+- Corpus is a group of documents, which is a group of tokens (words).
+
+Process:
+1. Collect raw text 
+2. Represent text into a suitable representation 
+3. Apply tfidf / Topic modeling / Sentiment analysis 
+4. Gain insights
+
+### Approaches
+1. Bag of words approach: a document is a collection of individual words.
+  - Preprocessing
+    - lowercasing, tokenization, stemming (e.g. plurals to singular), stopwords removal (the, and, a are too common), lemmatization (match each word with its dictionary form), Part-of-Speech Tagging (sentence into a tag sequence: he saw a fox -> pronoun verb determiner noun)
+	- Note: lowercasing can be an error (The Who, WHO and who).
+    - Note: should numbers be removed? Yes but 1Q13 should stay
+    - Note: don't remove stopwords in cases like movie titles
+  - Measuring sparseness: too rare and too common is useless
+    - Term Frequency Inverse Document Frequency
+	  - TFIDF is efficient in that the calculations are simple and straightforward, and it does not require knowledge of the underlying meanings of the text. It highlights informative words but reveals little of the inter-document or intra-document statistical structure. 
+      - TF(t, d) = # of appearances of word t in document d. Also: log TF, normalized TF, binary TF.
+      - IDF(t) = 1 + log(total documents / documents containing t), if t is rare, IDF is high, if t is common it tends to 1. Also log IDF, Laplace
+      - TFIDF(t, d) = TF(t, d) * IDF(t)
+      - Cosine distance for similarity
+
+2. N-gram sequences
+  - Easy to generate but increase the size of the feature set
+
+3. Named Entity extraction
+  - Recognize common named entities (Game of Thrones)
+  - Normalization is necessary: HP, H-P, Hewlett-Packard are the same
+  - Knowledge intensive, needs large corpus and hand coded features
+
+4. Topic models
+  - Create a topic layer (between the words and document) that aggregates words. Documents are evaluated with these intermediate topics as a kind of clustering of words, not the words themselves.
+  - General methods for creating topic models include matrix factorization methods, such as Latent Semantic Indexing and Probabilistic Topic Models, such as Latent Dirichlet Allocation.
+  - Categorizing Documents by Topics: k-means, svm, k-nn, naive Bayes or topic modeling (latent Dirichlet allocation ~ hierarchical bayesian estimation, package "lda" on R, example on book)
+
+5. Sentiment analysis 
+  - Document level or phrase level? SVM, naive Bayes, MaxEnt achieve around 80% accuracy.
+   - NLTK with Python
+   - Sentiment140 twitter demo	

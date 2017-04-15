@@ -1,47 +1,101 @@
-
+## Time Series Forecasting
 
 Exponential smoothing techniques base a future forecast off of past data where the most recent observations are weighted more than older observations.
 
 
 ### Simple Exponential Smoothing
 
-so = x0, or you can use an average (x0 = mean(x(first year)))
-st = alpha * xt + (1 - alpha) * st-1, with 0 < alpha < 1
+Uses one smoothing coefficients: alpha (accounts for past data)
 Not very good at following trend
 
 
-### Holt's Trend-Corrected Exponential Smoothing / double exponential smoothing
+### Holt's Trend-Corrected Exponential Smoothing / Double exponential smoothing
 
-Uses two smoothing coefficients: alpha (accounts for past data), gamma (accounts for trends)
+Uses two smoothing coefficients: alpha, gamma (accounts for trends)
 
 Are you accounting for seasonality? 
-Compute Holt's autocorrelation to find patterns
-Worry about the autocorrelations larger than 2/sqrt(number of data points)
-You will most likely find weekly, monthly, yearly autocorrelations, account for this using triple exponential smoothing
+- Compute Holt's autocorrelation to find patterns
+- Worry about the autocorrelations larger than 2/sqrt(number of data points)
+- You will most likely find weekly, monthly, yearly autocorrelations, account for this using triple exponential smoothing
 
 
-### Multiplicative Holt-Winters Smoothing / triple exponential smoothing
+### Multiplicative Holt-Winters Smoothing / Triple exponential smoothing
 
-Three smoothing coefficients: alpha, gamma, delta (accounts for seasonality)
+Uses three smoothing coefficients: alpha, gamma, delta (accounts for seasonality)
 
-* Smooth out the historical data using what's called a 2×12 moving average.
+- Smooth out the historical data using what's called a 2×12 moving average.
 i.e. take (MA month:1-12 + MA month:2-13) / 2
-You need two year of data for one year of smoothed data (the first six and last six months do not have data)
-* Compare a smoothed version of the time series to the original to estimate seasonality.
-A simple division original/skewed (take the mean when you have multiple month values) is enough. 
-* Using the initial seasonal estimates, deseasonalize the historical data. i.e. Divide Original by Seasonal estimate
-* Estimate the level and trend using a trendline on the deseasonalized data.
-Use the algorithm, optimize the three parameters
+  - You need two year of data for one year of smoothed data (the first six and last six months do not have data)
+- Compare a smoothed version of the time series to the original to estimate seasonality.
+  - A simple division original/skewed (take the mean when you have multiple month values) is enough. 
+- Using the initial seasonal estimates, deseasonalize the historical data. i.e. Divide Original by Seasonal estimate
+- Estimate the level and trend using a trendline on the deseasonalized data.
+- Use the algorithm, optimize the three parameters
 
 Note: When forecasting, use prediction intervals
 A Monte Carlo simulation can be useful to draw the 2.5 and 97.5 quantiles
 Display in a fan chart (time series)
 
-> sword <- read.csv("SwordDemand.csv")
-> sword.ts <- ts(sword,frequency=12,start=c(2010,1))
-> install.packages("forecast",dependencies=TRUE)
-> library(forecast)
-> sword.forecast <- forecast(sword.ts)
-> sword.forecast$method
-[1] "ETS(M,A,M)"		# MAM stands for multiplicative error, additive trend, multiplicative seasonality.
-> plot(sword.forecast)
+```{r}
+sword <- read.csv("References/DataSmart/SwordDemand.csv")
+sword.ts <- ts(sword,frequency=12,start=c(2010,1))
+
+install.packages("forecast",dependencies=TRUE)
+library(forecast)
+
+sword.forecast <- forecast(sword.ts)
+sword.forecast$method
+[1] "ETS(M,A,M)"		
+# MAM stands for multiplicative error, additive trend, multiplicative seasonality. It's a triple exponential smoothing
+plot(sword.forecast)
+```
+
+
+### Forecasting
+
+Data are dependent over time with specific pattern types (trends, seasonal, cycles)
+Subsampling into training/test is more complicated
+Similar issues arise in spatial data 
+	Dependency between nearby observations
+	Location specific effects
+Typically goal is to predict one or more observations into the future. 
+All standard predictions can be used (with caution!)
+
+```{r}
+library(quantmod)
+from.dat <- as.Date("01/01/08", format="%m/%d/%y")
+to.dat <- as.Date("12/31/13", format="%m/%d/%y")
+getSymbols("GOOG", src="google", from = from.dat, to = to.dat)
+
+mGoog <- to.monthly(GOOG)
+googOpen <- Op(mGoog)
+ts1 <- ts(googOpen,frequency=12)
+
+plot(ts1,xlab="Years+1", ylab="GOOG")
+plot(decompose(ts1),xlab="Years+1")
+
+ts1Train <- window(ts1,start=1,end=5)
+ts1Test <- window(ts1,start=5,end=(7-0.01))
+
+# Moving Average
+plot(ts1Train)
+lines(ma(ts1Train,order=3),col="red")
+
+# Exponential smoothing
+ets1 <- ets(ts1Train,model="MMM")
+fcast <- forecast(ets1)
+plot(fcast); lines(ts1Test,col="red")
+
+accuracy(fcast,ts1Test)
+```
+
+* Rob Hyndman's [Forecasting: principles and practice](https://www.otexts.org/fpp/) is a good place to start
+* See [quantmod](http://cran.r-project.org/web/packages/quantmod/quantmod.pdf) or [quandl](http://www.quandl.com/help/packages/r) packages for finance-related problems.
+
+
+
+What cross validation technique would you use on time series data set?
+Not k-fold but a forward chaining strategy with 5 fold.
+
+
+

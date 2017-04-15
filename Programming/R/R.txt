@@ -15,7 +15,6 @@
 	
 # Install package
 
-	install.packages("NAME")
 	install.packages(c("NAME1","NAME2"))
 	Rstudio -> Tools -> Install packages...
 	
@@ -45,12 +44,12 @@
 	object.size()		# Provides an estimate of the memory used by an R object
 	quantile()			# Get information on the quantiles
 	View()				# Invoke a spreadsheet viewer
-	fix(x)				# Open a data editor
+	fix()				# Open a data editor
 	
 	1:20				# Integer operation
 	1					# Gives a numeric object
 	1L					# Gives an integer object
-	Inf,	pi				
+	Inf	pi				
 	
 	attributes()		# Access the attributes of an object
 	class()				# Get the class of an object
@@ -60,7 +59,7 @@
 	as.logical(x)		# Explicit coertion, may result in NA
 	as.numeric(x), as.character(x), as.complex
 	
-	plot()				# Simple x,y plot
+	plot()				# Simple x, y plot
 	boxplot(m ~ c)		# Plot with mean and median with m on x-axis and c on y-axis
 	hist()				# Plot histogram
 	pairs()				# Plot all possible scatterplots
@@ -118,8 +117,8 @@
 	x[c(i,j)]			# Extract two elements
 	x[-c(i,j)]			# Extract everything but two elements
 	
-	x[i, ]				# Access a rows
-	x[ ,j]				# Access a vecotr of a column
+	x[i,  ]				# Access a rows
+	x[ , j]				# Access a vector of a column
 	x[ , j, drop=FALSE]	# Return a matrix of a column 
 	x[i, j]				# Return a vector of elements i,j
 	
@@ -149,6 +148,7 @@
 	which(x > 5)		# Returns the index where the element is > 5
 	any(x < 0)			# Returns TRUE if at least one element of x < 0
 	all(x < 0)			# Returns TRUE if all element of x < 0
+
 	
 # Vectorized operation
 
@@ -165,23 +165,21 @@
 	load		save			# saved workspaces
 	unserialize	serialize		# single R objects in binary form
 	
-	
 	read.table important arguments:
-	file, the name of a file, or a connection
-	header, logical indicating if the file has a header line
-	sep, a string indicating how the columns are separated
-	colClasses, a character vector indicating the class of each column in the dataset
-	nrows, the number of rows in the dataset
-	comment.char, a character string indicating the comment character
-	skip, the number of lines to skip from the beginning
-	stringsAsFactors, should character variables be coded as factors?
-	Note: lines beginning with # are skipped
+		file, the name of a file, or a connection
+		header, logical indicating if the file has a header line
+		sep, a string indicating how the columns are separated
+		colClasses, a character vector indicating the class of each column in the dataset
+		nrows, the number of rows in the dataset
+		comment.char, a character string indicating the comment character
+		skip, the number of lines to skip from the beginning
+		stringsAsFactors, should character variables be coded as factors?
+		Note: lines beginning with # are skipped
 
 	Reading large table is slow, use colClasses to help (e.g. colClasses = "numeric") or a somewhat dirty way
 		initial <- read.table("datatable.txt", nrows = 100)
 		classes <- sapply(initial, class)
 		tabAll <- read.table("datatable.txt", colClasses = classes)
-	
 	
 	# One object
 	dput(y, file = "y.R")
@@ -225,12 +223,16 @@
 	for (X in Y) {}
 	seq_along(x)	# Creates a indexed sequence for x 
 	seq_len(x)		# Creates a sequence of length x
+	(i in start:end)
+	(j in seq_along(number))
+	(k in letters)
 	
 	while() {}
 	
 	repeat {}		# Behave like a while(TRUE), use break to exit
 	next			# Skip an iteration
-	return
+	break			# Exit the loop
+	return()		# Output of the function
 	
 	
 # Functions
@@ -244,9 +246,18 @@
 	ls(environment(X))
 	get("Y", environment(X))
 	
-	# Custom operator
-	"%mult_add_one%" <- function(left, right){ left * right + 1 }
-	4 %mult_add_one% 5	# Returns 21
+	# Binary operator
+	"%m1%" <- function(left, right){
+		left * right + 1
+	}
+	`4 %m1% 5`		# Returns 21	
+	
+	When should I write a function or a package?
+	Your closest collaborator is you six months ago, but you don't reply to emails.
+
+	If you do X once, write code but document it very well so that it can be reproduced.
+	If you do X twice, write a function to abstract input/output.
+	If you do X three+, write a package with documentation.
 	
 	
 # Dates and Time
@@ -315,30 +326,19 @@
 	error			# Problem occured, execution stops
 	condition		# Something unexpected occured, programmers can create their own conditions
 	
+	stop()			
+	stopifnot()	
+	
 	invisible(x)	# Return x without printing
 	
 	traceback()		# Print the call stackof the last uncaught error
 	debug(FUN)		# Debug a function by going line by line
 	debugonce(FUN) undebug(FUN) isdebugged(FUN)
 	browser()		# Interrupts the execution to browse the environment
+					http://stat.ethz.ch/R-manual/R-devel/library/base/html/browser.html
 	trace()			# Insert debugging code that can be globally de/activated
+	recover()		# Navigates the function call stack after a function has thrown an error
 	options(error=recover)	# Allows the user to browse the environnment 
-	
-	
-# Simulation
-
-	rnorm(n, mean = 0, sd = 0)			
-					# Generates n random normal variates
-	dnorm(n, mean = 0, sd = 0)
-					# Evaluate the normal probability density
-	pnorm(q, mean = 0, sd = 0)
-					# Evaluate the cumulative distribution function
-	qnorm(p, mean = 0, sd = 0)
-					# Evaluate the quantile percentile
-	rpois, dpois, ppois, qpois	# Every distribution has r,d,p,q functions
-	
-	set.seed()		# Ensures reproductability of random results
-	sample()		# Draws randomly from a set of scalars
 
 	
 # R profiler	
@@ -351,55 +351,57 @@
 	$by.total		# Time spent in the function alone and its sublevels
 	$by.self		# Time spent in the function alone
 	
+	# Compare two functions and plot the result
+	library(microbenchmark, ggplot2)
+	profile <- microbenchmark(a <- rnorm(1000), b <- mean(rnorm(1000)))
+	autoplot(profile)
+	
+	# Identify bottlenecks
+	profvis
+	https://rstudio.github.io/profvis/index.html
+	
+	# More reading on performance
+	http://adv-r.had.co.nz/Performance.html
+	
+	
+# Memory usage
+	library(pryr)
+	mem_used()
+	object_size(var)
+	
+	# Print the 5 largest objects
+	library(magrittr)
+	sapply(ls(), function(x) object_size(get(x))) %>% sort %>% tail(5)
+	
+	# remove a variable and see how much it left
+	mem_change(rm(var))
+	
+	# R has an automatic garbage collection, you can print some stuff with
+	gc()
+	
 	
 # Statistics
 
+	rnorm(n, mean = 0, sd = 0)			
+					# Generates n random normal variates
+	dnorm(n, mean = 0, sd = 0)
+					# Evaluate the normal probability density (area P(x = n))
+	pnorm(q, mean = 0, sd = 0)
+					# Evaluate the cumulative distribution function (area under P(x <= q))
+	qnorm(p, mean = 0, sd = 0)
+					# Evaluate the quantile percentile
+	rpois, dpois, ppois, qpois	# Every distribution has r,d,p,q functions
+	
+	set.seed()		# Ensures reproductability of random results
+	sample()		# Draws randomly from a set of scalars
+	
 	integrate(p,x,y)# Compute the area of pdf p from x to y
 	# Create 4 quantiles on distribution
 	cutpoints <- quantile(distr ,seq(0,1,length = 4))
 	cut(distr, cutpoints)
 	
 	
-	
-	
-	
-	
-	
-	
-	
-Control structures
-
-	for (i in start:end)
-	for (j in seq_along(number))
-	for (k in letter)
-	
-	next 		skip
-	break		exit the loop
-	
-Functions
-	fun_name <- function(var1, var2 = "default") {
-		# body
-	}
-	
-	Argument unpacking:
-	args <- list(...)
-	place <- args[["place"]]	
-
-	Binary operator:
-	"%m1%" <- function(left, right){
-		left * right + 1
-	}
-	`4 %m1% 5` will return 21
-	
-When should I write a function or a package?
-	Your closest collaborator is you six months ago, but you don't reply to emails.
-
-	If you do X once, write code but document it very well so that it can be reproduced.
-	If you do X twice, write a function to abstract input/output.
-	If you do X three+, write a package with documentation.
-	
-	
-Functional programming
+# Functional programming
 	map_lgl(), map_chr(), map_dbl()
 		take an input (logical, characters or double) and apply a function on it.
 	
@@ -438,8 +440,8 @@ Functional programming
 		mult_by_15(z = 4)
 		[1] 60
 	
-
-Expressions, environment
+	
+# Expressions, environment
 	v <- "2 + 2"
 	exp <- parse(text = v)
 	eval(exp)
@@ -453,41 +455,7 @@ Expressions, environment
 	<<- To assign value in the parent environment
 	
 	
-Error Handling
-	message()
-	stop()
-	stopifnot()			# error if not TRUE
-	warning()
-	
-	
-	
-Debugging
-	traceback(): prints out the function call stack after an error occurs; does nothing if there’s no error
-		traceback()
-	browser(): an interactive debugging environment that allows you to step through code one expression at a time
-	http://stat.ethz.ch/R-manual/R-devel/library/base/html/browser.html
-	debug() / debugonce(): a function that initiates the browser within a function
-		debug(lm)
-	trace(): this function allows you to temporarily insert pieces of code into other functions to modify their behavior
-	recover(): a function for navigating the function call stack after a function has thrown an error
-		options(error = recover)
-		
-Profiling
-
-	# Compare two functions and plot the result
-	library(microbenchmark, ggplot2)
-	profile <- microbenchmark(a <- rnorm(1000), b <- mean(rnorm(1000)))
-	autoplot(profile)
-	
-	# Identify bottlenecks
-	profvis
-	https://rstudio.github.io/profvis/index.html
-	
-	# More reading on performance
-	http://adv-r.had.co.nz/Performance.html
-	
-	
-OOP
+# Object Oriented Programming
 	S3
 	shape_s3 <- function(side_lengths){structure(list(side_lengths = side_lengths), class = "shape_S3")}
 	is_square.shape_S3 <- function(x){
@@ -499,140 +467,44 @@ OOP
 	[1] "shape_S3"
 	is_square(square_4)
 
-	S4 
-	Fuck that
+	S4
+	# More to learn
 	
-	
-	
-	
-	
-	
-	
-	R Programming Language
 
-	# Read tabular data
-	library(readr)
-	teams <- read_csv("data/team_standings.csv")
-	OR
-	teams <- read_csv("data/team_standings.csv", col_types = "cc")
-	
-	logs <- read_csv("data/2016-07-20.csv.gz", col_types = "ccicccccci", n_max = 10)
-	
-	# Keep only one column
-	logdates <- read_csv("data/2016-07-20.csv.gz", 
-                     col_types = cols_only(date = col_date()),
-                     n_max = 10)
-					 
-	read_csv	Reads comma-separated file
-	read_csv2	Reads semicolon-separated file
-	read_tsv	Reads tab-separated file
-	read_delim	General function for reading delimited files
-	read_fwf	Reads fixed width files
-	read_log	Reads log files
-	
-	
-	# Read web based data
-	ext_tracks_file <- paste0("http://rammb.cira.colostate.edu/research/",
-                          "tropical_cyclones/tc_extended_best_track_dataset/",
-                          "data/ebtrk_atlc_1988_2015.txt")
-	ext_tracks_widths <- c(7, 10, 2, 2, 3, 5, 5, 6, 4, 5, 4, 4, 5, 3, 4, 3, 3, 3,
-                       4, 3, 3, 3, 4, 3, 3, 3, 2, 6, 1)
-	ext_tracks_colnames <- c("storm_id", "storm_name", "month", "day",
-                          "hour", "year", "latitude", "longitude",
-                          "max_wind", "min_pressure", "rad_max_wind",
-                          "eye_diameter", "pressure_1", "pressure_2",
-                          paste("radius_34", c("ne", "se", "sw", "nw"), sep = "_"),
-                          paste("radius_50", c("ne", "se", "sw", "nw"), sep = "_"),
-                          paste("radius_64", c("ne", "se", "sw", "nw"), sep = "_"),
-                          "storm_type", "distance_to_land", "final")
+# Editing text variables
 
-	# Read the file in from its url
-	ext_tracks <- read_fwf(ext_tracks_file, 
-                       fwf_widths(ext_tracks_widths, ext_tracks_colnames),
-                       na = "-99")
-
-	# Do cool stuff using dplyr
-	library(dplyr)
-
-	ext_tracks %>%
-	  filter(storm_name == "KATRINA") %>%
-	  select(month, day, hour, max_wind, min_pressure, rad_max_wind) %>%
-	  sample_n(4)	
-				   
-	# Using API, example
-	library(httr)
-	meso_url <- "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py/"
-	GET(url = meso_url, query = list(station = "DEN", data = "sped", 
-		year1 = "2016", month1 = "6", day1 = "1", year2 = "2016", 
-		month2 = "6", day2 = "30", tz = "America/Denver", format = "comma")) %>%
-	content() %>% 
-	read_csv(skip = 5, na = "M") %>% 
-	slice(1:3)
-
-	Others API
-	twitteR: twitter, 
-	Quandl: Quandl (financial data), 
-	RGoogleAnalytics: Google Analytics
-	censusr, acs: United States Census
-	WDI, wbstats: World Bank
-	GuardianR, rdian: The Guardian Media Group
-	blsAPI: Bureau of Labor Statistics
-	rtimes: New York Times
-	dataRetrieval, waterData: United States Geological Survey			   
-	rnoaa: National Oceanic and Atmospheric Administration	
-
-	Web scraping: rvest (https://github.com/hadley/rvest)
-	JSON, XML: jsonlite, xml2
-	https://cran.r-project.org/web/views/WebTechnologies.html
+	if(!file.exists("./data")){dir.create("./data")}
+	fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+	download.file(fileUrl,destfile="./data/cameras.csv",method="curl")
+	cameraData <- read.csv("./data/cameras.csv")
+	
+	# Change to lowercase ("crossStreet" -> "crossstreet")
+	tolower(names(cameraData))
+	
+	# Split names like "location.1" -> "location", "1" 
+	splitNames = strsplit(names(cameraData),"\\.")
+	
+	# Remove underscores "review_id" -> "reviewid"
+	sub("_","",names(reviews),)		# Replace one
+	gsub("_","",testName)			# Replace all
+	
+	# Find matching patterns
+	grep("Alameda",cameraData$intersection)	
+									# Returns the indices
+	grepl("Alameda",cameraData$intersection)
+									# Returns a logical array
+	grep("Alameda",cameraData$intersection,value=TRUE)
+									# Returns the strings
+	
+	# More useful string functions
+	library(stringr); 
+	nchar()							# Counts how many letters
+	substr("Jeffrey Leek",1,7)		# Keeps only the string from 1 to 7
+	paste("Jeffrey","Leek",sep)		# Paste two strings together (sep =" ")
+	paste0("Jeffrey","Leek")		# Paste two strings together (sep ="")
+	str_trim("Jeff      ")			# remove spaces
 	
 	
-	# Basic functions
-	seq(start, end, by, length)
-	seq_along(v)				# Return incremental sequence of length = length(v)
-	rep(v, times, each)
-	x[c(-2,-10)] is the same as x[-c(2,10)]
-	&&, || evaluates logically only the first item
-	which(x < 6), any(x < 0), all(ints > 0)
-	var %in% c("aaa", "bbb")	
-	
-	
-# Tidy data 
-	package: dplyr, tidyr, lubridate, readr, stringr
-	
-	ext_tracks %>%
-	group_by(storm_name, year) %>%
-	summarize(n_obs = n(),
-            worst_wind = max(max_wind),
-            worst_pressure = min(min_pressure))
-	
-	library(ggplot2)
-	ext_tracks %>%
-	group_by(storm_name) %>%
-	summarize(worst_wind = max(max_wind)) %>%
-	ggplot(aes(x = worst_wind)) + geom_histogram() 
-		
-	# Advanced dplyr commands
-	titanic_4 <- titanic %>% 
-		select(Survived, Pclass, Age, Sex) %>%
-		filter(!is.na(Age)) %>%
-		mutate(agecat = cut(Age, breaks = c(0, 14.99, 50, 150), 
-						  include.lowest = TRUE,
-						  labels = c("Under 15", "15 to 50", "Over 50"))) %>%
-		group_by(Pclass, agecat, Sex) %>%
-		summarize(N = n(),
-				survivors = sum(Survived == 1),
-				perc_survived = 100 * survivors / N)
-		
-	wc_4 <- worldcup %>% 
-		select(Time, Passes, Tackles, Saves) %>%
-		summarize(Time = mean(Time),
-				Passes = mean(Passes),
-				Tackles = mean(Tackles),
-				Saves = mean(Saves)) %>%
-		gather(var, mean) %>%
-		mutate(mean = round(mean, 1))
-		
-		
 # Text Processing and regex
 	# You can pass a vector to paste()
 	two_cities <- c("best", "worst")
@@ -647,77 +519,43 @@ OOP
 	strsplit()
 	
 	# metacharacters
-	"."				Any single character
-	"*"				Zero or more
-	"+"				One or more 
-	"i{2,3}"		Contains between 2 and 3 adjacent "i"
-	"(iss){2,}"		Contains 2 or more adjacent "iss"
-	"\\w", "\\d", "\\s"
-					Contains words, digits, whitespaces
-	"\\W", "\\D", "\\S" 
-					Do not contain words, digits, whitespaces
-	"\n", "\t"		Newline, tabs
-	"[aeiou]"		Match with any lowercase vowels
-	"[^aeiou]"		Match with anything but lowercase vowels
-	"[a-mA-M]"		Match with any letter
-	"^a", "a$"		Begins with, ends with
-	"a|b"			Match with a or b
+	.				Any single character
+	*				Zero or more
+	+				One or more 
+	i{3}			Matches exactly 3 "i"
+	i{2,3}			Contains between 2 and 3 adjacent "i"
+	(iss){2,}		Contains 2 or more adjacent "iss"
+	\\w, \\d, \\s	Contains words, digits, whitespaces
+	\\W, \\D, \\S	Do not contain words, digits, whitespaces
+	\n, \t			Newline, tabs
+	[aeiou]			Match with any lowercase vowels
+	[^aeiou]		Match with anything but lowercase vowels
+	[a-mA-M]		Match with any letter
+	[Bb][Aa]		Either Ba, BA, ba or bA is detected
+	^a, a$			Begins with, ends with
+	sp|st			Match sp or st
 	
-	exemple: start with a capitaized vowel, ends with a vowel
+	
+	[0-9][a-zA-Z]	Specifying a range
+	[^?.]$			Match everything that does not end with . or ?
+	9.11			. refers to any character
+	^good|bad	vs 	^(good|bad)		
+	([Ww]\.)? Bush	The W. or w. pattern is optional
+	(.*)			Match anything that is in parenthesis (24, M), (eat + west) and ()
+	[0-9]+ (.*)[0-9]+
+					Math anything between (and including) two numbers	
+	( +[^ ]+ +){1,5}Match "Space then word then space" one to five times
+	([a-z]+) +\1 	Match a word two times in a row ("so so")
+	^s(.*)s			Greedy match for "s.*s"
+	^s(.*?)s$
+	
+	
+	example: start with a capitaized vowel, ends with a vowel
 	start_end_vowel <- "^[AEIOU]{1}.+[aeiou]{1}$"
 	
-	# stingr
-	library(stringr)
-	
-	str_extract(s, regex)	Extract the regex from s
-	str_order(s)			Returns indices so that s is in alphabetical order
-	str_pad("Thai", width = 8, side = "both", pad = "-")
-	[1] "--Thai--"			Pad a string left/right/both
-	str_to_title()			Capitalize a string
-	str_trim()				Remove whitespace from both side of a string
-	str_wrap(s, width = 80)	Insert a newline as soon as the width is exceeded
-	word(s, start, end)		Allows to index a sentence using start, end
-	
-	Human readable regex: rex
-	https://github.com/kevinushey/rex
-	Test regex online
-	http://regexr.com/
-	Tidy Text Mining with R
-	http://tidytextmining.com/index.html
 	
 	
-# Memory usage
-	library(pryr)
-	mem_used()
-	object_size(var)
-	
-	# Print the 5 largest objects
-	library(magrittr)
-	sapply(ls(), function(x) object_size(get(x))) %>% sort %>% tail(5)
-	
-	# remove a variable and see how much it left
-	mem_change(rm(var))
-	
-	# R has an automatic garbage collection, you can print some stuff with
-	gc()
 	
 	
-# Working with large datasets	
-	library(data.table)
-	brazil_zika <- fread("data/COES_Microcephaly-2016-06-25.csv")
-	
-	fread("data/COES_Microcephaly-2016-06-25.csv",
-      select = c("location", "value", "unit")) %>%
-	  dplyr::slice(1:3)
-	
-	For optimal code, use Rcpp so you can bridge R to C++.
-	
-	Find parallelized package with
-	High-Performance and Parallel Computing with R task view.
-	https://cran.r-project.org/web/views/HighPerformanceComputing.html
-	
-	If the data is too large, use a RDBMS
-	R generic package 	DBI
-	R specific package	RMySQL, ROracle, RSQLServer, RSQLite, RPostgres
 	
 	

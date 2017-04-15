@@ -1,0 +1,41 @@
+## Regularization
+
+
+### Linear models can be improved
+- Prediction accuracy
+  - If the relationship is approximately linear, the model will have low bias.
+  - If n >> p, the model will have low variance, and will perform well on test observations
+  - If n ~= p, there will be a lot of variability in the fit. Poor predictions should be expected.
+  - If n < p, the method cannot be used. This can be corrected by constraining or shrinking the estimated coefficients, thus substantially reduce the variance at the cost of a negligible increase in bias
+- Model Interpretability
+  - Irrelevant variables can lead to unnecessary complexity. Excluding irrelevant variables can be done automatically by feature selection or variable selection.
+
+  
+### Shrinkage/regularization
+Regularization is the process of adding a tuning parameter to a model to introduce smoothness to prevent overfitting (i.e. shrink the coefficients to reduce variance). L1 is lasso, L2 is ridge
+
+#### Ridge regression
+- RSS + lambda * sum(beta_j)^2, with lambda a tuning parameter (chosen by CV)
+  - Balances RSS and a shrinkage penalty, mediated by lambda (use CV to choose lambda). 
+  - When lambda is large, the ridge coefficients shrink towards zero. When lambda is zero, the ridge coefficients are the same as the least-squares. It's a bias-variance trade-off.
+- It is best to apply ridge regression after standardizing the predictors,
+- Ridge regression works best when the least squares have high variance.
+The main disadvantage is that ridge regression will include all p predictors in the final model.
+
+#### Lasso regression
+- RSS + lambda * sum(abs(beta_j)), with lambda a tuning parameter (chosen by CV)
+  - As lambda increases, the flexibility of the ridge regression fit decreases, leading to decreased variance but increased bias.
+- Unlike ridge regression, results in coefficient estimates that are exactly equal to zero. It's because the absolute values indicates corners as optimum (polyhedron) whereas ridge has smoothed ends.
+
+#### Comparing the Lasso and Ridge Regression
+- In general, one might expect the lasso to perform better in a setting where a relatively small number of predictors have substantial coefficients, and the remaining predictors have coefficients that are very small or that equal zero. 
+- Ridge regression will perform better when the response is a function of many predictors, all with coefficients of roughly equal size.
+  - A technique such as cross-validation can be used in order to determine which approach is better on a particular data set.
+- Ridge regression more or less shrinks every dimension of the data by the same proportion, whereas the lasso more or less shrinks all coefficients toward zero by a similar amount, and sufficiently small coefficients are shrunken all the way to zero.
+- An author asserted that, in presence of few variables with medium / large sized effect, use lasso regression. In presence of many variables with small / medium sized effect, use ridge regression.
+  
+#### Pros and cons 
+- Can help with the bias/variance tradeoff
+- Can help with model selection
+- May be computationally demanding on large data sets
+- Does not perform as well as random forests and boosting

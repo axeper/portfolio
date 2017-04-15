@@ -1,0 +1,13 @@
+### k-NN
+
+Take a data point, look at the k neighbors and, according to a Majority vote classification, find the class of k.
+Choose k with nested CV.
+
+- Majority vote classification (which class has the biggest score of neighbors?)
+  - Majority scoring function: sum the number of same class neighbors
+  - Similarity-moderated classification: weighted sum of distance * same class neighbors
+  - Similarity-moderated scoring: weighted sum of distance of same class neighbors / total weighted sum of distance of all neighbors. Gives back a probability.
+
+Note: usimg weighted voting / similarity moderated voting will penalize gaps between neighbors. 
+E.g. you can have 2 close neighbors and 3 distant ones. Weighed voting will choose the closer cluster.
+

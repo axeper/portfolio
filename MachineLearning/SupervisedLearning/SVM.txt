@@ -1,0 +1,54 @@
+### SVM
+
+### Separable case
+- In a p-dimensional space, a hyperplane is a flat affine subspace of dimension p − 1.
+  - A hyperplane in p-dimensions: β0 + β1X1 + β2X2 + . . . + βpXp = 0
+  - If X < 0 or X > 0, then X lies on one side or the other of the hyperplane
+- Hard margin: maximize the width M of the margin of the hyperplane gives the best choice for a separating hyperplane.
+
+
+### Non Separable cases - Support Vector Classifiers
+- In non separable cases, no separating hyperplane exists. 
+- Also, a hard margin classifier can be dramatically impacted by outliers. Misclassifying a few observations might be preferable to perform better on the test set.
+
+- Soft margin (for non-separable classes): minimize the hinge loss function by penalizing the points that are on the wrong side.
+  - Hinge loss: l(y) = max(0, 1 - t * y), where t +- 1 is the intended output, y a classifier score
+- Observations that lie directly on the margin, or on the wrong side of the margin for their class, are known as support vectors.
+  - Slack variables epsilon_i are introduced in the maximization of the width M of the margin
+    - epsilon_i = 0 then the ith observation is on the correct side of the margin
+    - epsilon_i > 0 is on the wrong side of the margin.
+    - epsilon_i > 1 is on the wrong side of the hyperplane.
+  - The cost C bounds the sum of the epsilon_i that we can tolerate. If C > 0, no more than C observations can be misclassified. A large C is a wide margin and a high tolerance for observations to be on the wrong side, a small CV is a narrow margin. C is chosen by CV.
+
+  
+### Kernel choice
+- To classify nonlinear data, use the kernel trick. (i.e. cast non-linear data into a somewhat linear space). Neural networks works too.
+
+- Polynomial kernel: K(x_i, x_i') = (1 + sum(x_ij * x_i'j)^d
+- Radial kernel: K(x_i, x_i') = exp(-gamma * sum((x_ij * x_i'j)^2))
+
+- If number of features is large (relative to number of observations): SVM with linear kernel ; e.g. text classification with lots of words, small training example
+- If number of features is small, number of observations is intermediate: Gaussian kernel
+- If number of features is small, number of observations is small: linear kernel
+
+
+### Notes on SVM
+Is it beneficial to perform dimensionality reduction before fitting an SVM?
+When the number of features is large comparing to the number of observations (e.g. document-term matrix). SVM will perform better in a reduced space.
+
+The fact that the support vector classifier’s decision rule is based only on a potentially small subset of the training observations (the support vectors) means that it is quite robust to the behavior of observations that are far away from the hyperplane. This property is distinct from some of the other classification methods that we have seen in preceding chapters, such as linear discriminant analysis, who depends on the mean of all the observations
+
+SVMs with More than Two Classes (K > 2): use one-vs-one or one-vs-all
+
+For a quantitative response, support vector regression
+
+#### SVM vs Random Forest: 
+- Dataset with no outliers: SVM
+- Memory constraints: RF
+- Multiclass: RF
+  -  In a case of a multi-class classification problem: SVM will require one-against-all method (memory intensive)
+- Multi-dimensional: SVM
+- Getting fast results: RF (SVM is long to tune)
+- Learning about variable importantce: RF
+- Semi-supervised: RF (SVM can only work in a supervised learning mode)
+Always test both.

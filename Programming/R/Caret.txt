@@ -1,0 +1,420 @@
+## caret
+
+	# Example
+	library(caret); library(kernlab); data(spam)
+	inTrain <- createDataPartition(y=spam$type, p=0.75, list=FALSE)
+	training <- spam[inTrain,]; testing <- spam[-inTrain,]
+	modelFit <- train(type ~., data=training, method="glm"); modelFit$finalModel
+	predictions <- predict(modelFit,newdata=testing)
+	confusionMatrix(predictions,testing$type)
+
+	# K-fold
+	folds <- createFolds(y=spam$type,k=10,list=TRUE,returnTrain=TRUE)
+	folds <- createFolds(y=spam$type,k=10,list=TRUE,returnTrain=FALSE)
+
+	# Resampling 
+	folds <- createResample(y=spam$type,times=10,list=TRUE)
+	
+	# Time Slices
+	tme <- 1:1000; folds <- createTimeSlices(y=tme,initialWindow=20,horizon=10)
+	
+	# Training options
+	args(train.default)
+	function (x, y, method = "rf", preProcess = NULL, ..., weights = NULL, 
+		metric = ifelse(is.factor(y), "Accuracy", "RMSE"), maximize = ifelse(metric == "RMSE", FALSE, TRUE), trControl = trainControl(), tuneGrid = NULL, tuneLength = 3) 
+
+	# metric
+	RMSE, Rsquared for continuous; accuracy, kappa for categorical
+	
+	# trainControl
+	args(trainControl)
+		method
+			boot = bootstrapping
+			boot632 = bootstrapping with adjustment
+			cv = cross validation
+			repeatedcv = repeated cross validation
+			LOOCV = leave one out cross validation
+		number
+			For boot/cross validation
+			Number of subsamples to take
+		repeats
+			Number of times to repeate subsampling
+			If big this can slow things down
+		
+	# Feature plot
+	featurePlot(x=training[,c("age","education","jobclass")],y = training$wage,plot="pairs")
+	
+	# Qplot
+	qq <- qplot(age,wage,colour=education,data=training)
+	qq + geom_smooth(method='lm',formula=y~x)
+
+	# cut2, making factors (Hmisc package) - split into g quantiles
+	library("Hmisc"); cutWage <- cut2(training$wage,g=3)
+	t1 <- table(cutWage,training$jobclass)
+	prop.table(t1,1)
+
+	# Boxplots with points overlayed
+	p1 <- qplot(cutWage,age, data=training,fill=cutWage,geom=c("boxplot"))
+	p2 <- qplot(cutWage,age, data=training,fill=cutWage,geom=c("boxplot","jitter"))
+	grid.arrange(p1,p2,ncol=2)
+
+	
+	# Caret tutorials:
+	- http://www.edii.uclm.es/~useR-2013/Tutorials/kuhn/user_caret_2up.pdf
+	- http://cran.r-project.org/web/packages/caret/vignettes/caret.pdf
+	- http://www.jstatsoft.org/v28/i05/paper
+	- [Model training and tuning](http://caret.r-forge.r-project.org/training.html)
+
+
+# Preprocessing
+
+	Training and test must be processed in the same way	
+	Test transformations will likely be imperfect. Especially if the test/training sets collected at different times.
+	Preprocessing factors are very tricky.
+
+	# Standardizing
+	trainCapAveS <- (trainCapAve  - mean(trainCapAve))/sd(trainCapAve) 
+	testCapAveS <- (testCapAve  - mean(trainCapAve))/sd(trainCapAve) 
+	Or
+	preObj <- preProcess(training[,-58],method=c("center","scale"))
+	trainCapAveS <- predict(preObj,training[,-58])$capitalAve
+	testCapAveS <- predict(preObj,testing[,-58])$capitalAve
+	Or
+	mFit <- train(type ~.,data=training,preProcess=c("center","scale"),method="glm")
+
+	# Standardizing - Box-Cox transforms (transforms highly skewed data into normal)
+	preObj <- preProcess(training[,-58],method=c("BoxCox"))
+	trainCapAveS <- predict(preObj,training[,-58])$capitalAve
+	par(mfrow=c(1,2)); hist(trainCapAveS); qqnorm(trainCapAveS)
+
+	# Imputing missing data with knn
+	preObj <- preProcess(training[,-58],method="knnImpute")
+	capAve <- predict(preObj,training[,-58])$capAve
+
+	[preprocessing with caret](http://caret.r-forge.r-project.org/preprocess.html)
+	
+
+# Covariate (extraction of features)
+	
+	The balancing act is summarization vs. information loss.
+		* Images: Edges, corners, blobs, ridges
+		* People: Height, weight, hair color, sex, country of origin
+	The more knowledge of the system you have the better the job you will do. 
+	When in doubt, create more features than less
+	Can be automated, but use caution because interpretation is hard.
+	
+	# Adding covariates (features)
+	A good approach is through exploratory analysis (plotting/tables)
+	Convert factors into dummy variables
+		dummies <- dummyVars(wage ~ jobclass,data=training)
+		head(predict(dummies,newdata=training))
+	Remove near zero covariates (i.e. features that do not vary)
+		nsv <- nearZeroVar(training,saveMetrics=TRUE)
+	
+	Use splines to fit the data:
+		library(splines)
+		bsBasis <- bs(training$age,df=3)
+		# Fit splines on the plot
+		lm1 <- lm(wage ~ bsBasis,data=training)
+		plot(training$age,training$wage,pch=19,cex=0.5)
+		points(training$age,predict(lm1,newdata=training),col="red",pch=19,cex=0.5)
+		# Apply on the test
+		predict(bsBasis,age=testing$age)
+
+		
+# PCA
+
+	# Example
+	library(caret); library(kernlab); data(spam)
+	inTrain <- createDataPartition(y=spam$type,p=0.75, list=FALSE)
+	training <- spam[inTrain,]; testing <- spam[-inTrain,]
+
+	# Find which value are well correlated with each others
+	# Remove anything on the diagonal (cor(x,x) = 1)
+	M <- abs(cor(training[,-58]))
+	diag(M) <- 0
+	which(M > 0.8,arr.ind=T)
+	
+	# We find that these two are highly correlated
+	plot(spam[,34],spam[,32])
+	
+	Let's use a weighted combination to reduce noise and the number of predictors.
+	Similarly:
+		1) Find a new set of multivariate variables that are uncorrelated and explain as much variance as possible. (statistical goal)
+		2) Putting all the variables together in one matrix, we want to find the best matrix created with fewer variables that explains the original data. (data compression goal)	
+	Solutions:
+		SVD: If X is a matrix with each variable in a column and each observation in a row then the SVD is a "matrix decomposition"
+		X = U*D*transpose(V)
+		where the columns of U are orthogonal (left singular vectors), the columns of V are orthogonal (right singluar vectors) and D is a diagonal matrix (singular values). 
+		
+		PCA: The principal components are equal to the right singular values if you first scale (subtract the mean, divide by the standard deviation) the variables.
+		in R:
+			smallSpam <- spam[,c(34,32)]
+			prComp <- prcomp(smallSpam)
+			plot(prComp$x[,1],prComp$x[,2])
+			prComp$rotation
+
+		# PCA on SPAM data
+			typeColor <- ((spam$type=="spam")*1 + 1)
+			prComp <- prcomp(log10(spam[,-58]+1))
+			plot(prComp$x[,1],prComp$x[,2],col=typeColor,xlab="PC1",ylab="PC2")
+			Or with caret:
+			preProc <- preProcess(log10(spam[,-58]+1),method="pca",pcaComp=2)
+			spamPC <- predict(preProc,log10(spam[,-58]+1))
+			plot(spamPC[,1],spamPC[,2],col=typeColor)
+			# Train, test
+			trainPC <- predict(preProc,log10(training[,-58]+1))
+			modelFit <- train(training$type ~ .,method="glm",data=trainPC)
+			testPC <- predict(preProc,log10(testing[,-58]+1))
+			confusionMatrix(testing$type,predict(modelFit,testPC))
+			One-liner:
+			modelFit <- train(training$type ~ .,method="glm",preProcess="pca",data=training)
+			confusionMatrix(testing$type,predict(modelFit,testing))
+		
+	Conlcusions:
+	* Most useful for linear-type models
+	* Can make it harder to interpret predictors
+	* Watch out for outliers! 
+	  * Transform first (with logs/Box Cox)
+	  * Plot predictors to identify problems
+
+
+# Simple regression
+	
+	library(caret); data(faithful); set.seed(333)
+	inTrain <- createDataPartition(y=faithful$waiting,p=0.5, list=FALSE)
+	trainFaith <- faithful[inTrain,]; testFaith <- faithful[-inTrain,]
+	lm1 <- lm(eruptions ~ waiting,data=trainFaith)	
+	
+	# Plot the regression
+	plot(trainFaith$waiting,trainFaith$eruptions,pch=19,col="blue", 		 xlab="Waiting",ylab="Duration")
+	lines(trainFaith$waiting,lm1$fitted,lwd=3)
+	
+	# Predict
+	coef(lm1)[1] + coef(lm1)[2]*80
+	Or:
+	newdata <- data.frame(waiting=80)
+	predict(lm1,newdata)
+	
+	# Calculate RMSE on training and testing
+	sqrt(sum((lm1$fitted-trainFaith$eruptions)^2))
+	sqrt(sum((predict(lm1,newdata=testFaith)-testFaith$eruptions)^2))
+
+	# Prediction intervals
+	pred1 <- predict(lm1,newdata=testFaith,interval="prediction")
+	ord <- order(testFaith$waiting)
+	plot(testFaith$waiting,testFaith$eruptions,pch=19,col="blue")
+	matlines(testFaith$waiting[ord],pred1[ord,],type="l",,col=c(1,2,2),lty = c(1,1,1), lwd=3)
+
+	Or:
+	modFit <- train(eruptions ~ waiting,data=trainFaith,method="lm")
+	summary(modFit$finalModel)
+
+	
+# Regression with multivariate
+	
+	library(ISLR); library(ggplot2); library(caret);
+	data(Wage); Wage <- subset(Wage,select=-c(logwage))
+	inTrain <- createDataPartition(y=Wage$wage,p=0.7, list=FALSE)
+	training <- Wage[inTrain,]; testing <- Wage[-inTrain,]
+
+	featurePlot(x=training[,c("age","education","jobclass")],
+            y = training$wage,plot="pairs")
+	# Explore 2D plots with colors
+	qplot(age,wage,colour=jobclass,data=training)
+	qplot(age,wage,colour=education,data=training)
+
+	# Multivariate fitting
+	modFit <- train(wage ~ age + jobclass + education,method = "lm",data=training)
+	finMod <- modFit$finalModel
+
+	# Explore residuals
+	plot(finMod,1,pch=19,cex=0.5,col="#00000010")
+	qplot(finMod$fitted,finMod$residuals,colour=race,data=training)
+	plot(finMod$residuals,pch=19)
+
+	# Prediction on test set
+	pred <- predict(modFit, testing)
+	qplot(wage,pred,colour=year,data=testing)
+
+	
+	# Using ALL the covariates
+	modFitAll<- train(wage ~ .,data=training,method="lm")
+	pred <- predict(modFitAll, testing)
+	qplot(wage,pred,data=testing)
+
+
+# Predicting with trees
+
+	# Measures of impurity
+	hat(p_mk) = 1/N_m * sum{x_i in Leaf_m} \mathbb{1}(y_i = k)
+		In the leaf m, you have N_m objects. 
+		\mathbb{1}(y_i = k) is the number of class k in leaf m
+		hat(p_mk) is the probability of class k in leaf m 
+	
+	# Misclassification Error: 
+	1 - hat(p_mk(m)); k(m) =  most; common; k
+		* 0 = perfect purity
+		* 0.5 = no purity
+	
+	# Gini index:
+	sum_{k != k'} (hat(p_mk) * hat(p_mk') = sum(hat(p_mk) * (1-hat(p_mk)) = 1 - sum(p_mk)^2
+		* 0 = perfect purity
+		* 0.5 = no purity
+	
+	# Deviance/information gain
+	- sum(hat(p_mk) * log_2(hat(p_mk))
+		* 0 = perfect purity
+		* 1 = no purity
+	http://en.wikipedia.org/wiki/Decision_tree_learning	
+
+	Example:
+	data(iris); library(ggplot2); library(caret)
+	inTrain <- createDataPartition(y=iris$Species,p=0.7, list=FALSE)
+	training <- iris[inTrain,];	testing <- iris[-inTrain,]
+	
+	# Fit trees
+	modFit <- train(Species ~ .,method="rpart",data=training)
+	plot(modFit$finalModel, uniform=TRUE, main="Classification Tree")
+	
+	# Prettier plots
+	library(rattle)
+	fancyRpartPlot(modFit$finalModel)
+	
+	# Predict new values
+	predict(modFit,newdata=testing)
+	
+
+# Bagging (Bootstrap aggregating)
+
+	Example:
+	library(ElemStatLearn); data(ozone,package="ElemStatLearn")
+	ozone <- ozone[order(ozone$ozone),]
+	head(ozone)
+
+	ll <- matrix(NA,nrow=10,ncol=155)
+	for(i in 1:10){
+	  ss <- sample(1:dim(ozone)[1],replace=T)
+	  ozone0 <- ozone[ss,]; ozone0 <- ozone0[order(ozone0$ozone),]
+	  loess0 <- loess(temperature ~ ozone,data=ozone0,span=0.2)
+	  ll[i,] <- predict(loess0,newdata=data.frame(ozone=1:155))
+	}
+
+	plot(ozone$ozone,ozone$temperature,pch=19,cex=0.5)
+	for(i in 1:10){lines(1:155,ll[i,],col="grey",lwd=2)}
+	lines(1:155,apply(ll,2,mean),col="red",lwd=2)
+	
+	# Bagging in caret
+	* Some models perform bagging for you, in train() function consider "method" options : bagEarth, treebag, bagFDA
+	* Alternatively you can bag any model you choose using bag()
+	
+	# Advanced example
+	predictors = data.frame(ozone=ozone$ozone)
+	temperature = ozone$temperature
+	treebag <- bag(predictors, temperature, B = 10,
+                bagControl = bagControl(fit = ctreeBag$fit,
+                                        predict = ctreeBag$pred,
+                                        aggregate = ctreeBag$aggregate))
+	plot(ozone$ozone,temperature,col='lightgrey',pch=19)
+	points(ozone$ozone,predict(treebag$fits[[1]]$fit,predictors),pch=19,col="red")
+	points(ozone$ozone,predict(treebag,predictors),pch=19,col="blue")
+	http://www.inside-r.org/packages/cran/caret/docs/nbBag
+
+	ctreeBag$fit
+	ctreeBag$pred
+	ctreeBag$aggregate
+	
+	
+# Random forests
+
+	data(iris); library(ggplot2)
+	inTrain <- createDataPartition(y=iris$Species, p=0.7, list=FALSE)
+	training <- iris[inTrain,]; testing <- iris[-inTrain,]
+
+	modFit <- train(Species~ .,data=training,method="rf",prox=TRUE)
+	
+	# One tree
+	getTree(modFit$finalModel,k=2)
+
+	# Class "centers"
+	irisP <- classCenter(training[,c(3,4)], training$Species, modFit$finalModel$prox)
+	irisP <- as.data.frame(irisP); irisP$Species <- rownames(irisP)
+	p <- qplot(Petal.Width, Petal.Length, col=Species,data=training)
+	p + geom_point(aes(x=Petal.Width,y=Petal.Length,col=Species),size=5,shape=4,data=irisP)
+
+	# Predict new values
+	pred <- predict(modFit,testing); testing$predRight <- pred==testing$Species
+	qplot(Petal.Width,Petal.Length,colour=predRight,data=testing,main="newdata Predictions")
+	
+
+# Boosting
+
+	# Boosting on R
+	gbm, mboost, ada, gamboost (available in caret)
+	
+	# Example
+	library(ISLR); data(Wage); library(ggplot2); library(caret);
+	Wage <- subset(Wage,select=-c(logwage))
+	inTrain <- createDataPartition(y=Wage$wage,p=0.7, list=FALSE)
+	training <- Wage[inTrain,]; testing <- Wage[-inTrain,]
+	
+	modFit <- train(wage ~ ., method="gbm",data=training,verbose=FALSE)
+	qplot(predict(modFit,testing),wage,data=testing)
+	
+
+# Model based prediction
+
+	1. Assume the data follow a probabilistic model
+	2. Use Bayes' theorem to identify optimal classifiers
+	+ Can take advantage of structure of the data
+	+ May be computationally convenient
+	+ Are reasonably accurate on real problems
+	- Make additional assumptions about the data
+	- When the model is incorrect you may get reduced accuracy
+	
+	A range of models use this approach
+	* Linear discriminant analysis assumes $f_k(x)$ is multivariate Gaussian with same covariances
+	* Quadratic discrimant analysis assumes $f_k(x)$ is multivariate Gaussian with different covariances
+	* [Model based prediction](http://www.stat.washington.edu/mclust/) assumes more complicated versions for the covariance matrix 
+	* Naive Bayes assumes independence between features for model building
+	
+	# Discriminant function
+	delta_k(x) = x^T Sigma^{-1} mu_k - 1/2 * mu_k * Sigma^{-1} * mu_k + log(mu_k)
+	mu_k is the mean, Sigma^{-1} is the inverse of the covariance function
+	The largest delta_k will give us the class
+	
+	Example:
+	data(iris); library(ggplot2);
+	inTrain <- createDataPartition(y=iris$Species, p=0.7, list=FALSE)
+	training <- iris[inTrain,];testing <- iris[-inTrain,]
+
+	modlda = train(Species ~ .,data=training,method="lda")
+	modnb = train(Species ~ ., data=training,method="nb")
+	plda = predict(modlda,testing); pnb = predict(modnb,testing)
+	
+	# Plot the difference between the classification
+	equalPredictions = (plda==pnb)
+	qplot(Petal.Width,Sepal.Width,colour=equalPredictions,data=testing)
+
+	
+# Regularized regression
+	
+	In caret methods are: ridge, lasso, relaxo
+	
+
+# Clustering
+
+	kMeans1 <- kmeans(subset(training,select=-c(Species)),centers=3)
+	training$clusters <- as.factor(kMeans1$cluster)
+	qplot(Petal.Width,Petal.Length,colour=clusters,data=training)
+
+	# Compare to real labels
+	table(kMeans1$cluster,training$Species)
+
+	# Build predictor
+	modFit <- train(clusters ~.,data=subset(training,select=-c(Species)),method="rpart")
+	table(predict(modFit,training),training$Species)
+
+	# Apply on test
+	testClusterPred <- predict(modFit,testing) 
+	table(testClusterPred ,testing$Species)

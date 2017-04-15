@@ -1,0 +1,451 @@
+# Statistics 
+
+	"It’s easy to lie with statistics, but it’s hard to tell the truth without them."
+
+	Important considerations:
+	- Statistics can't prove anything with certainty.
+	- Absolute vs relative values: 58°C vs ranking on a test
+	- Fundamental problem: a lack of clarity over what exactly we are trying to define, describe, or explain. You can’t manage what you can’t measure VS Are you really measuring what you are trying to manage?
+	- Unit of analysis: economy vs people, schools vs students, euro vs pound, nominal vs real value (accounted for inflation)
+	- Statistical index suffers from definitions and its constructions: being a good doctor vs refusing to operate on difficult case
+	
+	Data is garbage in, garbage out (large biased samples is worse than a small biased sample)
+	- Population must be selected randomly (simple random selection)
+	- A representative sample is key but is hard to obtain
+	- Errors usually stem from the data not the method
+	- Sample size needs to be as big as possible
+	- Selection bias (a group of friend vs a population, airport people vs car people, people who complete a study vs people who don't, volunteer vs non volunteers, young men taking X vs old men taking Y)
+	- Publication bias (positive findings are more likely to be published than negative findings, 99 studies that find no effect will not be published but the 1 with a slight effect will)
+	- Recall bias (unreliable memories that recalled X as a cause for Y)
+	- Survivorship bias (grades increase as bad students drop out)
+	- Healthy user bias (eating vitamin and being healthy vs taking care of one's health and being healthy)
+	- Phrasing bias (global warming vs climate change)
+	- No single question can capture the opinion on a complex issue
+	- Are respondents telling the truth?
+
+	Dangerous assumptions:
+	- Assuming independent events when they are not
+	- Assuming non independent events when they are
+	- Cluster happen (If there is a million schools, you can get an event of probability 1/million or matching DNA with probability 1/million in a dataset of 10 million people)
+	- Regression to the mean (If something rare happens, it most likely won't happen again)
+	- Statistical discrimination (making false positive claims)
+
+
+# Rules
+
+	P(A or B) = P(A) + P(B) - P(A and B)
+	P(A|B) = P(A and B) / P(B)			
+	P(A|B) = P(A) if A and B are independent
+	P(B|A) = P(A|B)P(B) / [ P(A|B)P(B) + P(A|~B)P(~B) ]
+	
+	
+# Definitions
+
+	Random variables 	
+		Numerical outcome of an experiment (discrete or continuous)
+	
+	Probability mass function (pmf)
+		Probability that a discrete random variables takes a values
+		Note: p(x) >= 0 and sum(p(x)) == 1
+		Example: Bernoulli distribution)
+			p(x) = theta^x (1 - theta)^(1-x)
+	
+	Probability density function (pdf)
+		Probability that a continuous random variables takes a range of values (= area of a pdf)
+		Note: p(x) >= 0 and the integral of the pdf must be one
+		Example: Beta distribution
+			B(a,b) = G(a)G(b) / G(a+b)
+			
+	Cumulative distribution function (cdf)
+		Probability that the random variable is less than or equal to the value of x
+		F(x) = P(X <= x)
+		
+	Survival function 
+		Probability that the random variable is greater than the value of x
+		S(x) = P(X > x)
+		Note: S(x) = 1 - F(x)
+
+	Quantiles
+		The alpha quantile of a cumulative distribution F is the point x_alpha so that
+			F(x_alpha) = alpha
+		A percentile is a quantile using alpha as a percentile
+		Example: the median is the 50th percentile
+		
+	Independence
+		A and B are independent if P(A and B) = P(A) * P(B)
+		Note: independence implies that P(A|B) = P(A)
+		Note: {A, A^c} and {B, B^c} are all independent
+		
+	IID random variables
+		Random variables that are independent (i.e. statistically unrelated) and
+		identically distributed (i.e. drawn from the same population distribution)
+	
+	What is the difference between covariance and correlation?
+	Correlation is the standardized form of covariance: covariances are difficult to compare. For example: if we calculate the covariances of salary ($) and age (years), we’ll get different covariances which can’t be compared because of having unequal scales. To combat such situation, we calculate correlation to get a value between -1 and 1, irrespective of their respective scale.
+
+
+# Expectation Value / Mean
+
+	Population (whole set) vs Sample (subset of the population)
+	
+	Expected value (or population mean) is the center of mass of population
+		mu = E[X] = sum(x p(x))			# use the pmf or the pdf 
+	The sample mean is an unbiased estimator for the population mean. It's the center of mass of the observed data
+		m = hat(mu) = bar(X) = 1 / n * sum (x_i)
+	
+	E[a1 x + a2 y + b] = a1 * mu_x + a2 * mu_y + b
+	
+	
+# Variance
+
+	The variance is only useful as to measure the standard deviation, which measures the spread of the data, according to the 68–95–99.7 rule. 
+	
+	Population variance
+		Var[x] = E[(X - mu)^2] = E[X^2] - E[X]^2 = 1 / N * sum((x_i - mu)^2)
+		sigma = sqrt(Var)
+	The sample variance is the estimator of the population variance
+		s^2 = hat(sigma)^2 = 1 / (n - 1) * sum(x_i - hat(mu))^2 
+		
+	Var[a1 x + a2 y + b] = a1^2 * sigma_x^2 + a2^2 * sigma_y^2 + 2 * a1 * a2 * sigma_xy
+
+	
+# Standard error
+
+	The standard error of the mean takes into account the size of the sample to quantify how precisely you know the true mean.
+	(= the standard deviation of the sampling distribution of the sample mean)
+		s / sqrt(n) 
+	
+	Note: The standard error of the median is not trivial to compute. Bagging can approximate the value.
+	- Sample n observations with replacement from the observed data resulting in one simulated complete data set.
+	- Take the median of the simulated data set.
+	- Repeat these two steps B times, resulting in B simulated medians.
+	- These medians are approximately drawn from the sampling distribution of the median of n observations; therefore we can
+		- Draw a histogram of them.
+		- Calculate their standard deviation to estimate the standard error of the median.
+		- Take the 2.5 and 97.5 percentiles as a confidence interval for the median.
+	
+	```{r}
+	library(UsingR); data(father.son)
+	x <- father.son$sheight; n <- length(x); B <- 10000
+	resamples <- matrix(sample(x, n * B, replace = TRUE), B, n)
+	medians <- apply(resamples, 1, median)
+	sd(medians)
+	quantile(medians, c(.025, .975))
+	```
+	
+	For any properly drawn random sample, the standard error is equal to sqrt(p * (1 - p) / n)
+	Sometimes, the standard error are different for each question. Then you can take p = .5 as the largest margin of error.
+	
+		
+# Distributions
+
+	# Bernoulli distribution
+	Random variables take values X = 1 ("success", probability p) and X = 0 ("failure", probability 1- p)
+	P(X = x) = p^x (1 - p)^(1 - x)		# PMF
+	mean = p	variance = p(1 - p)
+	
+	# Binomial trials (binom)
+	Sum of iid Bernoulli trials (X = sum(X_i))
+	P(X = x) = (n choose x) p^x (1 - p)^(n - x)
+			(n choose x) = n! / (x!(n-x)!)
+	
+	# Normal distribution (norm)
+	X ~ N(mu, sigma^2)
+	if mu = 0 and sigma = 1, it's called the standard normal distribution
+	To change from X ~ N(mu, sigma^2) <-> Z ~ N(0, 1),
+		(X - mu) / sigma			# standardize to Z ~ N(0, 1)
+		mu + sigma * Z				# transform to X ~ N(mu, sigma^2)
+	A z-score or standard score indicates how many standard deviations an element is from the mean.
+
+	dnorm(x, mean, sd) returns the density (height) of the pdf. 
+	pnorm(q, mean, sd) returns cdf(x) = Pr(X <= x). It's the integral of the pdf from -Inf to q.
+	qnorm(p, mean, sd) returns the z-score for a given quantile (value of the cdf(x) = Pr(X = x)).
+	rnorm(n, mean, sd) generates n random values ~ N(mean, sd^2)
+	
+	68%, 95% and 99% of the normal density lies within 1, 2 and 3 standard deviation from the mean, respectively
+	-2.33, -1.96, -1.645, -1.28, 1.28, 1.645, 1.96, 2.33 are the 1, 2.5, 5, 10, 90, 95, 97.5, 99 percentiles of the standard normal distribution
+	
+	# Poisson (pois)
+	P(X = x, lambda) = lambda^x exp(-lambda) / x!
+	mean = lambda	variance = lambda
+	X ~ Poisson(lambda t) where
+		lambda = E[X/t] is the expected count per unit of time
+		t is the total monitoring time
+	dpois(X, lambda) is the frequency that exactly X happens knowing lambda	
+	ppois(x <= X, lambda) is the frequency that at least X happens knowing lambda
+		
+	if n is large and p is small, the Poisson distribution can accurately approximate the binomial distribution
+	X ~ Binomial(n,p) with lambda = np
+	
+	# Other distributions
+	lognormal
+	Power law, Pareto distribution, 80/20 rule
+	Zipf's law
+	Benford's law
+
+
+# Asymptotics
+
+	Law of Large Numbers: the average of the results obtained from a large number of trials should be close to the expected value, and will tend to become closer as more trials are performed.
+	This can be accepted only if the estimator is consistent (i.e. it converges to what you want to estimate). The sample mean, variance and standard deviation of iid random variables are consistent.
+
+	# Central Limit Theorem
+	The CLT states that, given certain conditions, the arithmetic mean of a sufficiently large number of iterates of independent random variables, each with a well-defined (finite) expected value and finite variance, will be approximately normally distributed, regardless of the underlying distribution.
+	The distribution of averages iid variables (properly normalized) becomes that of a normal distribution as the sample size increases (sampling should be at least 30).
+	
+	The sample mean of ANY distribution leads to a normal distribution. The standard error measures the dispersion of the sample means (i.e. the standard error is the standard deviation of the sample mean). 
+
+	
+# Intervals
+
+	A Confidence Interval CI for the mean is 
+		mean ± quantile * Standard Error (e.g. for 95%, 2 * s / sqrt(n))
+			
+	# Binomial
+	An interval for binomial distribution is
+	^p +- z_(1 - alpha/2) sqrt(p (1 - p) / n)
+		Example: with ^p = 0.56, n = 100 and alpha = 5%
+		0.56 + c(-1,1) * qnorm(0.975) * sqrt(0.56 * 0.44 / 100)		
+		Or
+		Use binom.test(56, 100)$conf.int 				# Not using CLT
+	
+	For a 95% CI in a binomial event, ^p +- 1/sqrt(n)
+	
+	"Add 2 sucesses and 2 failures" - The Agresti-Coull interval is also another approximate binomial confidence interval.
+
+	# Poisson
+	X ~ Poisson(lambda t) then	^lambda = X/t	Var(^lambda) = lambda/t
+	The intervals can be estimated (x=5, t=94.32, 95% CI, lambda=x/t)
+		lambda + c(-1,1) * qnorm(0.975) * sqrt(lambda/t)
+		Or
+		poisson.test(5, T=94.43)$conf
+		
+		
+	# t Confidence Intervals
+
+	The t distribution has thicker tail than the normal.
+	It is indexed by a degree of freedom (if df is high, it behaves like a normal).
+	(hat(mu) - mu) / (S / sqrt(n))
+	
+	Note: the data must be roughly symmetric and with a bell curve. 
+	Discrete data and skewed distributions violates the t assumptions. You can take the log.
+	
+	The CLT intervals	Est +- quantile(normal) * standard error(estimated) 
+	The T intervals		Est +- quantile(T) * standard error(estimated) 
+
+	In a paired test, the data is collected from subjects measured at two different points wherein each subject has two measurements which are done before and after the treatment. (example: trying a special diet and having people measured before and after)
+	Unpaired tests, on the other hand, is when data is collected from two different and independent subjects or patients. (example: people with cancer and people without cancer)
+	
+	Assuming Paired data:
+		```{r}
+		library(UsingR); data(father.son)
+		t.test(father.son$sheight - father.son$fheight)
+		# or
+		t.test(father.son$sheight, father.son$fheight, paired = TRUE)
+		```
+	
+	If we assume constant variance accross the two groups, but not paired:	
+		t.test(g2, g1, paired = FALSE, var.equal = TRUE)$conf
+
+	If we can't assume constant variance or pairing:
+		t.test(g2, g1, paired = FALSE, var.equal = FALSE)$conf
+
+	Student’s t-test assumes that distributions of the two populations have equal but unknown variances. When the equal population variance assumption is not justified in performing Student’s t-test for the difference of means, use Welch’s t-test
+		T_welch = (bar(X_1) - bar(X_2)) / sqrt(s_1^2 / n_1 + s_2^2 / n_2)
+	
+	If the populations cannot be assumed or transformed to follow a normal distribution, a nonparametric test can be used. The Wilcoxon rank-sum test is a nonparametric hypothesis test that checks whether two populations are identically distributed. 
+		wilcox.test(x, y, conf.int = TRUE)
+		
+	Because the Wilcoxon test does not assume anything about the population distribution, it is generally considered more robust than the t-test. In other words, there are fewer assumptions to violate.
+	
+	
+# Hypothesis testing
+
+	H_0 i the null hypothesis. It is assumed true and evidence is required to reject it and accept H_a.
+	H_0: mu = mu_0 		H_a: mu != mu_0
+	H_0: mu_1 = mu_2 	H_a: mu_1 != mu_2
+	
+	Reject H_0 when
+	hat(mu) >= mu_0 + standardError * quantile(0.95)
+		standardError = sd_0 / sqrt(n)
+	sqrt(n) * (hat(mu) - mu_0) / s > Z_(1-alpha)
+		Z_(1-alpha) = 1.645 for 95%
+		Use qt(.95, degreesOfFreedom) for t-test
+		
+	Two sided test at 95% must be splitted into 2.5% on each tail
+		qt(.025, degreesOfFreedom) < H_0 < qt(.975, degreesOfFreedom)
+	
+	
+	# P-values
+	
+	A p-value of 0.01: if you ran your experiment 100 times, you would see the effect only once due to chance alone, and not actually due to whatever you're testing.
+	The .05 significance is arbitrary, both .01 and .1 are also reasonably common thresholds.
+	
+	Statistical significance says nothing about the size of the association. Reporting the effect size is necessary. 
+	
+	Cohen's term d = (mean_1 - mean_2) / s
+	Cohen classified effect sizes as small (d  =  0.2), medium (d  =  0.5), and large (d ≥ 0.8). 
+	
+	
+# Power
+
+	The power of a test is the probability of correctly rejecting the null hypothesis. In other words, if a study detect an effect, the effect is really there.
+
+	Power = 1 - beta, beta is the probability of a type II error (failing to reject the null hypothesis when it's false).
+	
+	We reject if (bar(X) - mu) / (sigma /sqrt(n)) > z_(1-\alpha)    
+		Equivalently  bar(X) > mu + z_(1-alpha) * (sigma / sqrt(n))
+	Under H_0: bar(X) ~ N(mu_0, sigma^2 / n)
+	Under H_a: bar(X) ~ N(mu_0, sigma^2 / n)
+	
+	In other words:
+	1 - beta = P(bar(X) > mu + z_(1-alpha) * (sigma / sqrt(n)) ; mu = mu_a )
+	Unknowns: mu_a, sigma, n, beta
+	Knowns: mu_0, alpha
+	If H_a is mu < mu_0, the test is similar.
+	If H_a is mu != mu_0, use alpha/2
+	
+	Power increases on alpha, n, mu_a (far from mu_0), sqrt(n)*(mu_a-mu_0)\sigma
+	(mu_a-mu_0)\sigma is called the effect size and it's unit-free.
+
+	```{r}
+	# you can omit one argument (power, n, delta, sd)
+	power.t.test(n = 16, delta = 2, sd = 4, type = "one.sample",  alt = "one.sided")$power
+	power.t.test(power = .8, delta = 2, sd = 4, type = "one.sample",  alt = "one.sided")$n
+	
+	alpha = 0.05; mu0 = 30; mua = 32; sigma = 4; n = 16
+	z = qnorm(1 - alpha)
+	pnorm(mu0 + z * sigma / sqrt(n), mean = mu0, sd = sigma / sqrt(n), lower.tail = FALSE)
+	pnorm(mu0 + z * sigma / sqrt(n), mean = mua, sd = sigma / sqrt(n), lower.tail = FALSE)
+	```
+	
+	# Effect Size
+	
+	When a difference is statistically significant, it does not necessarily mean that it is big, important, or helpful in decision-making. It simply means you can be confident that there is a difference. With a large enough sample size, almost any effect size can appear statistically significant. However, a very small effect size may be useless in a practical sense.
+	
+	Let’s say, for example, that you evaluate the effect of an EE activity on student knowledge using pre and posttests. The mean score on the pretest was 83 out of 100 while the mean score on the posttest was 84. Although you find that the difference in scores is statistically significant (because of a large sample size), the difference is very slight, suggesting that the program did not lead to a meaningful increase in student knowledge.
+	
+	Effect size: d = (bar(X1) - bar(X2)) / sqrt((s1^2 + s2^2) / 2)
+
+	Standardized quantity that measures the size of an effect as it exists in the population, in a way that is independent of certain details of the experiment such as the sizes of the samples used. In other words, all effect sizes are calculated on a common scale -- which allows you to compare the effectiveness of different programs on the same outcome.
+	
+
+# ANOVA
+	When comparing n models, t test are not sufficient, we use ANOVA 
+		H0: mu_1 = mu_2 = ... = mu_n
+		summary(aov(purchase_amt ~ offers, data=offertest))
+
+	The between-groups mean sum of squares is an estimate of the between-groups variance. It measures how the population means vary with respect to the grand mean, or the mean spread across all the populations.
+	The within-group mean sum of squares is an estimate of the within-group variance. It quantifies the spread of values within groups.
+	The F-test statistic in ANOVA can be thought of as a measure of how different the means are relative to the variability within each group. The larger the observed F-test statistic, the greater the likelihood that the differences between the means are due to something other than chance alone. The F-test statistic is used to test the hypothesis that the observed effects are not due to chance—that is, if the means are significantly different from one another.
+
+
+# Multiple testing
+	
+	First era: do we have enough data; second era: how do we compare data;
+	Our era: too many variables, which is one the most relevant?
+
+	With a 5% error, if we test 20 non-relevant variables, we may have one positive test.
+	
+						|   beta=0    |   beta!=0      |  Hypotheses
+	--------------------|-------------|----------------|---------
+	Claim beta  = 0     |       U     |       T        |   m-R 
+	Claim beta != 0     |       V     |       S        |   R 
+		Claims          |      m_0    |       m-m_0    |   m 
+
+	Type I error or false positive (V): Say that the parameter does not equal zero when it does; True H0 but reject it (False Positive)
+	Type II error or false negative (T): Say that the parameter equals zero when it doesn't; False H0 but fail to reject it (False Negative)
+
+	# Error rates
+	False positive rate - The rate at which false results (beta = 0) are called significant: E[V/m_0]
+	
+	Family wise error rate (FWER) - The probability of at least one false positive Pr(V >= 1)
+	# Controlling FWER
+	At 10k tests (P < 0.05), we expect 500 false positives. How to control that?
+	The Bonferroni correction is the oldest multiple testing correction: 
+		Suppose you do m tests
+		You want to control FWER at level alpha so Pr(V >= 1) < alpha
+		Calculate P-values normally
+		Set alpha_fwer = alpha/m
+		Call all P-values less than alpha_{fwer} significant
+	Pros: Easy to calculate, conservative
+	Cons: May be very conservative
+	
+	False discovery rate (FDR) - The rate at which claims of significance are false E[V/R]
+	# Controlling false discovery rate (FDR)
+	Benjamini-Hochberg, most popular correction when performing lots of tests say in signal-processing disciplines:
+		Suppose you do m tests
+		You want to control FDR at level alpha so E[V/R]
+		Calculate P-values normally
+		Order the P-values from smallest to largest $_(1),...,P_(m)
+		Call any P_(i) <= alpha * i/m significant
+	Pros: Still pretty easy to calculate, less conservative (maybe much less)
+	Cons: Allows for more false positives, may behave strangely under dependence
+
+	# Adjusted P-values
+	Adjust the threshold alpha or calculate "adjusted p-values"
+	They are not p-values anymore but they can be used directly without adjusting alpha: 
+	Suppose P-values are P_1,...,P_m
+	You could adjust them by taking P_i^{fwer} = max(m * P_i,1) for each P-value.
+	Then if you call all P_i^{fwer} < alpha significant you will control the FWER. 
+
+	```{R}
+	# No true positive
+		set.seed(1010093)
+		pValues <- rep(NA,1000)
+		for(i in 1:1000){
+		  y <- rnorm(20)
+		  x <- rnorm(20)
+		  pValues[i] <- summary(lm(y ~ x))$coeff[2,4]
+		}
+		# Controls false positive rate
+		sum(pValues < 0.05)
+		# Controls FWER 
+		sum(p.adjust(pValues,method="bonferroni") < 0.05)
+		# Controls FDR 
+		sum(p.adjust(pValues,method="BH") < 0.05)
+	
+	# 50% true positives
+		set.seed(1010093)
+		pValues <- rep(NA,1000)
+		for(i in 1:1000){
+		  x <- rnorm(20)
+		  # First 500 beta=0, last 500 beta=2
+		  if(i <= 500){y <- rnorm(20)}else{ y <- rnorm(20,mean=2*x)}
+		  pValues[i] <- summary(lm(y ~ x))$coeff[2,4]
+		}
+		trueStatus <- rep(c("zero","not zero"),each=500)
+		table(pValues < 0.05, trueStatus)
+
+		# Controls FWER (no true positives, but some false positives)
+		table(p.adjust(pValues,method="bonferroni") < 0.05,trueStatus)
+		# Controls FDR (less true positives)
+		table(p.adjust(pValues,method="BH") < 0.05,trueStatus)
+	```
+	
+# Permutation testing
+
+	Consider the null hypothesis that the distribution of the observations from each group is the same, Then, the group labels are irrelevant!
+	Consider a data formed with X and Y
+	Permute the Y (group) labels 
+	Recalculate the statistic
+		Mean difference in counts
+		Geometric means
+		T statistic
+	Calculate the percentage of simulations where the simulated statistic was more extreme (toward the alternative) than the observed
+	
+	```{R}
+	subdata <- InsectSprays[InsectSprays$spray %in% c("B", "C"),]
+	y <- subdata$count
+	group <- as.character(subdata$spray)
+	testStat <- function(w, g) mean(w[g == "B"]) - mean(w[g == "C"])
+	observedStat <- testStat(y, group)
+	# Here
+	permutations <- sapply(1 : 10000, function(i) testStat(y, sample(group)))
+	# Global mean difference
+	observedStat
+	# Extreme simulations
+	mean(permutations > observedStat)
+	```
+	
+	

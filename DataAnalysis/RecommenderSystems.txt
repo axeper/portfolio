@@ -1,0 +1,12 @@
+### Link Prediction and Social Recommendation
+
+How can people be represented by data? How can we draw similarity between them?
+1. Use a similarity measure between two users (e.g. number of friends in common weighted by communication, geographical proximity, common interests).
+2. Use a similarity measure as features of a pair of people
+
+One of the most popular approaches for providing recommendations, described in detail in anarticle by several of the Netflix competition winners (Koren, Bell, & Volinsky, 2009), is to base the model on latent dimensions underlying the preferences. 
+
+Read the Netflix Challenge / The Netflix Prize on wikipedia.
+
+Find the best d latent dimensions that the training finds, compute the user receptivity to d.
+

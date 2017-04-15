@@ -1,0 +1,73 @@
+### Naive Bayes
+
+Simple, fast, perform well in multiclass prediction and useful for a baseline. 
+Performance is low because of the assumption of independance. Also it assumes equal importance for all features (rarely true).
+Good for incremental learning (i.e. when train and test data changes often).
+
+Prefer random forests for performance (slower and needs parameter optimization).
+
+
+### Theory
+
+Joint probability: 
+	p(A, B) = p(A) * p(B | A) = p(A) * p(B) if A and B are independent.
+
+Bayes Theorem:
+	
+	p(C = c | E) = p(E | C = c) * p(C = c) / p(E)
+	
+	p(C = c) is the prior probability (base rate). It is the closest guess you can make about a class, without any further information.
+	p(E | C = c) is the likelihood that we see E knowing that we have C = c
+	p(E) is the prior probability of getting E. Also called marginal likelihood.
+	p(C = c | E) is the posterior distribution. Given E, what's the probability we get C = c?
+
+	
+### Example
+	p(A | B) = p(B | A) * p(A) / p(B)
+	A = spam, B = contains the word "FREE"
+	
+	p(A) is the probability of a message being spam.
+	p(B | A) is the likelihood of previous messages being spam and containing the word "FREE"’. 
+	p(B) is the probability that the word "FREE" is used in any message.
+	p(A | B) is the likelihood that a message containing the word "FREE" is spam.
+	
+
+### Simplifications
+Simplification I - P(a1,a2,...,am|c) = P(a1|c) * P(a2|c) * ... * P(am|c)
+Simplification II - Ignore the denominator P(a1,a2,...,am) because it is constant for all
+If we are dealing with small number use the log
+	logP(c) + sum(logP(a_i|c))
+Laplace smoothing helps with small leafs
+	P**(x) = [count(x) + epsilon] / [sum(count(x) + epsilon)]
+
+
+### Using Decision Trees
+- Approximately 3 out of every 1000 drivers will drive while drunk. 
+- The breathalyzer test detects a drunk person with 98%.
+- 4% of the time breathalyzer tests give a positive result for someone who is not drunk. 
+
+drunk?	Y positive?	Y = .003 * .98
+		Y			N = .003 * .02
+		N			Y = .997 * .04
+		N 			N = .997 * .96
+
+- p(drunk | positive) = p(positive | drunk) * p(drunk) / p(positive)
+  - (.98) * (.003) / (.003 * .98 + .997 * .04)
+	
+	
+### Assuming independence
+p(E | C = c) = p(e1 & e2 & ... & en | C = c) is hard to measure, unless we assume independence then it becomes p(e1 | C = c) * p(e2 | C = c) * ... 
+
+Assuming independence, we get 
+p(c0 | E) = p(c0) * p(e1|c0) *...*p(ek|c0) / [ p(e1|c0) *...*p(ek|c0) + p(e1|c1) *...*p(ek|c1)]
+
+````{r}
+library(e1071)
+model <- naiveBayes(Enrolls ~ Age+Income+JobSatisfaction+Desire, traindata, laplace = .01)
+results <- predict (model,testdata)
+```
+
+
+
+
+

@@ -1,0 +1,21 @@
+## Python 
+
+
+### Creating a virtualenv
+
+[Documentation](https://conda.io/docs/using/envs.html)
+
+Create a virtual environment, named bunnies with numpy installed, compare the two version of python and delete the environment
+
+```{cmd}
+conda create --name bunnies numpy
+
+python  -V
+
+activate bunnies
+python -V
+deactivate bunnies
+
+conda info --envs
+conda remove --name bunnies --all
+```

@@ -1,0 +1,162 @@
+## Time Series 
+
+Box-Jenkins Methodology:
+1. The trend refers to the long-term movement in a time series. It indicates whether the observation values are increasing or decreasing over time.
+2. The seasonality component describes the fixed, periodic fluctuation in the observations over time, it is often related to the calendar.
+3. A cyclic component also refers to a periodic fluctuation, but one that is not as fixed as in the case of a seasonality component (e.g. boom-bust cycles).
+4. After accounting for the other three components, the random component is what remains (noise + underlying structure).
+
+A time series, yt for t=1,2,3,... is a stationary time series if the following three conditions are met:
+  - (a) The expected value (mean) of yt is a constant for all values of t.
+  - (b) The variance of yt is finite.
+  - (c) The covariance of yt and yt+h depends only on the value of h=0,1, 2, . . .for all t.
+
+Autocorrelation Function provides insight into the covariance of the variables and its underlying structure (i.e. how much variables vary with each other)
+  - ACF(h) = cov(h) / cov(0), where h is the lag
+  - Exponential decay is indicative of a stationary series.
+
+Autoregressive Models AR(p) is
+  - yt = delta + phi1*y t-1 + ... + phip*y t-p + epsilon t
+  - The partial autocorrelation function (PACF) provides a measure of autocorrelation yt and y t+h (partial correlation of a time series with its own lagged values). It contrasts with the autocorrelation function, which does not control for other lags.
+
+A Moving Average Model MA(q)
+  - yt = eps_t + theta_1 * eps_t-1 + ... + theta_q * eps_t-q
+  - In an MA(q) model, the value of a time series is a linear combination of the current white noise term and the prior q white noise terms.
+
+Autoregressive Moving Average model ARMA(p,q)
+  - yt = delta + phi1*y t-1 + ... + phip*y t-p + epsilon t + eps_t + theta_1 * eps_t-1 + ... + theta_q * eps_t-q
+  - To apply an ARMA model properly, the time series must be a stationary one (no trend, cyclicity ,...)
+  - Removing a simple trend: subtract the value of a fitted regression line/model.
+  - Removing complex behavior: differencing : d_t = y_t - y_t-1 (note: differencing can be applied successively but variance will increase)
+
+Autoregressive Integrated Moving Average model ARIMA(p,d,q)
+  - ARIMA = differencing d times + ARMA(p, q)
+  - Prefer models with the smallest AIC, AICc or BIC value.
+  - Normality and constant variance assumption: observe a histogram and a Q-Q plot
+	```{r}
+	library(forecast)
+	x <- ts(X[ ,2])
+	plot(diff(x))
+	acf(diff(x), xaxp = c(0, 48, 4), lag.max=48, main="")
+	pacf(diff(x), xaxp = c(0, 48, 4), lag.max=48, main="")
+	arima_2 <- arima (x, order=c(0,1,0), seasonal = list(order=c(1,0,0),period=12))
+	
+	# ARIMA(p,d,q) x (P,D,Q)_s 
+	# s is seasonality, P,D,Q is number of AR/differencing/MA across s periods
+	acf(arima_2$residuals, xaxp = c(0, 48, 4), lag.max=48, main="")
+	
+	# Forecasting (after hist and qqnorm of the residuals)
+	arima_2.predict <- predict(arima_2,n.ahead=12)
+	matrix(c(arima_2.predict$pred-1.96*arima_2.predict$se,arima_2.predict$pred, arima_2.predict$pred+1.96*arima_2.predict$se), 12,3,
+	
+	plot(gas_prod, xlim=c(145,252), xlab = "Time (months)", ylab = "Gasoline production (millions of barrels)", ylim=c(360,440))
+	lines(arima_2.predict$pred)
+	lines(arima_2.predict$pred+1.96*arima_2.predict$se, col=4, lty=2)
+	lines(arima_2.predict$pred-1.96*arima_2.predict$se, col=4, lty=2)
+	```
+More: Autoregressive Moving Average with Exogenous inputs (ARMAX), Spectral analysis, Generalized Autoregressive Conditionally Heteroscedastic (GARCH), Kalman filtering, Multivariate time series analysis
+
+
+
+
+## Time Series Forecasting
+
+Exponential smoothing techniques base a future forecast off of past data where the most recent observations are weighted more than older observations.
+
+
+### Simple Exponential Smoothing
+
+Uses one smoothing coefficients: alpha (accounts for past data)
+Not very good at following trend
+
+
+### Holt's Trend-Corrected Exponential Smoothing / Double exponential smoothing
+
+Uses two smoothing coefficients: alpha, gamma (accounts for trends)
+
+Are you accounting for seasonality? 
+- Compute Holt's autocorrelation to find patterns
+- Worry about the autocorrelations larger than 2/sqrt(number of data points)
+- You will most likely find weekly, monthly, yearly autocorrelations, account for this using triple exponential smoothing
+
+
+### Multiplicative Holt-Winters Smoothing / Triple exponential smoothing
+
+Uses three smoothing coefficients: alpha, gamma, delta (accounts for seasonality)
+
+- Smooth out the historical data using what's called a 2×12 moving average.
+i.e. take (MA month:1-12 + MA month:2-13) / 2
+  - You need two year of data for one year of smoothed data (the first six and last six months do not have data)
+- Compare a smoothed version of the time series to the original to estimate seasonality.
+  - A simple division original/skewed (take the mean when you have multiple month values) is enough. 
+- Using the initial seasonal estimates, deseasonalize the historical data. i.e. Divide Original by Seasonal estimate
+- Estimate the level and trend using a trendline on the deseasonalized data.
+- Use the algorithm, optimize the three parameters
+
+Note: When forecasting, use prediction intervals
+A Monte Carlo simulation can be useful to draw the 2.5 and 97.5 quantiles
+Display in a fan chart (time series)
+
+```{r}
+sword <- read.csv("References/DataSmart/SwordDemand.csv")
+sword.ts <- ts(sword,frequency=12,start=c(2010,1))
+
+install.packages("forecast",dependencies=TRUE)
+library(forecast)
+
+sword.forecast <- forecast(sword.ts)
+sword.forecast$method
+[1] "ETS(M,A,M)"		
+# MAM stands for multiplicative error, additive trend, multiplicative seasonality. It's a triple exponential smoothing
+plot(sword.forecast)
+```
+
+
+### Forecasting
+
+Data are dependent over time with specific pattern types (trends, seasonal, cycles)
+Subsampling into training/test is more complicated
+Similar issues arise in spatial data 
+	Dependency between nearby observations
+	Location specific effects
+Typically goal is to predict one or more observations into the future. 
+All standard predictions can be used (with caution!)
+
+```{r}
+library(quantmod)
+from.dat <- as.Date("01/01/08", format="%m/%d/%y")
+to.dat <- as.Date("12/31/13", format="%m/%d/%y")
+getSymbols("GOOG", src="google", from = from.dat, to = to.dat)
+
+mGoog <- to.monthly(GOOG)
+googOpen <- Op(mGoog)
+ts1 <- ts(googOpen,frequency=12)
+
+plot(ts1,xlab="Years+1", ylab="GOOG")
+plot(decompose(ts1),xlab="Years+1")
+
+ts1Train <- window(ts1,start=1,end=5)
+ts1Test <- window(ts1,start=5,end=(7-0.01))
+
+# Moving Average
+plot(ts1Train)
+lines(ma(ts1Train,order=3),col="red")
+
+# Exponential smoothing
+ets1 <- ets(ts1Train,model="MMM")
+fcast <- forecast(ets1)
+plot(fcast); lines(ts1Test,col="red")
+
+accuracy(fcast,ts1Test)
+```
+
+* Rob Hyndman's [Forecasting: principles and practice](https://www.otexts.org/fpp/) is a good place to start
+* See [quantmod](http://cran.r-project.org/web/packages/quantmod/quantmod.pdf) or [quandl](http://www.quandl.com/help/packages/r) packages for finance-related problems.
+
+
+
+What cross validation technique would you use on time series data set?
+Not k-fold but a forward chaining strategy with 5 fold.
+
+
+

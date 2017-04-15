@@ -1,0 +1,210 @@
+## Basics
+
+### Process
+
+- Question -> 
+- Input data -> 
+  - Garbage in, garbage out
+  - More data > better models
+- Features ->
+  - Choose sparse (leads to compression) but relevant features
+  - Choice is based on application knowledge
+  - Don't rely on automated but uncomprehensible features 
+  - Study outliers
+  - Don't throw away information
+- Algorithm -> 
+  - Prefer a generic algorithm to a specific one
+- Parameters optimization -> 
+- Model Evaluation
+	
+	
+### Definitions
+
+- Supervised learning
+  - infer a function from labeled data
+  - learn by example (input + target) and give an output
+  - predict the price of X given Y
+  - SVM, neural networks, linear regression, logistic regression
+- Unsupervised learning
+  - infer a function to describe hidden structure in the unlabelled data
+  - no output
+  - find customer segments
+  - clustering, PCA, SVD
+	
+- Prediction
+  - Minimization of the reducible error when making an educated guess.
+  - Is this house under- or over-valued?
+- Inference 
+  - Understanding of the relationship between X and Y.
+  - How much extra will a house be worth if it has a view of the river? 
+
+- Parametric method: income ~= b0 + b1 * education + b2 * experience
+- Non-Parametric method: income = thin-plate spline(education, experience)
+- The parametric approach will outperform the nonparametric approach if the parametric form that has been selected is close to the true form of f.
+
+- Regression deals with quantitative variables.
+- Classification deals with categorical variables.
+
+#### Bias-variance tradeoff
+- Error = bias^2 + Variance + Irreductible error
+- Bias error is useful to quantify how much on an average are the predicted values different from the actual value. A high bias error means we have a under-performing model which keeps on missing important trends by erroneous or overly simplistic assumptions in the learning algorithm.
+- Variance quantifies how are the prediction made on same observation different from each other. A high variance model will overfit on your training population and perform badly on any observation beyond training due to too much complexity in the learning algorithm you’re using.
+- Essentially, if you make the model more complex and add more variables, you’ll lose bias but gain some variance. In other words, as we use more flexible methods, the variance will increase and the bias will decrease
+- Do we follow the data as closely as possible (overfitting, high variance) or do we generalize as much as possible disregarding most of the data (underfitting)?
+	
+#### Overfitting
+- “If you torture the data long enough, it will confess."
+- In Sample Error: The error rate you get on the same data set you used to build your predictor. Sometimes called resubstitution error.
+- Out of Sample Error: The error rate you get on a new data set. Sometimes called generalization error.	
+- Out of sample error is key because it prevents overfitting on noise.
+- To evaluate the generalization performance, you need holdout data, and in the case of a limited dataset, you can use cross-validaton.
+- Overfitting is akin to memorization, whereas underfitting is the base rate (usually the mean or median).
+- Limit overfitting with: cross-validation, regularization, keeping a model simple (complexity control, pruning).
+- Use train and test for cross-validation, but validation/holdout only for results.
+- Split sets randomly following 60%, 20%, 20%.
+- With similar results, prefer simpler models.
+
+	
+### Cross-validation
+
+Repeatedly drawing samples from a training set and refitting a model of interest on each sample in order to obtain additional information about the fitted model. Computationally expensive but usually not prohibitively so. Note: use chunks when working with time series.
+		
+- Leave-one-out cross-validation (LOOCV)
+  - Train on everything but one sample, compute the MSE or the error rate, repeat, take the average of all MSE computed
+  - Advantages: less bias towards the test error, consistent because of no randomness by splitting the data.
+  - LOOCV can be computationally expensive because it generally requires one to construct many models — equal in number to the size of the training set. However, for some special cases, we have a "short cut" identity (least-squares polynomial regression)
+- k-Fold Cross-Validation
+  - Train on k-1 group, test on the hold-out fold. This procedure is repeated k-times and average the k MSE estimates.
+  - Computationally less expensive than LOOCV (except for linear models where the leverage identity holds)
+- Bias reduction -> LOOCV, Variance reduction -> k-Fold CV. A good trade-off is k = 5 or k = 10 to suffer from neither high bias or high variance.
+- Nested cross-validation: the inner CV (CV on the train set) is for model selection, the outer CV (CV on the train and hold out data) is for performance estimation. 	
+	
+	
+### Techniques for variable Selection
+- Subset Selection
+  - Forward stepwise selection / Sequential Forward Selection: starts with 0 predictors and fit the models that augment the model with one additional predictor, pick the best model (lowest RSS, highest R^2). Select the best model using CV error, AIC, BIC, adjusted R^2
+  - Backward stepwise selection: starts with p predictors and fit the models that contains the model with one less predictor, pick the best model (lowest RSS, highest R^2). Select the best model using CV error, AIC, BIC, adjusted R^2
+  - Hybrid approach: for each additional predictor, can we remove irrelevant predictors?
+- Remove the correlated variables with VIF > 5
+- Linear regression and select variables based on p-values
+- Random Forest, Xgboost and plot variable importance chart
+- Lasso Regression automatically shrinks coefficient to 0	
+	
+	
+### Dealing with collinearity multicollinearity
+State of very high intercorrelations or inter-associations among the independent variables.
+
+- Issues:
+  - Large standard error because of imprecise regression.
+  - The test of hypothesis that the coefficient is equal to zero may lead to a failure to reject a false null hypothesis of no effect of the explanatory (Type II error)
+  - Leads to overfitting
+- Remove multicollinearity:
+  - Compute Variance Inflation Factor, VIF >= 10 indicates large multicollinearity.
+  - Principal component regression gives uncorrelated predictors
+  - Combine the affected variables
+  - Ridge regression
+  - Partial least square regression
+  - Get a correlation matrix, get rid of >75%. 
+
+	
+### Types of error
+
+“All models are wrong but some are useful” 
+	
+- Mean squared error (or root mean squared error)
+  - MSE: 1/n * sum(Prediction_i - Truth_i)^2
+  - RMSE: sqrt( 1/n * sum(Prediction_i - Truth_i)^2)
+  - Continuous data, sensitive to outliers
+- Mean absolute deviation (or mean absolute error):
+  - MAE: 1/n * sum(abs(Prediction_i - Truth_i))
+  - Continuous data, robust to outliers
+
+- Accuracy
+  - (TP + TN) / (TP + FP + FN + TN)
+  - Problem: weights false positives/negatives equally
+  - Note: error rate is usually 1 - accuracy
+- False Positive rate / Type I error / 1 - Specificity
+  - FP / (TN + FP)
+- False Negative rate / Type II error
+  - FN / (TN + FP)
+- Precision / Positive Predictive Value
+  - TP / (TP + FP)
+  - Measure how well the test identify true and positive results.
+- Recall / True Positive Rate / Sensitivity
+  - TP / (TP + FN)
+  - Measure how well the test identify true and negative results.
+- Specificity / True Negative Rate 
+  - TN / (FP + TN)
+- Negative Predictive Value
+  - TN / (FN + TN)
+- F1 score
+  - Weighted average of precision and recall, 1 is best. Use it in classification tests where true negatives don’t matter much.
+	
+- R-squared
+  - R^2 = 1 - (RSS / TSS), RSS = sum((y_i - hat(y_i)^2), TSS = sum((y_i - bar(y)^2)
+  - Percent of variance explained by the model
+  - R-squared increases every time you add a predictor and can trick you into specifying an overly complex model. Use the adjusted R-squared to account for degrees of freedom.
+- Adjusted R-squared
+  - R-squared that accounts for increasing number of predictors
+- p-values
+  - Low p-values (arbitrarily < 0.05) are considered statistically significant predictors.
+- VIF
+  - Ratio of variances of the coefficient when fitting the full model divided by the variance of the coefficient when fitted on its own.
+  - Rule of thumb: VIF > 5 indicates multicollinearity
+- Mallow's Cp
+  - Cp = 1 / n * (RSS + 2 * d * sigma^2), where d is the number of predictors and sigma an estimate of the variance of the error. 
+  - Note: RSS + penalty accounting for the test error and the number of predictors
+- AIC (Akaike information criterion): likelihood approach to Cp
+- BIC (Bayesian information criterion), Bayesian approach to Cp
+- ROC curve (plot of Senstivity vs (1 - Specificity))
+  - Graphical representation of the trade-off between true positive rates (sensitivity) and the false positive rate at various thresholds.
+  - The bigger the area, the better the curve: 0.5 is random, 1 is perfect, 0.8 is good
+- If the test metrics are similar and show flat curves, apply the one-standard-error rule: calculate the standard error of the estimated test MSE for each model size, and then select the smallest model for which the estimated test error is within one standard error of the lowest point on the curve. The rationale here is that if a set of models appear to be more or less equally good, then we might as well choose the simplest model—that is, the model with the smallest number of predictors.
+  
+- Concordance
+  - Kappa to measure inter-rater agreement for categorical items.
+		
+#### Validating an insight
+- Sign-test
+  - Counts the number of times A has a better metrics than B and assumes this comes from a binomial distribution. Then we can obtain a p-value of the Ho test: A and B are equal in terms of performance.
+- One sample Z test
+- Two-sample Z test
+- One sample t-test
+- Paired t-test
+- Two sample pooled equal variances t-test
+- Two sample unpooled unequal variances t-test and unequal sample sizes (Welch’s t-test)
+- Chi-squared test for variances
+- Chi-squared test for goodness of fit
+- Anova 
+- Regression F-test
+- TurkeyHSD
+	
+#### Final checks
+- Residual plot
+- Assumptions of linear regression
+  - The data used in fitting the model is representative of the population
+  - Normality of error distribution
+  - Statistical independence of errors/residuals
+  - Variance of the residuals is constant (homoscedasticity)
+  - Linearity
+  - Additivity
+
+#### Loss function is the general term for error penalty.
+- Zero-one loss: zero for correct decision, one for incorrect
+- Absolute error: absolute distance.
+- Squared error: distance as a measure of error (note this penalizes correct and incorrect prediction alike)
+- Hinge loss: l(y) = max(0, 1 - t * y), where t is the true output +-1 and y is the predicted output. if t and y are the same, you get 0, else you increase linearly the error.
+	
+#### More
+RMSLE, WMAE, Global F-test
+	
+
+### Recommended Methods
+Output of the classification should include class probabilities in addition to the class labels. / Logistic regression, decision tree
+Analysts want to gain an insight into how the variables affect the model. / Logistic regression, decision tree
+The problem is high dimensional. / Naïve Bayes
+Some of the input variables might be correlated. / Logistic regression, decision tree
+Some of the input variables might be irrelevant. / Decision tree, naïve Bayes
+The data contains categorical variables with a large number of levels. / Decision tree, naïve Bayes
+The data contains mixed variable types. / Logistic regression, decision tree
+There is nonlinear data or discontinuities in the input variables that would affect the output. / Decision tree

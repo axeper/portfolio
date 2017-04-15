@@ -1,0 +1,176 @@
+# Notations
+
+	X_i - observation
+	bar(X) - empirical mean, bar(X) = 1/n * sum(X_i)
+	tilde(X) - data with mean = 0, tilde(X_i) = X_i - bar(X)
+	Var(X) = 1/(n-1) * sum( (X_i - bar(X))^2 ) = 1/(n-1) * sum((X_i)^2 - n*bar(X)^2)
+	Standard deviation = sqrt(Var(x)) = sqrt(S^2) = S
+	
+	Centering = removing the mean; X_i - mean(x)
+	Scaling = setting the standard deviation to 1; X_i / S
+	Normalization = data between [0, 1];  (X_i - min(x)) / (max(x) - min(x))
+	Standardization = data with mean 0 and sd 1; (X_i - bar(X)) / S)
+	
+	Cov(X,Y) = 1/n-1 * sum((X_i - bar(X)) (Y_i -bar(Y))) 
+			 = 1/n-1 * sum(X_i * Y_i - n * bar(X) * bar(Y))
+	Cor(X,Y) = Cov(X,Y) / (S_x * S_Y)
+	Cov(X,Y) and Cor(X,Y) tells you how much the change in X are associated with changes in Y. Cor() is standardized between [-1, 1] while Cov() isn't.
+	
+	
+# Introduction to least squares
+	
+	Given
+		hat(y) = hat(b0) + hat(b1) * x
+	Minimize RSS 
+		RSS = (y - hat(y))^2 = e1^2 + ... + en^2 = 
+		(y1 - hat(b0) - hat(b1) * x1)^2 + .... 
+
+	Fit the line (beta_0 + beta_1 * x_i) through the data pairs (X_i, Y_i) where
+		hat(b1) = sum(xi - bar(x)) * (yi - bar(y)) / sum(xi - bar(x))^2 =  Cor(Y,X) * Sd(Y) / Sd(X)
+		hat(b0) = bar(y) - hat(b1) * bar(x)
+
+	```{r}
+	# Regression
+	beta1 <- cor(y, x) *  sd(y) / sd(x); beta0 <- mean(y) - beta1 * mean(x);
+	coef(lm(y ~ x))
+		
+	# Regression to the origin (i.e. get the slope):
+	yc <- y - mean(y); xc <- x - mean(x); beta1 <- sum(yc * xc) / sum(xc ^ 2);
+	coef(lm(formula = y ~ x - 1))
+	```
+	
+	hat(mu) = bar(y) = 1/n * sum(yi)
+	Var(hat(mu)) = SE(hat(mu))^2 = sigma^2 / n, SE is the standard error
+		
+	When modifying the intercept, the slope doesn't change
+	Y_i = tilde(beta_0) + beta_1 * (X_i - a) + epsilon_i
+	When multiplying X_i by a, we divide beta_1 by a
+	Y_i = beta_0 + tilde(beta_1) * (X_i * a) + epsilon_i
+
+	The difference between a prediction interval and a confidence interval is the standard error.
+	Confidence intervals tell you about how well you have determined the mean (expected outcome).
+	Prediction intervals tell you where you can expect to see the next data point sampled (next possible outcome).
+
+	How do you choose predictors?
+	Forward selection: add predictors to the null model if they have low RSS until stopping rule.
+	Backward selection (only if p <= n): start with all the variables and remove the largest p-values until stopping rule..
+	Mixed selection: add predictors then remove the ones with high p-value.
+	
+	# General rules
+	Beware of the unknown unknows: regressors that we don't even know about that we should have included in the model.
+	Omitting variables results in bias in the coefficients of interest - unless their regressors are uncorrelated with the omitted ones.
+	Including any variable increase standard errors of other regressors.
+	
+	
+# Accuracy of the fit
+
+	Compute RSE = sqrt(RSS/ n - p - 1), where p is number of degrees of freedom. 
+	A large RSE indicates a bad fit.
+
+	Hypothesis testing
+		State null hypothesis (H0: X and Y do not relate)
+		Mathematically describe it (H0 : b1 = 0)
+		t-statistic: t = (hat(b1) - b1) / SE(hat(b1)), here b1 = 0
+		Get the p-value (a small p-value indicates that it is unlikely that the effect was chance)
+
+	Total Sum of squares = Error not included in the model + Error of the model 
+	sum(Y_i - bar(Y))^2 = sum(Y_i - hat(Y_i))^2 + sum(hat(Y_i) - bar(Y))^2 
+	TSS = sum(yi - bar(y))^2 is the total sum of squares
+		
+	R^2 = 1 - RSS / TSS. R^2 measures the proportion of variability in Y that can be explained using X. 
+	Correlation and R^2 are identical for linear model. R^2 always increases when adding predictors.
+	R^2 can be misleading (see example(anscombe))
+	```{r}
+	R^2 = sum((hat(yi) - bar(y))^2 / sum((yi - bar(y))^2;
+	summary(lm(y ~ x))$r.squared
+	```
+
+	F-statistic = [(TSS - RSS) / p] / [RSS / (n - p - 1)]. F > 1 is evidence against the null hypothesis. It's a t-test for group variables.
+	
+	Residuals are the difference between the observed and predicted outcome
+	e_i = yi - hat(yi) = [b0 + b1 * X_i + eps_i] - [hat(b0) + hat(b1) * X_i]
+	sum(e_i)= 0 	
+	E[e_i] = sum(e_i * x_i) = 0
+
+	```{r}
+	e <- resid(lm(y ~ x))
+	summary(lm(y ~ x))$sigma
+	```
+
+# Potential problems:
+	1. Non-linearity of the response-predictor relationships
+		Look at the residual plots: can we see some non-linearity Do the residuals have mean zero?
+		If the residual plot indicates that there are non-linear associations in the data, then a simple approach is to use non-linear transformations of the predictors, such as logX, sqrt(X), and X2, in the regression model.
+	2. Correlation of error terms.
+		Beware with time series data. Residuals might be correlated.
+	3. Non-constant variance of error terms.
+		Residual plots might show heteroscedasticity. Using log() or sqrt() functions can decrease the effect.
+		Q-Q plot: a straight line means that residuals are normally distributed.
+	4. Outliers.
+		Plot the studentized residuals, computed by dividing each residual by its estimated standard error. Observations whose studentized residuals are greater than 3 in absolute value are possible outliers.
+	5. High-leverage points.
+		Compute the leverage statistics (how far from the center of the axis the data point is)
+		Influence: whether or not the leverage is acted upon.
+	6. Collinearity.
+		Increase the t-statistic (thus the p-value)
+		Inspect the correlation matrix
+		Compute the VIF. VIF = 1 no collinearity (orthogonal), VIF > 5, 10 is problematic.
+		Drop (or combine, i.e. take the mean) the predictors with high VIF.
+
+	?influence.measures include:
+		rstandard - standardized residuals, residuals divided by their standard deviations)
+		rstudent - standardized residuals, residuals divided by their standard deviations, where the ith data point was deleted in the calculation of the standard deviation for the residual to follow a t distribution
+		hatvalues - measures of leverage
+		dffits - change in the predicted response when the $i^{th}$ point is deleted in fitting the model.
+		dfbetas - change in individual coefficients when the $i^{th}$ point is deleted in fitting the model.
+		cooks.distance - overall change in teh coefficients when the $i^{th}$ point is deleted.
+		resid - returns the ordinary residuals
+		resid(fit) / (1 - hatvalues(fit)) where `fit` is the linear model fit returns the PRESS residuals, i.e. the leave one out cross validation residuals - the difference in the response and the predicted response at data point $i$, where it was not included in the model fitting.
+		
+		
+# Questions to answers
+	1. Is there a relationship between X and Y?
+		Use F-statistic to reject H0
+	2. How strong is the relationship?
+		RSE, R^2
+	3. Which of the predictors are contributing to Y?
+		Discard predictors with high p-values
+	4. How large is the effect of each medium?
+		Does the confidence intervals include 0? Is it narrow?
+		Check the VIF for collinearity. VIF is the square of standard error inflation.
+	5. How accurately can we predict future Y?
+		The accuracy associated with this estimate depends on whether we wish to predict an individual response, Y = f(X) + eps, or the average response, f(X).
+		If the former, we use a prediction interval, and if the latter, we use a confidence interval. 
+		Prediction intervals will always be wider than confidence intervals because they account for the uncertainty associated with epsilon, the irreducible error.
+	6. Is the relationship linear?
+		Check the residual plot for nonlinearity
+	7. Is there synergy/interaction between the terms?
+		See the plots. Check the p-value of the interraction term, recompute R^2
+	8. Skepticism around fitted parameters
+		Do they make sense? Do we need another predictor?
+
+	
+# Restrictions of linear models
+	The relationship between predictors and response are additive and linear.
+	Look for interaction terms. This makes the model nonlinear.
+	The hierarchical principle states that if we include an interaction in a model, we should also include the main effects, even if the p-values associated with principle their coefficients are not significant.
+	Compared to KNN, linear regression performs better 1) when the assumptions are true (f is indeed linear) 2) at high dimensions because of the curse of dimensionality (no close neighbors)
+
+
+# Notes
+	Multivariable regression analysis
+		The interpretation of a multivariate regression coefficient is the expected change in the response per unit change in the regressor, holding all of the other regressors fixed.
+		Note, the important linearity is linearity in the coefficients.
+
+		# When using factors, the estimates are all proportional to the intercept (sprayA)
+		# i.e. sprayB = estimate_intercept + estimate_sprayB
+		# Use relevel to change the intercept from sprayA to sprayC
+		spray2 <- relevel(InsectSprays$spray, "C")
+		summary(lm(count ~ spray2, data = InsectSprays))$coef
+
+	Simpson paradox
+		Modeling multivariate relationships is difficult. Expertise is required.
+		Adjustement for other variables can REVERSE the sign of an effect
+		Ascertaining mechanisms or cause are difficult subjects to be added on top of difficulty in understanding multivariate associations.
+
+

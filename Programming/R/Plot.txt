@@ -7,8 +7,10 @@
 	Label the data correctly
 	Content is king
 	
-	# Exploratory graphs
-	summary()	boxplot()	hist() + rug()	barplot()	
+	
+# Exploratory graphs
+	summary()	boxplot()	hist() + rug()	barplot()
+	dotchart()  plot(density())    stem()   library(hexbin) 
 	use abline() to add straight line to show median, sd
 	
 	# Examples of 2D plots

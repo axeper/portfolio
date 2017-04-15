@@ -1,0 +1,162 @@
+## Business Knowledge 
+
+### Principles
+- Extracting useful knowledge from data to solve business problems can be treated systematically by following a process with reasonably well-defined stages (e.g. CRISP-DM).
+- From a large mass of data, information technology can be used to find informative descriptive attributes of entities of interest
+- If you look too hard at a set of data, you will find something—but it might not generalize beyond the data you’re looking at. (Overfitting)
+- Formulating data mining solutions and evaluating the results involves thinking carefully about the context in which they will be used.
+
+
+### The Cross Industry Standard Process for Data Mining, abbreviated CRISP-DM
+- Business Understanding: the design team should think carefully about the use scenario, i.e. what is the end goal?
+- Data Understanding: what raw data can be used? What is the cost and the effort of that data? Defining the variables to use.
+- Modeling: What technology should be used?
+- Evaluation: Assess rigorously the results of the modeling process. How does it perform in laboratory and real-world settings? Is it easily comprehensible, deployable and maintainable?
+- Deployment: real use to produce return on investment.
+- This process is not a development but rather an iterative and exploratory approach and strategy.
+
+[Four Problems in Using CRISP-DM and How To Fix Them](http://www.kdnuggets.com/2017/01/four-problems-crisp-dm-fix.html?utm_content=buffer481d4&utm_medium=social&utm_source=twitter.com&utm_campaign=buffer)
+
+Others: Davenport's DELTA, Hubbard's Applied Information Economics, Cohen et al.'s "MAD Skills"
+
+
+### Data Analytics Lifecycle
+1. Discovery - What do I need to draft an analytic plan for business peer-review?
+  - Understand the business domain.
+  - Scope the resources (technology, tools, systems, data, people, domain experts)
+  - Identify the main objective(s), frame it in business terms and account for success, "good enough" and failure.
+  - Identify the key stakeholders, set clear expectations to have their approval.
+  - Prepare for an interview with the project sponsors
+    - What business problem is the team trying to solve?
+    - What is the desired outcome of the project?
+    - What data sources are available?
+    - What industry issues may impact the analysis?
+    - What timelines need to be considered?
+    - Who could provide insight into the project?
+    - Who has final decision-making authority on the project?
+    - How will the focus and scope of the problem change if the following dimensions change:
+      - Time: Analyzing 1 year or 10 years’ worth of data?
+      - People: Assess impact of changes in resources on project timeline.
+      - Risk: Conservative to aggressive
+      - Resources: None to unlimited (tools, technology, systems)
+      - Size and attributes of data: Including internal and external data sources
+    - Prepare for the interview; draft questions, and review with colleagues.
+    - Use open-ended questions; avoid asking leading questions.
+    - Probe for details and pose follow-up questions.
+    - Avoid filling every silence in the conversation; give the other person time to think.
+    - Let the sponsors express their ideas and ask clarifying questions, such as “Why? Is that correct? Is this idea on target? Is there anything else?”
+    - Use active listening techniques; repeat back what was heard to make sure the team heard it correctly, or reframe what was said.
+    - Try to avoid expressing the team’s opinions, which can introduce bias; instead, focus on listening.
+    - Be mindful of the body language of the interviewers and stakeholders; use eye contact where appropriate, and be attentive.
+    - Minimize distractions.
+    - Document what the team heard, and review it with the sponsors.
+  - Identify potential data sources, start reviewing the raw data, evaluate the data structures and tools needed, scope the sort of data infrastructure needed.
+2. Data Preparation - Is the data good enough and in high volume?
+  - Prepare an Analytic Sandbox so that the data science team can access everything.
+  - Perform Extract, Transform, Load, Transform (Hadoop, APIs, ...)
+  - Learn about the data, especially make a dataset inventory (available & accessible, available not accessible, to collect, to obtain from Third Party)
+  - Clean, normalize, transform, merge the raw data into usable data. Account for any systematic errors.
+  - Survey and visualize: “overview first, zoom and filter, then details-on-demand.”
+  - Guidelines
+    - Review data to ensure that calculations remained consistent within columns or across tables for a given data field. For instance, did customer lifetime value change at some point in the middle of data collection? Or if working with financials, did the interest calculation change from simple to compound at the end of the year?
+    - Does the data distribution stay consistent over all the data? If not, what kinds of actions should be taken to address this problem?
+    - Assess the granularity of the data, the range of values, and the level of aggregation of the data.
+    - Does the data represent the population of interest? For marketing data, if the project is focused on targeting customers of child-rearing age, does the data represent that, or is it full of senior citizens and teenagers?
+    - For time-related variables, are the measurements daily, weekly, monthly? Is that good enough? Is time measured in seconds everywhere? Or is it in milliseconds in some places? Determine the level of granularity of the data needed for the analysis, and assess whether the current level of timestamps on the data meets that need.
+    - Is the data standardized/normalized? Are the scales consistent? If not, how consistent or irregular is the data?
+    - For geospatial datasets, are state or country abbreviations consistent across the data? Are personal names normalized? English units? Metric units?
+  - Common tools: Hadoop, Alpine Miner, OpenRefine, Data Wrangler
+3. Model Planning - Do we have a good idea about the type of model to try?
+  - Data Exploration, Variable Selection, Model Selection
+  - Common tools: R, SQL analysis services, SAS
+4. Model Building - Is the model robust enough?
+  - Divide the data in train, validation, hold-out
+    - Does the model appear valid and accurate on the test data?
+    - Does the model output/behavior make sense to the domain experts? That is, does it appear as if the model is giving answers that make sense in this context?
+    - Do the parameter values of the fitted model make sense in the context of the domain?
+    - Is the model sufficiently accurate to meet the goal?
+    - Does the model avoid intolerable mistakes? Depending on context, false positives may be more serious or less serious than false negatives, for instance.
+    - Are more data or more inputs needed? Do any of the inputs need to be transformed or eliminated?
+    - Will the kind of model chosen support the runtime requirements?
+    - Is a different form of the model required to address the business problem? If so, go back to the model planning phase and revise the modeling approach.
+  - Common tools: SAS Enterprise Miner, SPSS Modeler, Matlab, Alpine Miner, Statistica, Mathematica, R, PL/R, Octave, WEKA, Python, SQL
+5. Communicate Results
+  - Compare results from step 4 with the objectives of step 1.
+  - Identify the salient points: what are the three main findings that can be shared with the stakeholders? How do they translate in business value?
+6. Operationalize
+  - Deploy a small scope, pilot project.
+  
+
+### Data Science and Business Strategy
+- Good relations between business managers and data science.
+- Does data, as a strategic asset, provides competitive advantage? Or is the company at competitive disadvantage?
+- How does the company sustain the competitive advantage?
+  - Historical advantage such as Amazon in the dotcom bubble
+  - Intellectual property (patent or trade secrets)
+  - Intangible assets (business culture)
+  - Data scientist as valuable individuals (top-notch skills + strong professional network)
+  - Good data science management (integration of the needs of the business and the technical activities)
+- David Brooks' “What Data Can’t Do” (Brooks, 2013).
+
+
+### Solving business problems
+The role of data mining must be clear and the business constraints, cost, and benefits are considered. Any simplifying assumptions are made consciously and explicitly.
+
+1. Define an objective function with business sense
+  - Expected profit = expected revenue - expected cost = p(R | x) * revenue(x) + [1 - p(R | x)] * cost(x), cost(x) < 0
+  - Expected revenue in case of positive response + expected cost in case of negative response
+  - Make explicit the cost and revenue of Type I and II errors.
+2. What data do we need?
+  - What is our control group (usually the company records)?
+  - What is the targeted group (as it does not exist, you have to make assumptions or gather data)?
+
+  
+### What is a good model?
+Connect the model to the initial goal: does the model provide value? 
+The solution must address the problem in quantitative way.
+
+1. Accuracy = correct decisions / total decisions, TP + TN / total; it's 1 - error rate
+  - Simple measure but do not work when the base rate / skew in the data is high (e.g. 1 / 1000 person is sick, always saying "sick" is .999 accurate)
+  - Does not tell anything about Type I and Type II errors (which are critical if the test data is skewed).
+  - Weight Type I and Type II error similarily.
+  
+2. Expected value: sum(pi * vi), pi is the probability and vi its value
+  - Expected benefit from a client: p(x) * v + [1 - p(x)] * ~v, where v is the profit and ~v the cost
+  - Example in advertising: $99 profit, $1 cost then p(x) * 99 > [1 - p(x)] * $1, i.e. we make a profit from an advertising campaign if the response rate is p(x) > 0.01
+
+  - Other example: using the confusion matrix, compute each probability rate (TP, FP, FN, TN), (56, 7, 5, 42). Compute the cost-benefit matrix(99, -1, 0, 0). Then, when p is a positive response and n a negative response.
+    - Expected profit = p(p) * [TP rate * cost + FN rate * cost] + p(n) * [FP rate * cost + TN rate * cost]
+	- T = 110, P = 61, N = 49, p(p) = 0.55, p(n) = 0.45, TP = 56/61 * 99, FP = 7/49 * - 1, FN = 5/61 * 0, TN = 42/49 * 0; Expected profit = 50.04
+
+#### Base rates
+Always compare your result to some base rate like:
+- Majority classifier: always predict the majority class (very useful in skewed data)
+- Aggregate multiple simple averages.
+- A very, very simple model (a decision stump: a decision tree with one only node)
+- Creating a model using domain knowledge.
+
+#### Visual model performance
+How can we assert the performance of a model when choosing a threshold? And what's the best threshold?
+
+- Profit curves: expected values vs threshold
+- ROC graphs: FP rate vs TP rate
+  - AUC: performance of a ROC. Useful as a single number.
+  - As ROC is hard to understand, you can use Cumulative Response Curve (how many samples for how many sales). Perfect curve is 1/1 curve
+  - Lift Curves (how do I compare against random guessing?). The more lift, the better.
+
+
+### Endgame
+Structure:
+- Project Goals: Situation, complication, implication
+- Main Findings: Executive summary = key message as a business impact + three supporting points
+- Approach: methodology (more or less technical)
+- Model Description: algorithm, data, variables
+- Key points supported by the data
+- Model Details: more technical points
+- Recommendations: what to do next
+
+Tips: use images, be MECE (say everything without redundancy), quantify as much as possible (great value -> $X in savings)
+
+Tailor the presentation for each stakeholders (high-level takeaways for executive-level stakeholders, technical graphs for analyst, code and technical specifications for engineers)
+
+Provide technical specifications: deliver code, anticipate IT related questions, documentation, APIs, specifications, data format, structures, exception handling, pre- and post-process, ...

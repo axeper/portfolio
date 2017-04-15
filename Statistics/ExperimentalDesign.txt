@@ -1,0 +1,78 @@
+# Experimental design
+
+# Data science guidelines
+	Ensure that there is no selection bias in test data used for performance comparison
+	Ensure that the test data has sufficient variety in order to be symbolic of real-life data (helps avoid overfitting)
+	Ensure that "controlled experiment" principles are followed, i.e. while comparing performance, the test environment (hardware, etc.) must be exactly the same while running original algorithm and new algorithm
+	Ensure that the results are repeatable with near similar results
+	Examine whether the results reflect local maxima/minima or global maxima/minima
+
+	
+# Regression problems
+	Using regression to analyze a nonlinear relationship
+	Correlation is not causation
+	Reverse causality (explaining GDP with unemployment)
+	Omitted variable bias (golfers die of heart attacks vs age)
+	Highly correlated explanatory variables (multicollinearity) (drug use vs a specific drug as people may change depending on the availability)
+	Extrapolating beyond the data. Statistics are valid only for sample similar to the population measured.
+	Data mining (too many variables). Make 20 studies, you have a chance to have a significant result.
+	Note: 1) data provenance and key variables are more important than the methods. 2) the results are only circumstantial, skepticism, replication and critical thinking are needed
+
+	
+# Program evaluation 
+	How can we measure causal effect of X?
+
+	Randomized, controlled experiments.
+		Create a treatment and control group by distributing the study participants randomly across the two groups.
+		Ideally, clinical trials are double-blind, meaning that neither the patient nor the physician knows who is receiving the treatment and who is getting a placebo.
+	Natural experiment
+		Change in laws: states with minimum schooling laws vs others
+	Nonequivalent control
+		When randomization is not possible, we have a risk of introducing a potential bias. Good students randomly attributed to Harvard or Princeton
+		
+
+# How to distinguish reliable and non-reliable study:
+	Always report: sample size, effect size, base rate
+	Large sample size and with large effects
+	Greater number of and lesser selection of tested relationship
+	Greater flexibility in designs, definitions, outcomes, and analytical modes
+	Minimal bias due to financial and other factors (including popularity of that scientific field)
+
+
+# Experimental design for user behavior
+	Step 1: Formulate the Research Question:
+		What are the effects of page load times on user satisfaction ratings?
+	Step 2: Identify variables:
+		We identify the cause & effect. Independent variable: page load time, Dependent variable: user satisfaction rating
+	Step 3: Generate Hypothesis:
+		Lower page download time will have more effect on the user satisfaction rating for a web page. Here the factor we analyze is page load time.
+	Step 4: Determine Experimental Design.
+		Within-participants design - both user groups see both versions.
+		Between-participants design - one group of users see version A & the other user group version B.
+	Step 5: Develop experimental task & procedure:
+		Detailed description of steps involved in the experiment, tools used to measure user behavior, goals and success metrics should be defined. Collect qualitative data about user engagement to allow statistical analysis.
+	Step 6: Determine Manipulation & Measurements
+		One level of factor will be controlled and the other will be manipulated. We also identify the behavioral measures: latency, frequency, duration-length, intensity-force
+	Step 7: Analyze results
+		Identify user behavior data and support the hypothesis or contradict according to the observations made for e.g. how majority of users satisfaction ratings compared with page load times.
+		
+		
+# A/B 
+	A/B testing (split testing) is comparing two versions of a web page to see which one performs better. 
+	You compare two web pages by showing the two variants (let's call them A and B) to similar visitors at the same time. The one that gives a better conversion rate, wins.
+	
+	
+# Identify a cause vs. a correlation:
+	Correlation: statistical measure that describes the size and direction of a relationship between two or more variables. A correlation between two variables doesn’t imply that the change in one variable is the cause of the change in the values of the other variable
+	Causation: indicates that one event is the result of the occurrence of the other event; there is a causal relationship between the two events
+	Example: sleeping with one’s shoes on is strongly correlated with waking up with a headache.Therefore, sleeping with one’s shoes causes headach vs going to bed drunk.
+	Identify a cause Vs a correlation: use of a controlled study
+	In medical research, one group may receive a placebo (control) while the other receives a treatment. If the two groups have noticeably different outcomes, the different experiences may have caused the different outcomes
+	
+	
+# When you sample, what bias are you inflicting?
+	Selection bias: An online survey about computer use is likely to attract people more interested in technology
+	Under coverage bias: Sample too few observations from a segment of population
+	Survivorship bias: Observations at the end of the study are a non-random set of those present at the beginning of the investigation. In finance and economics: the tendency for failed companies to be excluded from performance studies because they no longer exist.
+
+

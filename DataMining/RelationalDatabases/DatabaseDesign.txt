@@ -1,5 +1,4 @@
-Database design with UML and SQL, 3rd edition
-http://www.tomjewett.com/dbdesign/dbdesign.php?page=intro.html
+[Database design with UML and SQL, 3rd edition](http://www.tomjewett.com/dbdesign/dbdesign.php?page=intro.html)
 
 	Models and languages
 		 The Unified Modeling Language (UML) - tool for communicating with the client in terms that are used in the enterprise
@@ -25,7 +24,8 @@ http://www.tomjewett.com/dbdesign/dbdesign.php?page=intro.html
 			cZipCode
 			___________
 			___________		methods (empty here)
-						
+		
+		
 		Relation schemes (relational model)
 			Customers Scheme = {cFirstname, cLastname, cPhone, cStreet, cZipCode}
 			
@@ -117,3 +117,5 @@ http://www.tomjewett.com/dbdesign/dbdesign.php?page=intro.html
 				No transitive functional dependencies
 				Eliminate subkeys (where the subkey is not part of the primary key)
 		
+
+[What every developer should know about SQL performance](http://use-the-index-luke.com/sql/table-of-contents)

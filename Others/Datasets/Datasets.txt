@@ -1,0 +1,30 @@
+# General data
+- [Open Governments](http://www.data.gov/opendatasites)
+- [Gap Minder](http://www.gapminder.org/)
+- [Survey data](http://www.asdfree.com/)
+- [Infochimps marketplace](http://www.infochimps.com/marketplace)
+- [Kaggle](http://www.kaggle.com/)
+- [Collections by data scientists](http://blog.mortardata.com/post/67652898761/6-dataset-lists-curated-by-data-scientists)
+
+# More specialized collections
+- [Stanford Large Network Data](http://snap.stanford.edu/data/)
+- [UCI Machine Learning](http://archive.ics.uci.edu/ml/)
+- [KDD Nugets Datasets](http://www.kdnuggets.com/datasets/index.html)
+- [CMU Statlib](http://lib.stat.cmu.edu/datasets/)
+- [Gene expression omnibus](http://www.ncbi.nlm.nih.gov/geo/)
+- [ArXiv Data](http://arxiv.org/help/bulk_data)
+- [Public Data Sets on Amazon Web Services](http://aws.amazon.com/publicdatasets/)
+
+# Others
+- [Top Datasets on Reddit](http://www.kdnuggets.com/2013/12/top-datasets-on-reddit.html)
+- [9 Must-Have Datasets for Investigating Recommender Systems](http://www.kdnuggets.com/2016/02/nine-datasets-investigating-recommender-systems.html)
+-[Fueling the Gold Rush: The Greatest Public Datasets for AI
+](https://medium.com/startup-grind/fueling-the-ai-gold-rush-7ae438505bc2#.mv5q4gy1s)
+- [25+ websites to find datasets for data science projects
+](https://www.analyticsvidhya.com/blog/2016/11/25-websites-to-find-datasets-for-data-science-projects/)
+- [Cool Datasets](http://cooldatasets.com/)
+- [Free Datasets](https://webhose.io/datasets)
+- [List of open data sets 1](http://www.datapure.co/open-data-sets)
+- [List of open data sets 2](http://www.kdnuggets.com/2011/02/free-public-datasets.html)
+
+
