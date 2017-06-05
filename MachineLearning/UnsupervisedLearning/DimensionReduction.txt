@@ -1,9 +1,19 @@
 ## Dimension reduction
 
+
+### Simple transformations
+- StandardScaler: ensures that for each feature the mean is 0 and the variance is 1.
+- RobustScaler: scales using the median and quartiles, instead of mean and variance. Removes outliers.
+- MinMaxScaler: shifts the data such that all features are exactly between 0 and 1.
+- Normalizer: scales each data point such that the feature vector has a Euclidean length of 1.
+
+
 PCA: Find a new set of multivariate variables that are uncorrelated and explain as much variance as possible. (statistical goal)
 	
 SVD: Putting all the variables together in one matrix, we want to find the best matrix created with fewer variables that explains the original data. (data compression goal)	
-		
+
+t-SNE (manifold learning): find a two-dimensional representation of the data that preserves the distances between points as best as possiblIn other words.
+
 	
 ### PCA
 
@@ -37,6 +47,10 @@ Interpretation 2: find the best projection of the data into a lower dimensional 
 - Only considers orthogonal transformations (rotations) of the original variables
 - PCA is only based on the mean vector and covariance matrix. Some distributions (multivariate normal) are characterized by this but some are not
 - If the variables are correlated, PCA can achieve dimension reduction. If not, PCA just orders them according to their variances
+
+
+### NMF
+Whereas in PCA we wanted components that were orthogonal and that explained as much variance of the data as possible, in NMF, we want the components and the coefficients to be non-negative; that is, we want both the components and the coefficients to be greater than or equal to zero. Consequently, this method can only be applied to data where each feature is non-negative, as a non-negative sum of non-negative components cannot become negative.
 
 
 ### SVD: 
@@ -84,7 +98,15 @@ plot(svd1$u[, 2], col = sub1$activity, pch = 19)
 ```
 
 
+### Manifold Learning with t-SNE
+While PCA is always a good first approach, the nature of the method (applying a rotation and then dropping directions) limits its usefulness.
+t-SNE, like all Manifold Learning, tries to preserve the information indicating which points are neighbors to each other.
+
+
 ### Alternatives
+If you are interested in this kind of pattern extraction, we recommend that you study the sections of the scikit_learn user guide on independent component analysis (ICA), factor analysis (FA), and sparse coding (dictionary learning), all of which you can find on the page about decomposition methods. 
+http://scikit-learn.org/stable/modules/decomposition.html
+
 - [Factor analysis](http://en.wikipedia.org/wiki/Factor_analysis)
 - [Independent components analysis](http://en.wikipedia.org/wiki/Independent_component_analysis)
 - [Latent semantic analysis](http://en.wikipedia.org/wiki/Latent_semantic_analysis)

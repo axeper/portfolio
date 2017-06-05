@@ -1,2 +1,5 @@
 # Ignore temporary unsorted files
 /TODO
+
+# Ignore the jupyter checkpoints
+.ipynb_checkpoints

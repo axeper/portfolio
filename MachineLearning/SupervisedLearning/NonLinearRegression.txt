@@ -1,5 +1,9 @@
 ## Non Linear Regression
 
+
+If a is very large and high-dimensional, but some features have nonlinear relations with the output, we can use non linear techniques (binning, polynomial features, ...) can increase modeling power.
+
+
 ### Basis functions
 The idea is to have at hand a family of functions or transformations that can be applied to a variable X:  b1(X), b2(X), . . . , bK(X). Instead of fitting a linear model in X, we fit the model: yi = β0 + β1(xi) + β2(xi)^2 + β3(xi)^3 + . . . + βd(xi)^d + epsilon_i.
 
@@ -22,6 +26,8 @@ Fit a least squares using C0(X), C1(X), ... Ck(X) as predictors
 - yi = β0 + β1C1(xi) + β2C2(xi) + . . . + βkCK(xi) + epsilon_i.
 
 
+
+
 ### Regressions splines
 Fitting polynomials into K knots so that they join smoothly. Use CV to choose K with the lowest MSE.
 
@@ -40,6 +46,8 @@ Polynomials use a high degree to produce flexible fits, whereas splines introduc
 The extra flexibility in the polynomial produces undesirable results at the boundaries, like wild oscillations, while the natural cubic spline still provides a reasonable fit to the data as they always extrapolate linearly.
 
 
+
+
 ### Smoothing splines
 Regression splines trying to minimize a residual sum of squares:
 - minimize g: sum((yi - g(xi))^2) + lambda * integral(g''(t)^2)
@@ -48,10 +56,14 @@ Regression splines trying to minimize a residual sum of squares:
   - lambda can be chosen with LOOCV, as there is a very efficient formula to compute RSS for smoothing splines
 
   
+  
+  
 ### Local regression
 Overlapping splines
 Choose s a span of points, a weighting function K and the type of regression (linear, quadratic. 
 Fit a weighted least squares according to the point in the span s, their weight according to K 
+
+
 
 ### Generalized additive models (GAMs)
 General framework for extending a standard linear model by allowing non-linear functions of each of the variables, while maintaining additivity. Just like linear models, GAMs can be applied with both quantitative and qualitative responses.

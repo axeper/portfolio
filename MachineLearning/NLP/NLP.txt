@@ -4,7 +4,7 @@ Challenges:
 - Unstructured data
 - Curse of dimensionality 
 - Text on the internet is deeply flawed.
-- Context is important. ("So bad, it's good." is it a positive or negative statement?)
+- Context is important. ("So bad, it's good." is a positive or negative statement?)
 
 Definitions:
 - Corpus is a group of documents, which is a group of tokens (words).
@@ -19,12 +19,12 @@ Process:
 1. Bag of words approach: a document is a collection of individual words.
   - Preprocessing
     - lowercasing, tokenization, stemming (e.g. plurals to singular), stopwords removal (the, and, a are too common), lemmatization (match each word with its dictionary form), Part-of-Speech Tagging (sentence into a tag sequence: he saw a fox -> pronoun verb determiner noun)
-	- Note: lowercasing can be an error (The Who, WHO and who).
+    - Note: lowercasing can be an error (The Who, WHO and who).
     - Note: should numbers be removed? Yes but 1Q13 should stay
     - Note: don't remove stopwords in cases like movie titles
   - Measuring sparseness: too rare and too common is useless
     - Term Frequency Inverse Document Frequency
-	  - TFIDF is efficient in that the calculations are simple and straightforward, and it does not require knowledge of the underlying meanings of the text. It highlights informative words but reveals little of the inter-document or intra-document statistical structure. 
+      - TFIDF is efficient in that the calculations are simple and straightforward, and it does not require knowledge of the underlying meanings of the text. It highlights informative words but reveals little of the inter-document or intra-document statistical structure. 
       - TF(t, d) = # of appearances of word t in document d. Also: log TF, normalized TF, binary TF.
       - IDF(t) = 1 + log(total documents / documents containing t), if t is rare, IDF is high, if t is common it tends to 1. Also log IDF, Laplace
       - TFIDF(t, d) = TF(t, d) * IDF(t)
@@ -46,4 +46,4 @@ Process:
 5. Sentiment analysis 
   - Document level or phrase level? SVM, naive Bayes, MaxEnt achieve around 80% accuracy.
    - NLTK with Python
-   - Sentiment140 twitter demo	
+   - Sentiment140 twitter demo

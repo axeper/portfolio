@@ -1,7 +1,6 @@
 ## Basics
 
 ### Process
-
 - Question -> 
 - Input data -> 
   - Garbage in, garbage out
@@ -19,7 +18,6 @@
 	
 	
 ### Definitions
-
 - Supervised learning
   - infer a function from labeled data
   - learn by example (input + target) and give an output
@@ -31,12 +29,12 @@
   - find customer segments
   - clustering, PCA, SVD
 	
-- Prediction
-  - Minimization of the reducible error when making an educated guess.
-  - Is this house under- or over-valued?
 - Inference 
   - Understanding of the relationship between X and Y.
   - How much extra will a house be worth if it has a view of the river? 
+- Prediction
+  - Minimization of the reducible error when making an educated guess.
+  - Is this house under- or over-valued?
 
 - Parametric method: income ~= b0 + b1 * education + b2 * experience
 - Non-Parametric method: income = thin-plate spline(education, experience)
@@ -45,13 +43,15 @@
 - Regression deals with quantitative variables.
 - Classification deals with categorical variables.
 
+
 #### Bias-variance tradeoff
 - Error = bias^2 + Variance + Irreductible error
 - Bias error is useful to quantify how much on an average are the predicted values different from the actual value. A high bias error means we have a under-performing model which keeps on missing important trends by erroneous or overly simplistic assumptions in the learning algorithm.
 - Variance quantifies how are the prediction made on same observation different from each other. A high variance model will overfit on your training population and perform badly on any observation beyond training due to too much complexity in the learning algorithm you’re using.
 - Essentially, if you make the model more complex and add more variables, you’ll lose bias but gain some variance. In other words, as we use more flexible methods, the variance will increase and the bias will decrease
 - Do we follow the data as closely as possible (overfitting, high variance) or do we generalize as much as possible disregarding most of the data (underfitting)?
-	
+
+
 #### Overfitting
 - “If you torture the data long enough, it will confess."
 - In Sample Error: The error rate you get on the same data set you used to build your predictor. Sometimes called resubstitution error.
@@ -64,22 +64,69 @@
 - Split sets randomly following 60%, 20%, 20%.
 - With similar results, prefer simpler models.
 
-	
-### Cross-validation
 
+### Curse of Dimensionality
+As the number of features or dimensions grows, the amount of data we need to generalize accurately grows exponentially.
+
+
+### Cross-validation
 Repeatedly drawing samples from a training set and refitting a model of interest on each sample in order to obtain additional information about the fitted model. Computationally expensive but usually not prohibitively so. Note: use chunks when working with time series.
 		
 - Leave-one-out cross-validation (LOOCV)
   - Train on everything but one sample, compute the MSE or the error rate, repeat, take the average of all MSE computed
-  - Advantages: less bias towards the test error, consistent because of no randomness by splitting the data.
+  - Advantages: less bias towards the test error, consistent because of no randomness by splitting the data. Better on smalle datasets.
   - LOOCV can be computationally expensive because it generally requires one to construct many models — equal in number to the size of the training set. However, for some special cases, we have a "short cut" identity (least-squares polynomial regression)
 - k-Fold Cross-Validation
   - Train on k-1 group, test on the hold-out fold. This procedure is repeated k-times and average the k MSE estimates.
   - Computationally less expensive than LOOCV (except for linear models where the leverage identity holds)
+  - In scikit-learn, you have KFold(), ShuffleSplit(), StratifiedShuffleSplit(), GroupKFold() nad many others
 - Bias reduction -> LOOCV, Variance reduction -> k-Fold CV. A good trade-off is k = 5 or k = 10 to suffer from neither high bias or high variance.
-- Nested cross-validation: the inner CV (CV on the train set) is for model selection, the outer CV (CV on the train and hold out data) is for performance estimation. 	
+- Nested cross-validation: the inner CV (CV on the train set) is for model selection, the outer CV (CV on the train and hold out data) is for performance estimation. But it is computationally very expensive.
+	param_grid = [{'kernel': ['rbf'], 'C': [1, 10], 'gamma': [1, 10]}, {'kernel': ['linear'], 'C': [1, 10]}]
+	scores = cross_val_score(GridSearchCV(SVC(), param_grid, cv=5), iris.data, iris.target, cv=5)
+
+```{python}
+def nested_cv(X, y, inner_cv, outer_cv, Classifier, parameter_grid):
+    outer_scores = []
+    # for each split of the data in the outer cross-validation
+    # (split method returns indices)
+    for training_samples, test_samples in outer_cv.split(X, y):
+        # find best parameter using inner cross-validation:
+        best_parms = {}
+        best_score = -np.inf
+        # iterate over parameters
+        for parameters in parameter_grid:
+            # accumulate score over inner splits
+            cv_scores = []
+            # iterate over inner cross-validation
+            for inner_train, inner_test in inner_cv.split(
+                    X[training_samples], y[training_samples]):
+                # build classifier given parameters and training data
+                clf = Classifier(**parameters)
+                clf.fit(X[inner_train], y[inner_train])
+                # evaluate on inner test set
+                score = clf.score(X[inner_test], y[inner_test])
+                cv_scores.append(score)
+            # compute mean score over inner folds
+            mean_score = np.mean(cv_scores)
+            if mean_score > best_score:
+                # if better than so far, remember parameters
+                best_score = mean_score
+                best_params = parameters
+        # build classifier on best parameters using outer training set
+        clf = Classifier(**best_params)
+        clf.fit(X[training_samples], y[training_samples])
+        # evaluate 
+        outer_scores.append(clf.score(X[test_samples], y[test_samples]))
+    return np.array(outer_scores)
+
+from sklearn.model_selection import ParameterGrid, StratifiedKFold
+scores = nested_cv(iris.data, iris.target, StratifiedKFold(5),
+                   StratifiedKFold(5), SVC, ParameterGrid(param_grid))
+print("Cross-validation scores: {}".format(scores))
+```
 	
-	
+
 ### Techniques for variable Selection
 - Subset Selection
   - Forward stepwise selection / Sequential Forward Selection: starts with 0 predictors and fit the models that augment the model with one additional predictor, pick the best model (lowest RSS, highest R^2). Select the best model using CV error, AIC, BIC, adjusted R^2
@@ -89,7 +136,10 @@ Repeatedly drawing samples from a training set and refitting a model of interest
 - Linear regression and select variables based on p-values
 - Random Forest, Xgboost and plot variable importance chart
 - Lasso Regression automatically shrinks coefficient to 0	
-	
+- scikit-learn Statistics / Model-Based / Iterative
+    - from sklearn.feature_selection import SelectPercentile, SelectFromModel, RFE
+- Expert knowledge	
+
 	
 ### Dealing with collinearity multicollinearity
 State of very high intercorrelations or inter-associations among the independent variables.
@@ -108,7 +158,6 @@ State of very high intercorrelations or inter-associations among the independent
 
 	
 ### Types of error
-
 “All models are wrong but some are useful” 
 	
 - Mean squared error (or root mean squared error)
@@ -137,8 +186,9 @@ State of very high intercorrelations or inter-associations among the independent
   - TN / (FP + TN)
 - Negative Predictive Value
   - TN / (FN + TN)
-- F1 score
+- F1 score / Fscore
   - Weighted average of precision and recall, 1 is best. Use it in classification tests where true negatives don’t matter much.
+  - Has 3 parameters in multiclass classification: "macro", "micro", "weighted".
 	
 - R-squared
   - R^2 = 1 - (RSS / TSS), RSS = sum((y_i - hat(y_i)^2), TSS = sum((y_i - bar(y)^2)
@@ -163,7 +213,8 @@ State of very high intercorrelations or inter-associations among the independent
   
 - Concordance
   - Kappa to measure inter-rater agreement for categorical items.
-		
+
+
 #### Validating an insight
 - Sign-test
   - Counts the number of times A has a better metrics than B and assumes this comes from a binomial distribution. Then we can obtain a p-value of the Ho test: A and B are equal in terms of performance.
@@ -200,11 +251,15 @@ RMSLE, WMAE, Global F-test
 	
 
 ### Recommended Methods
-Output of the classification should include class probabilities in addition to the class labels. / Logistic regression, decision tree
-Analysts want to gain an insight into how the variables affect the model. / Logistic regression, decision tree
-The problem is high dimensional. / Naïve Bayes
-Some of the input variables might be correlated. / Logistic regression, decision tree
-Some of the input variables might be irrelevant. / Decision tree, naïve Bayes
-The data contains categorical variables with a large number of levels. / Decision tree, naïve Bayes
-The data contains mixed variable types. / Logistic regression, decision tree
-There is nonlinear data or discontinuities in the input variables that would affect the output. / Decision tree
+- Get a baseline to familiarize yourself with the data then build more complex
+- Small datasets, baseline / Nearest neighbors
+- Large datasets, high dimensional data, baseline / Linear models
+- Classification with very large datasets, high-dimensional data. Expect lower performance than linear models. / Naïve Bayes
+- Fast, don't need scaling, not sparse. / Decision tree, random forest, gradient boosted decision trees
+- Output of the classification should include class probabilities in addition to the class labels. / Logistic regression, decision tree
+- Analysts want to gain an insight into how the variables affect the model. / Logistic regression, decision tree
+- Some of the input variables might be correlated. / Logistic regression, decision tree
+- Some of the input variables might be irrelevant. / Decision tree, naïve Bayes
+- The data contains categorical variables with a large number of levels. / Decision tree, naïve Bayes
+- The data contains mixed variable types. / Logistic regression, decision tree
+- There is nonlinear data or discontinuities in the input variables that would affect the output. / Decision tree

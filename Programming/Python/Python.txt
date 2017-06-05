@@ -1,8 +1,13 @@
 ## Python 
 
 
-### Creating a virtualenv
+### Guidelines
+[PEP 8 -- Style Guide for Python Code](https://www.python.org/dev/peps/pep-0008/)
 
+[Transforming Code into Beautiful, Idiomatic Python](https://gist.github.com/JeffPaine/6213790)
+
+
+### Creating a virtualenv
 [Documentation](https://conda.io/docs/using/envs.html)
 
 Create a virtual environment, named bunnies with numpy installed, compare the two version of python and delete the environment
@@ -19,3 +24,81 @@ deactivate bunnies
 conda info --envs
 conda remove --name bunnies --all
 ```
+
+
+### Fluent Python tips
+
+[Magic Method list](http://www.diveintopython3.net/special-method-names.html)
+Example: to evaluate col[key], the interpreter calls col.__getitem__(key)
+
+Named Tuples
+from collections import namedtuple
+City = namedtuple('City', 'name country population coordinates')
+_fields is a tuple with the field names of the class.
+_make() lets you instantiate a named tuple from an iterable.
+_asdict() returns a collections.OrderedDict built from the named tuple instance.
+
+bisect(haystack, needle) does a binary search for needle in haystack — which must be a sorted sequence — to locate the position where needle can be inserted while maintaining haystack in ascending order.
+bisect.bisect_left() insert to the left
+Similarily, bisect.insort() insert the item directly into the sorted array and preserve the sorting.
+
+When not to use lists?
+- Iterating over the generator expression or the list comprehension will do the same thing. However, the list comprehension will create the entire list in memory first while the generator expression will create the items on the fly, so you are able to use it for very large (and also infinite!) sequences.
+  - (i for i in ...) is a generator expression and [i for i in ...] is a list comprehension.
+- FIFO or LIFO data structure? Use collections.deque
+  - queue, multiprocessing, asyncio, heapq all implement their own version of queue
+- Lots of containment check (item in collection)? Use set
+- 10 millions of float? Use array.array
+  - dump/load with tofile() fromfile()
+  - sort with a = array.array(a.typecode, sorted(a))
+  - adding item in a sorted array with bisect.insort
+- Saving quickly all built.in types? Use pickle.dump
+
+Dicts
+- Dict are sparse (very fast) but they are not space efficient (the price is memory). Prefer named tulpes
+  - collections.OrderedDict - keys are maintained in insertion order
+  - collections.ChainMap - holds a list of mappings which can be searched as one
+  - collections.Counter - a mapping that holds an integer count for each key
+
+Sets
+- A set is a collection of unique objects. Set is not hashable, frozenset is hashable.
+  - Count occurrences needles in a haystack; these lines work for any iterable types.
+  - found = len(set(needles) & set(haystack))
+  - found = len(set(needles).intersection(haystack))
+  
+  
+Generators (module itertools)
+- mapping: accumulate, enumerate, starmap
+- filtering: compress, filterfalse, predicate, ....
+- merge: chain, product, zip_longest, chain.from_iterable
+- expand output: combinations, combinations_with_replacement, count, cycle, permutations, repeat, product
+- rearrange: groupby, tee
+- reducing: all, any, min, max, reduce
+
+
+
+
+
+### Tips and tricks
+b, a = a, b 
+
+a, b, *rest = range(5) 								# excess unpacking
+
+tshirts = [(c, s) for c in colors for s in sizes]	# cartesian product with list comprehension
+
+from time import perf_counter as pc					# Performance timer
+t0 = pc(); #code here; pc() - t0
+
+my_dict.setdefault(key, []).append(new_value)		# Handling missing values
+
+with urlopen(URL) as remote, open(JSON, 'wb') as local:
+    local.write(remote.read())
+	
+try:
+	dangerous_call()
+except OSError:
+	log('OSError...')
+else:
+	after_call()
+
+	

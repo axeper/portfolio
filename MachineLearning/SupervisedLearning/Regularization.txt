@@ -7,6 +7,7 @@
   - If n >> p, the model will have low variance, and will perform well on test observations
   - If n ~= p, there will be a lot of variability in the fit. Poor predictions should be expected.
   - If n < p, the method cannot be used. This can be corrected by constraining or shrinking the estimated coefficients, thus substantially reduce the variance at the cost of a negligible increase in bias
+- The lesson is that enough data makes regularization less important.
 - Model Interpretability
   - Irrelevant variables can lead to unnecessary complexity. Excluding irrelevant variables can be done automatically by feature selection or variable selection.
 

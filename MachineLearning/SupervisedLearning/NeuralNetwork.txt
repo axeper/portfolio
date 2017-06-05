@@ -1,0 +1,8 @@
+## Neural network
+
+
+Nonlinear function (tanh or relu, f(x) = max(0, x)) applied to a weighted sum.
+
+Neural networks expect all input features to ideally have a mean of 0, and a variance of 1.
+
+Tuning neural network is extremely difficult, scikit-learn's implementation of MLPs has two easy-to-use choices: 'adam' (sensitive to scaling) and 'l-bfgs' (more robust but slower to train).

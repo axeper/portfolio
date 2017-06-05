@@ -59,14 +59,14 @@
 		
 # A/B 
 	A/B testing (split testing) is comparing two versions of a web page to see which one performs better. 
-	You compare two web pages by showing the two variants (let's call them A and B) to similar visitors at the same time. The one that gives a better conversion rate, wins.
+	You compare two web pages by showing the two variants to similar visitors at the same time. The one that gives a better conversion rate, wins.
 	
 	
 # Identify a cause vs. a correlation:
 	Correlation: statistical measure that describes the size and direction of a relationship between two or more variables. A correlation between two variables doesn’t imply that the change in one variable is the cause of the change in the values of the other variable
 	Causation: indicates that one event is the result of the occurrence of the other event; there is a causal relationship between the two events
-	Example: sleeping with one’s shoes on is strongly correlated with waking up with a headache.Therefore, sleeping with one’s shoes causes headach vs going to bed drunk.
-	Identify a cause Vs a correlation: use of a controlled study
+	Example: sleeping with one’s shoes on is strongly correlated with waking up with a headache. Therefore, sleeping with one’s shoes causes headach vs going to bed drunk.
+	Identify a cause VS a correlation: use of a controlled study
 	In medical research, one group may receive a placebo (control) while the other receives a treatment. If the two groups have noticeably different outcomes, the different experiences may have caused the different outcomes
 	
 	

@@ -74,6 +74,3 @@ sqrt(sum((pred2V-validation$wage)^2))
 sqrt(sum((combPredV-validation$wage)^2))
 ```
 
-
-
-

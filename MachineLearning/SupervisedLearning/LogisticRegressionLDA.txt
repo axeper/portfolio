@@ -27,17 +27,27 @@ Confounding: When you doing a regression, you may have inverse results when comp
 - Null Deviance indicates the response predicted by a model with nothing but an intercept. Lower the value, better the model. Residual deviance indicates the response predicted by a model on adding independent variables. Lower the value, better the model.
 - Pseudo-R^2 = 1 - residual deviance / null deviance
 - T = null deviance - residual deviance ~ chisquared(p-1). A large value of T indicate that the fitted model is better than the one using only the intercept. T can be derived:
-	M1: res dev 5359.2, 7997 df
-	M2: res dev 5358.9, 7996 df
-	Example: 5359.2 - 5358.3 = .9 with 7997-7996 df
-	pchisq(.9 , 1, lower=FALSE)
-	0.3427817
-	-> H0 would not be rejected in 66%. Do not add the var
+    M1: res dev 5359.2, 7997 df
+    M2: res dev 5358.9, 7996 df
+    Example: 5359.2 - 5358.3 = .9 with 7997 - 7996 = 1 df
+    pchisq(.9 , 1, lower=FALSE)
+    0.3427817
+    -> H0 would not be rejected in 66%. Do not add the var
 
-	
+
+### Logistic vs SVM
+SVM minimizes hinge loss while logistic regression minimizes logistic loss. Logistic regression is a probabilistic framework, while SVM leads to sparser solutions.
+
+n = number of features, m = number of training examples
+- n >> m: logistic or SVM (linear)
+- n small, m medium: SVM (gaussian)
+- n small, m large: create/add more features, then use logistic or SVM(linear)
+Consider neural network too.
+
+
 ### Logistic vs tree
 Trees split the space perpendicularily where as classifier defines a boundary
-Trees use divide and conquer recursive strategy whereas linear regression split the space
+Trees use divide and conquer recursive strategy whereas linear regression split the space.
 
 Multinomial logistic regression can be used for categorical variable with more than two results.
 
@@ -72,7 +82,7 @@ QDA is a version of LDA, that assumes that the observations from each class are 
 
 
 ### What about KNN regression?
-- Logistic regression can outperform LDA if these Gaussian assumptions are not met
+- Logistic regression can outperform LDA if the Gaussian assumptions are not met.
 - Hence KNN is a completely non-parametric approach: no assumptions are made about the shape of the decision boundary. Therefore, we can expect this approach to dominate LDA and logistic regression when the decision boundary is highly non-linear.
 - When the true decision boundaries are linear, then the LDA and logistic regression approaches will tend to perform well.
 - When the boundaries are moderately non-linear, QDA may give better results.

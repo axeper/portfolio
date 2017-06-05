@@ -27,20 +27,30 @@
 - Polynomial kernel: K(x_i, x_i') = (1 + sum(x_ij * x_i'j)^d
 - Radial kernel: K(x_i, x_i') = exp(-gamma * sum((x_ij * x_i'j)^2))
 
+The important parameters in kernel SVMs are the regularization parameter C, the choice of the kernel, and the kernel-specific parameters. In the case of the RBF kernel, gamma and C both control the complexity of the model (large values result in complex model) and should be adjusted together.
+
 - If number of features is large (relative to number of observations): SVM with linear kernel ; e.g. text classification with lots of words, small training example
 - If number of features is small, number of observations is intermediate: Gaussian kernel
 - If number of features is small, number of observations is small: linear kernel
 
 
-### Notes on SVM
-Is it beneficial to perform dimensionality reduction before fitting an SVM?
-When the number of features is large comparing to the number of observations (e.g. document-term matrix). SVM will perform better in a reduced space.
+### Strengths and drawbacks
+SVM work well on low-dimensional and high-dimensional data, but don’t scale very well with the number of samples. Working with datasets of size 100,000 or more can become challenging in terms of runtime and memory usage.
+SVM will perform better in a reduced space: apply dimensionality reduction before fitting an SVM when the number of features is large comparing to the number of observations (e.g. document-term matrix). 
 
-The fact that the support vector classifier’s decision rule is based only on a potentially small subset of the training observations (the support vectors) means that it is quite robust to the behavior of observations that are far away from the hyperplane. This property is distinct from some of the other classification methods that we have seen in preceding chapters, such as linear discriminant analysis, who depends on the mean of all the observations
+The fact that the support vector classifier’s decision rule is based only on a potentially small subset of the training observations (the support vectors) means that it is quite robust to the behavior of observations that are far away from the hyperplane. This property is distinct from some of the other classification methods, such as linear discriminant analysis, who depends on the mean of all the observations
 
+Careful preprocessing of the data and tuning of the parameters is needed.
+Hard to interpret and explain.
+
+
+#### Notes
 SVMs with More than Two Classes (K > 2): use one-vs-one or one-vs-all
 
 For a quantitative response, support vector regression
+
+SVM has a very efficient SMO algorithm for optimizing the kernelized model. Further, there is LibSVM, an implementation of SMO, that allows training non-linear SVMs very easily.
+
 
 #### SVM vs Random Forest: 
 - Dataset with no outliers: SVM

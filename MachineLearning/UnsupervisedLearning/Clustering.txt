@@ -60,6 +60,9 @@ Caution:
 - What unit of measure (for example, miles or kilometers) should be used for each attribute? Height in m or cm can be clustered differently!
 - Do the attributes need to be rescaled so that one attribute does not have a disproportionate effect on the results?
 
+k-means fails when the clusters are not "circular", i.e. when the assumption that all directions are equally important for each cluster is not met. 
+Complex shapes (like two moons) usually do not work either. Note: you can use more clusters to find an expressive representation for complex shapes.
+
 	
 ### Spherical k-means: k-means + cosine distance
 
@@ -102,9 +105,12 @@ A third partitioning method is known as Partitioning around Medoids (PAM) [4]. I
 
 
 
-## Hierarchical Clustering
+## Hierarchical Clustering / Agglomerative Clustering
 
 An issue with K-means is that we have to choose K. On the other hand, hierarchical clustering is a bottom-up, agglomerative approach to clustering. The lower in the dendogram, the closer the observations. Proximity is defined by the vertical axis, no the horizontal one.
+
+Unfortunately, this family of methods still fails at separating complex shapes.
+
 
 ### Algorithm
 - Find closest two things -> merge them -> find next closest
@@ -123,7 +129,7 @@ Linkage:
 	Complete: maximal intercluster dissimiliarity.
 	Single: minimal intercluster dissimiliarity.
 	Centroid: dissimilarity between the centroid for cluster A and the centroid for cluster B.
-	
+	(scikit-learn) ward: clusters merge such that the variance within all clusters increases the least. 
 
 	
 ```{r}
@@ -151,4 +157,21 @@ heatmap(dataMatrix, cm.colors(25))
 
 
 
-	
+
+## DBSCAN (Density-based spatial clustering of applications with noise)
+Identify points in dense regions of the feature space. Clusters form dense regions of data, separated by regions that are relatively empty.
+There are three kinds of points: core points, points that are within distance eps of core points (called boundary points), and noise.
+
+Parameters:
+- eps: increase means that more points will be included in a cluster. This makes clusters grow, but might also lead to multiple clusters joining into one. Setting eps to be very large will result in all points forming a single cluster.
+Finding a good setting for eps is sometimes easier after scaling the data using StandardScaler or MinMaxScaler, as using these scaling techniques will ensure that all features have similar ranges.
+- min_samples: increase means that fewer points will be core points, and more points will be labeled as noise. It determines whether points in less dense regions will be labeled as outliers or as their own clusters.
+
+
+
+
+## Comparing clustering
+There are metrics that can be used to assess the outcome of a clustering algorithm relative to a ground truth clustering, the most important ones being the adjusted rand index (ARI) and normalized mutual information (NMI), which both provide a quantitative measure between 0 and 1.
+
+When no ground truth exist. We can use the silhouette (doesn't work perfectly), robustness-based clustering metrics (not implemented in scikit-learn)
+

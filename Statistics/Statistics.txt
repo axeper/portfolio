@@ -31,6 +31,13 @@
 	- Statistical discrimination (making false positive claims)
 
 
+# [Statistics for Hackers](https://speakerdeck.com/jakevdp/statistics-for-hackers)
+	Write for loops to validate a result through simulation:
+		1. Direct Simulation (Finding a p-value)
+		2. Shuffling (Statistical difference)
+		3. Bootstraping (Compute the standard error)
+		4. Cross Validation (Model evaluation)
+	
 # Rules
 
 	P(A or B) = P(A) + P(B) - P(A and B)
@@ -339,113 +346,4 @@
 	The within-group mean sum of squares is an estimate of the within-group variance. It quantifies the spread of values within groups.
 	The F-test statistic in ANOVA can be thought of as a measure of how different the means are relative to the variability within each group. The larger the observed F-test statistic, the greater the likelihood that the differences between the means are due to something other than chance alone. The F-test statistic is used to test the hypothesis that the observed effects are not due to chance—that is, if the means are significantly different from one another.
 
-
-# Multiple testing
-	
-	First era: do we have enough data; second era: how do we compare data;
-	Our era: too many variables, which is one the most relevant?
-
-	With a 5% error, if we test 20 non-relevant variables, we may have one positive test.
-	
-						|   beta=0    |   beta!=0      |  Hypotheses
-	--------------------|-------------|----------------|---------
-	Claim beta  = 0     |       U     |       T        |   m-R 
-	Claim beta != 0     |       V     |       S        |   R 
-		Claims          |      m_0    |       m-m_0    |   m 
-
-	Type I error or false positive (V): Say that the parameter does not equal zero when it does; True H0 but reject it (False Positive)
-	Type II error or false negative (T): Say that the parameter equals zero when it doesn't; False H0 but fail to reject it (False Negative)
-
-	# Error rates
-	False positive rate - The rate at which false results (beta = 0) are called significant: E[V/m_0]
-	
-	Family wise error rate (FWER) - The probability of at least one false positive Pr(V >= 1)
-	# Controlling FWER
-	At 10k tests (P < 0.05), we expect 500 false positives. How to control that?
-	The Bonferroni correction is the oldest multiple testing correction: 
-		Suppose you do m tests
-		You want to control FWER at level alpha so Pr(V >= 1) < alpha
-		Calculate P-values normally
-		Set alpha_fwer = alpha/m
-		Call all P-values less than alpha_{fwer} significant
-	Pros: Easy to calculate, conservative
-	Cons: May be very conservative
-	
-	False discovery rate (FDR) - The rate at which claims of significance are false E[V/R]
-	# Controlling false discovery rate (FDR)
-	Benjamini-Hochberg, most popular correction when performing lots of tests say in signal-processing disciplines:
-		Suppose you do m tests
-		You want to control FDR at level alpha so E[V/R]
-		Calculate P-values normally
-		Order the P-values from smallest to largest $_(1),...,P_(m)
-		Call any P_(i) <= alpha * i/m significant
-	Pros: Still pretty easy to calculate, less conservative (maybe much less)
-	Cons: Allows for more false positives, may behave strangely under dependence
-
-	# Adjusted P-values
-	Adjust the threshold alpha or calculate "adjusted p-values"
-	They are not p-values anymore but they can be used directly without adjusting alpha: 
-	Suppose P-values are P_1,...,P_m
-	You could adjust them by taking P_i^{fwer} = max(m * P_i,1) for each P-value.
-	Then if you call all P_i^{fwer} < alpha significant you will control the FWER. 
-
-	```{R}
-	# No true positive
-		set.seed(1010093)
-		pValues <- rep(NA,1000)
-		for(i in 1:1000){
-		  y <- rnorm(20)
-		  x <- rnorm(20)
-		  pValues[i] <- summary(lm(y ~ x))$coeff[2,4]
-		}
-		# Controls false positive rate
-		sum(pValues < 0.05)
-		# Controls FWER 
-		sum(p.adjust(pValues,method="bonferroni") < 0.05)
-		# Controls FDR 
-		sum(p.adjust(pValues,method="BH") < 0.05)
-	
-	# 50% true positives
-		set.seed(1010093)
-		pValues <- rep(NA,1000)
-		for(i in 1:1000){
-		  x <- rnorm(20)
-		  # First 500 beta=0, last 500 beta=2
-		  if(i <= 500){y <- rnorm(20)}else{ y <- rnorm(20,mean=2*x)}
-		  pValues[i] <- summary(lm(y ~ x))$coeff[2,4]
-		}
-		trueStatus <- rep(c("zero","not zero"),each=500)
-		table(pValues < 0.05, trueStatus)
-
-		# Controls FWER (no true positives, but some false positives)
-		table(p.adjust(pValues,method="bonferroni") < 0.05,trueStatus)
-		# Controls FDR (less true positives)
-		table(p.adjust(pValues,method="BH") < 0.05,trueStatus)
-	```
-	
-# Permutation testing
-
-	Consider the null hypothesis that the distribution of the observations from each group is the same, Then, the group labels are irrelevant!
-	Consider a data formed with X and Y
-	Permute the Y (group) labels 
-	Recalculate the statistic
-		Mean difference in counts
-		Geometric means
-		T statistic
-	Calculate the percentage of simulations where the simulated statistic was more extreme (toward the alternative) than the observed
-	
-	```{R}
-	subdata <- InsectSprays[InsectSprays$spray %in% c("B", "C"),]
-	y <- subdata$count
-	group <- as.character(subdata$spray)
-	testStat <- function(w, g) mean(w[g == "B"]) - mean(w[g == "C"])
-	observedStat <- testStat(y, group)
-	# Here
-	permutations <- sapply(1 : 10000, function(i) testStat(y, sample(group)))
-	# Global mean difference
-	observedStat
-	# Extreme simulations
-	mean(permutations > observedStat)
-	```
-	
 	

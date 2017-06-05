@@ -8,6 +8,16 @@ Choose k with nested CV.
   - Similarity-moderated classification: weighted sum of distance * same class neighbors
   - Similarity-moderated scoring: weighted sum of distance of same class neighbors / total weighted sum of distance of all neighbors. Gives back a probability.
 
-Note: usimg weighted voting / similarity moderated voting will penalize gaps between neighbors. 
+Note: using weighted voting / similarity moderated voting will penalize gaps between neighbors. 
 E.g. you can have 2 close neighbors and 3 distant ones. Weighed voting will choose the closer cluster.
 
+Pros:
+- Simple
+- Works with any number of classes
+- Easy to add more data
+- Only two parameters (K, distance metric)
+
+Cons:
+- High Prediction Cost (worse for large data sets)
+- Not good with high dimensional data
+- Categorical Features don't work well

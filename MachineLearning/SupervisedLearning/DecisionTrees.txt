@@ -5,7 +5,6 @@ Another way to see decision trees: the space is segmented by straight lines, whe
 
 
 ### Algorithm for regression
-
 - Do recursive binary splitting on the data. This is a top-down approach where recursively and greedily (local solution, not global) we find the best single partitioning of the data such that the reduction of RSS is the greatest. This process is applied to each of the split parts seperately until some minimal number of observations is present on each of the leaves.
 - Apply cost complexity pruning of this larger tree formed in step 1 to obtain a sequence of best subtrees as a function of a parameter, alpha. Each value of alpha corresponds to a different subtree which minimizes an equation: RSS + alpha * penalty (here the penalty is |T|, the number of terminal nodes on the tree). 
   - When alpha = 0, we have the original tree, and as alpha increases we get a more pruned version of the tree.
@@ -14,54 +13,56 @@ Another way to see decision trees: the space is segmented by straight lines, whe
 
 
 ### Algorithm for classification
-
 We can't use RSS so we need another metric based on probabilities. Assume a set of p1, p2, ... elements, where p is a probability. The closer p is to 0 or 1, the purer the node: n positive, m negative, then p = n / (n + m)
 - Classification Error Rate: E = 1 - max(p_mk), where p_mk is the proportion of training observation in region m and class k. Not adapted to tree-growing
 - Gini Index: G = sum(p_mk * (1 - p_mk)). Measures the total variance accross K classes. Also said to measure a node purity. Prefered to entropy in CART model.
 - Cross-entropy: D = - sum(p_mk * log(p_mk)). A small value implies a pure node.
 - Entropy: E = - sum(p(x) * log2(p(x))). Entropy is maximum in p(x = 0.5), minimal for 0 and 1
 - Conditional Entropy: H = - sum(p(x)) * sum(p(y|x) * log2(p(y|x)))
-	Example: Cellular | Telephone | Unknown
-	P(contact) 0.6435 0.0680 0.2885
-	P(subscribed=yes | contact) 0.1399 0.0809 0.0347
-	P(subscribed=no | contact) 0.8601 0.9192 0.9653
-	H(subscribed|contact) = 0.4661 =
-	−[0.6435 * (0.1399 * log2(0.1399) + 0.8601 * log2(0.8601))
-	+ 0.0680 * (0.0809 * log2(0.0809) + 0.9192 * log2(0.9192))
-	+ 0.2885 * (0.0347 * log2(0.0347) + 0.9653 * log2(0.9653))
+    Example: Cellular | Telephone | Unknown
+    P(contact) 0.6435 0.0680 0.2885
+    P(subscribed=yes | contact) 0.1399 0.0809 0.0347
+    P(subscribed=no | contact) 0.8601 0.9192 0.9653
+    H(subscribed|contact) = 0.4661 =
+    −[0.6435 * (0.1399 * log2(0.1399) + 0.8601 * log2(0.8601))
+    + 0.0680 * (0.0809 * log2(0.0809) + 0.9192 * log2(0.9192))
+    + 0.2885 * (0.0347 * log2(0.0347) + 0.9653 * log2(0.9653))
 - Information Gain: IG(A) = E(S) - H(S|A). The attribute with the greatest IG (the most pure) is considered as the most informative one. IF IG is small, use the K measure. If K is big, the split is considered significant.
 
 #### Example with Entropy
-
 - Compute the Information Gain. The features with the highest IG are the ones that we want (greedy search).
   - Entropy = -p1 * log2(p1) - p2 * log2(p2) - ... , 0 is pure, 1 is impure
   - Information Gain = entropy(parent) - [p(child1) * entropy(child1) + p(child2) * entropy(child2)] 
   - Note that IG = 0 means that the children have the same entropy as the parents (no gain)
 - Repeat to build a decision tree. Stop/prune to avoid overfitting.
-- Note:	Additive smoothing / Laplace correction moderate the effect of leaves with few instances
+- Note: Additive smoothing / Laplace correction moderate the effect of leaves with few instances
   - p = (n + 1) / (n + m + 2)
   - Example: 1 positive, 0 negative, p = 1, smoothed p = 2/3
 
 #### Regrading overfitting
+There are two common strategies to prevent overfitting: stopping the creation of the tree early (also called pre-pruning), or building the tree but then removing or collapsing nodes that contain little information (also called post-pruning or just pruning). 
+
 To avoid overfitting, we prefer growing a large tree then pruning rather than constraining its growth. This allows some "worthless" split that may result later in valuable splits rather than constraining trees to a small size.
+
+Scikit-learn only implements pre-pruning. But usually, setting either max_depth, max_leaf_nodes, or min_samples_leaf—is sufficient to prevent overfitting.
 
 The sweet spot is just a bit before the performance on the holdout data starts to decrease.
 - Do some hypothesis testing to control overfitting: are the observables differences caused by chance or are statistically significant?
 - Find a pruning strategy
 
 #### Pruning
-
 Pruning is what happens in decision trees when branches that have weak predictive power are removed in order to reduce the complexity of the model and increase the predictive accuracy of a decision tree model. Pruning can happen bottom-up and top-down, with approaches such as reduced error pruning and cost complexity pruning.
 
 Reduced error pruning is perhaps the simplest version: replace each node. If it doesn’t decrease predictive accuracy, keep it pruned. While simple, this heuristic actually comes pretty close to an approach that would optimize for maximum accuracy.
 
 Cost complexity pruning / weakest link pruning: use CV to find alpha, such that the penalty alpha * |T| minimizes the average error, where |T| is the number of terminal nodes of the tree T. 
 
-
-### Drawbacks
-
+#### Drawbacks
 The big problem with decision trees is that, while extremely interpretable, it does not perform 
 well. Bagging, random forest and boosting improves the performance by a lot.
+
+#### Visualization
+We can visualize the tree from a .dot format using the export_graphviz function from the tree module.
 
 
 
@@ -85,14 +86,14 @@ well. Bagging, random forest and boosting improves the performance by a lot.
 - Better performance in nonlinear settings
 - Without pruning/cross-validation can lead to overfitting
 - Harder to estimate uncertainty
-- Difficult to interpret
+- Difficult to interpret (gives nonzero importance to many more features than the single tree.)
 
 #### How is random forest different from Gradient boosting algorithm (GBM)?
 - Random forest uses bagging technique to make predictions. Random forest improves model accuracy by reducing variance (mainly). The trees grown are uncorrelated to maximize the decrease in variance. Train algorithm into n bootstrap separately. Average the predictions at the end. Done in parallel.
 - GBM uses boosting techniques to make predictions. GBM improves accuracy my reducing both bias and variance in a model. After a first round of prediction, the algorithm weighs the misclassified predictions higher so they can be corrected in the next round. Done iteratively.
 
 
-```{R}
+```{r}
 install.packages("randomForest",dependencies=TRUE)
 install.packages("ROCR",dependencies=TRUE)
 library(randomForest)
@@ -121,14 +122,22 @@ plot(perf.lm, xlim=c(0,1), ylim=c(0,1))
 plot(perf.rf, xlim=c(0,1), ylim=c(0,1), lty=2, add=TRUE)
 ```
 
-	
 
 
 
+## Gradient Boosted Regression Trees
 
+Can be used for regression and classification.
+Gradient boosted trees often use very shallow trees, of depth one to five, which makes the model smaller in terms of memory and makes predictions faster. 
+The main idea behind gradient boosting is to combine many simple models (in this context known as weak learners), like shallow trees. Each tree can only provide good predictions on part of the data, and so more and more trees are added to iteratively improve performance.
+another important parameter of gradient boosting is the learning_rate, which controls how strongly each tree tries to correct the mistakes of the previous trees.
 
+#### Drawbacks
+Compared to random forest, it is more sensitive to parameter settings but can provide better accuracy.
+Slow to train.
+Does not work well on high-dimensional sparse data.
 
-
+The xgboost package and its Python interface may be faster (and sometimes easier to tune) than the scikit-learn implementation.
 
 
 

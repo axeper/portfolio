@@ -1,41 +1,37 @@
 ### [Best Practices for Scientific Computing](https://arxiv.org/abs/1210.0530)
 
-- Write programs for people, not computers.
-  - A program should not require its readers to hold more than a handful of facts in memory at once
-  - Names should be consistent, distinctive and meaningful
-  - Code style and formatting should be consistent
-  - All aspects of software development should be broken down into tasks roughly an hour long
-- Automate repetitive tasks.
-  - Rely on the computer to repeat tasks
-  - Save recent commands in a file for re-use
-  - Use a build tool to automate scientific workflows
-- Use the computer to record history.
-  - Software tools should be  used to track computational work automatically
-- Make incremental changes.
-  - Work in small steps with frequent feedback and course correction
-- Use version control.
-  - Use a version control system
-  - Everything that has been created manually should be put in version control
-- Don’t repeat yourself (or others).
-  - Every piece of data must have a single authoritative representation in the system
-  - Code should be modularized rather than copied and pasted
-  - Re-use code instead of rewriting it
-- Plan for mistakes.
-  - Add assertions to programs to check their operation
-  - Use an off-the-shelf unit testing library
-  - Use all available oracles when testing programs
-  - Turn bugs into test cases
-  - Use a symbolic debugger
-- Optimize software only after it works correctly.
-  - Use a profiler to identify bottlenecks
-  - Write code in the highest-level language possible
-- Document design and purpose, not mechanics.
-  - Document interfaces and reasons, not implementations
-  - Refactor code instead of explaining how it works
-  - Embed the documentation for a piece of software in that software
-- Collaborate.
-  - Use pre-merge code reviews
-  - Use pair programming when bringing someone new up to speed and when tackling particularly tricky problems
+1. Write programs for people, not computers.
+  - A program should not require its readers to hold more than a handful of facts in memory at once.
+  - Make names consistent, distinctive, and meaningful.
+  - Make code style and formatting consistent.
+2. Let the computer do the work.
+  - Make the computer repeat tasks.
+  - Save recent commands in a file for re-use.
+  - Use a build tool to automate workflows.
+3. Make incremental changes.
+  - Work in small steps with frequent feedback and course correction.
+  - Use a version control system.
+  - Put everything that has been created manually in version control.
+4. Don’t repeat yourself (or others).
+  - Every piece of data must have a single authoritative representation in the system.
+  - Modularize code rather than copying and pasting.
+  - Re-use code instead of rewriting it.
+5. Plan for mistakes.
+  - Add assertions to programs to check their operation.
+  - Use an off-the-shelf unit testing library.
+  - Turn bugs into test cases.
+  - Use a symbolic debugger.
+6. Optimize software only after it works correctly.
+  - Use a profiler to identify bottlenecks.
+  - Write code in the highest-level language possible.
+7. Document design and purpose, not mechanics.
+  - Document interfaces and reasons, not implementations.
+  - Refactor code in preference to explaining how it works.
+  - Embed the documentation for a piece of software in that software.
+8. Collaborate.
+  - Use pre-merge code reviews.
+  - Use pair programming when bringing someone new up to speed and when tackling particularly tricky problems.
+  - Use an issue tracking tool.
 
 More
 - Maintain and update older code.
@@ -88,3 +84,17 @@ More
   - Include a PUBLICATIONS file in the project's doc directory.
   - Write the manuscript in a plain text format that permits version control.
   - Include tools needed to compile manuscripts in the project folder.
+  
+  
+  
+### [Tidy Data](https://www.jstatsoft.org/article/view/v059i10)
+- Tidy data
+  1. Each variable forms a column.
+  2. Each observation forms a row.
+  3. Each type of observational unit forms a table.
+- Messy data most common problems
+  - Column headers are values, not variable names.
+  - Multiple variables are stored in one column.
+  - Variables are stored in both rows and columns.
+  - Multiple types of observational units are stored in the same table.
+  - A single observational unit is stored in multiple tables.

@@ -112,7 +112,7 @@
 	
 	qplot2:
 		# Basic scatterplot, color is a variable, geom is a regression line
-		qplot(x, y, data = df, col = z, shape =zz, geom = c("point", "smooth"))
+		qplot(x, y, data = df, col = z, shape = zz, geom = c("point", "smooth"))
 		
 		# qplot makes histograms with only one variable, color is z
 		qplot(x, data = df, fill = z)

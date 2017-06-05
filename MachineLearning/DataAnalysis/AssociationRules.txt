@@ -17,7 +17,7 @@ Four main measures:
   - Lift measures how many times more often X and Y occur together than expected if they are statistically independent of each other. Lift is a measure [6] of how X and Y are really related rather than coincidentally happening together
 4. Leverage(X -> Y): support(X and Y) - support(X) * support(Y)
   - Leverage is 0 when X and Y are statistically independent of each other. If X and Y have some kind of relationship, the leverage would be greater than zero. A larger leverage value indicates a stronger relationship between X and Y. 
-5. Besides these four rules, there are other alternative measures, such as correlation[8], collective strength [9], conviction [6], and coverage [10].
+5. Other alternative measures exist, such as correlation[8], collective strength [9], conviction [6], and coverage [10].
 
 ```{r}
 library('arules')
