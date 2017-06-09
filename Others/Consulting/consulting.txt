@@ -1,0 +1,171 @@
+## Consulting Frameworks
+
+### Profit and loss
+- Acquire information about the Economy, Market, Competitors (start with external factors)
+- Profits = Revenues - Costs
+- WCS: What Constitues Success?
+  - What are the major revenues streams? How have they changed over time?
+  - What are the major costs (fixed and variables)? How have they changed over time? 
+    - Any major shifts? Ask for benchmarking?
+  - Look at volumes
+  - Products: see advantages and disadvantages
+
+
+### Enter a new market
+- Start with the company
+  - Why enter? What are their revenue streams? What is their product mix? What are their costs? WCS?
+- State of the current and future market
+  - Market size, growth rate, lifecycle (emerging, declining), customers segmentation, technology impact, response from the competition?
+- Due dilligence
+  - Competitors and their market size? Product differentiation? Pricing? Substitutions? Barriiers to entry/exit? Risks?
+- Enter the market
+  - Grow organically vs acquire an existing player vs joint venture / strategic alliance
+
+#### Merge and acquisition
+- Why?
+  - Increase market access, shares, brand; diversify holdings; control competition; inherit talent; obtain patents or license; tax advantages; cost savings
+- Research market and competitions  
+  - Status of the company, market, competitors, esp. how will the competition respond? 
+  - Margins, legal risk, tech risk
+
+
+### Pricing strategy
+- Investigate company
+  - Size, market shares, objective, reacting or leading
+- Investigate the product
+  - How does it compare to the competition? Substitutions, alternatives? Growth cycle? Supply and demand?
+- Pricing strategy
+  - Competitive analysis: how to price and market the product given the competition and its response?
+  - Cost-based pricing: sum of cost to learn the breakeven point
+  - Price-based pricing: what are people willing to pay for it?
+
+
+### Growth and increasing sales
+- Increase revenue, volume or both
+- What is the company size, resources, products?
+- Industry: growth, prices (compared to client and competition)
+  - Ideas: expand distribution channels; diversify products or services (! cannibalization); marketing campaigns; acquire a competitor; adjust prices; create a seasonal balance
+
+
+### Start a new business
+- Explore competitors (market share, product differentiation, barriers to entry/exit)
+- As an outsider, would you invest in:
+  - managment (experience, core competencies, relevant past experiences)
+  - market plans (barriers to entry, major players, competitive response)
+  - distribution channels (which, how many)
+  - products and services (what are we selling, competitive edge, disadvantages, proprietary technology)
+  - customers (who, how to reach them, how to keep them)
+  - finances (how is it funded, how are the fund allocated)
+
+
+### Competitive response  
+- What is the new product, how does it differ, what changed (costs, techno, customer needs), did they increase or expand channels?
+- Response: analyze, rebrand, repackage; introduce a new product; increase marketing; build customer loyalty; cut prices; acquire another player; merge/create a strategic advantage; copy the competition
+
+  
+### Turnarounds
+- Analyze the cause (bad product, management, economy), are competitors struggling too?
+- Review services, finance, products; assure financing; contemplate lay-offs; determine short term and long term goals; visit clients, suppliers and distributors; prioritize and try to get some small success
+
+
+
+
+### Other frameworks
+Keep always in mind how the internet, the economy and the competition affects the company.
+
+Company, Costs, Competitions, Client, Channels + Product, Place, Price, Promotion
+
+Porter's five forces: constant rivalry + threat of new entrants + threat of substitutes + bargain power of suppliers + bargain power of buyers
+
+Value chain
+- raw materials >>> operations >>> delivery >>> marketing/sales >>> service
+- inbound logistics -> production and operations -> outbound logistics -> marketing and sales -> service
+  - supporting: human resources, technology, strategy, reearch and development
+
+Cut costs 
+- Labor
+  - cross-train workers, cut overtime, reduce 401k, 4 10-hours day, convert workers into owners, contemplate lay-offs
+- Production
+  - invest in technology, reduce inventories, outsource, consolidate suppliers, import parts
+- Finance
+  - Have customer pay sooner
+
+Growing sales
+- raise prices, increase frequency of purchase, target a new customer segment, introduce new products, expand distribution channels, acquire a competitor
+
+Profit = Revenue – Costs = Price/unit * Volume - Volume * (variable + fixed)
+
+Internal vs External + Risks
+- Internal: people related to the company, product, process, technology
+- External: customers, market, competitors
+- Risks
+
+Business analysis:
+- Customers: identify the segment, their needs, price sensitivity, distribution preferencess
+- Products: advantages, disadvantages; are there substitutions or complementary goods, life cycle, packaging
+- Company: capabilities, expertise, distribution channels, cost structure, intangibles (brand), financial situation
+- Competitor: competitor concentration, behaviors and strategy; focus on the weakness of a competitor; barriers to entry
+
+Main competitors
+- Competitor’s size
+- Competitor’s cost structure
+- Competitor’s products
+
+The 5 classic dimensions of a how-to-win strategy:
+- Product
+- Production / Supply Chain
+- Channels of distribution
+- Brand
+- Price
+
+SWOT analysis
+- Strength (internal positive); Weaknesses (internal negative); Opportunities (external positive); Threats (external negative)
+
+Economy of scale: cost advantages because of high volume production
+Economy of scope: cost advantages because of similar processes (bundling)
+
+
+
+
+
+
+
+
+## Key questions
+- Industry
+  - Where is it in the life cycle? Growth trends last 1 -10 years?
+  - How the company perform compared to the industry? Who are the major players?
+  - Any new changes (players, technology, regulations)?
+  - What drives the industry? Brands, products, size, technology, economics?
+- Suppliers
+  - How many? What is their product availability? How is the supply chain?
+- Future
+  - Any new or leaving players? Merge or acquisitions? Barriers to entry or exit? Substitutions, alternatives?
+- Product
+  - What is special about it? Advantages/disadvantages? Similar products or substitutions?
+  - How does it fit with the rest of the product line? How to sell, market it?
+- Market strategy
+  - Are we cannibalizing or synergizing other products? Competitive response? Barriers to entry?
+- Customers
+  - Who are they? What is important for them? How are they segmented? How can we reach them?
+  
+
+
+
+## Interview tips
+1) Listen, take readable notes, summarize aloud, verify objective, ask questions
+2) Structure the case, write it down and go through it with the interviewer
+3) State clearly assumptions and quantify qualitative hypothesis and conclusions
+4) Conclude and summerize with an action-oriented recommendation closure.
+
+In estimation cases, find a proxy to manever the case.
+
+Use issue tree (be MECE), drill-down analysis, eliminate process, synthesis, recommend action-oriented statements and make it stick
+
+
+
+
+
+
+
+
