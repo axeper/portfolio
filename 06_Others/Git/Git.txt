@@ -11,4 +11,15 @@ From an existing folder
 	git remote add origin <project url>
 	git push -f origin master
 ```
+
+Cloning and pushing
+
+```
+	git clone URL /NEW/PATH
+	cd NEW
+	git status
+	git add .
+	git commit -m ""
+	git push
+```
 	
