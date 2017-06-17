@@ -38,10 +38,13 @@ The important parameters in kernel SVMs are the regularization parameter C, the 
 SVM work well on low-dimensional and high-dimensional data, but don’t scale very well with the number of samples. Working with datasets of size 100,000 or more can become challenging in terms of runtime and memory usage.
 SVM will perform better in a reduced space: apply dimensionality reduction before fitting an SVM when the number of features is large comparing to the number of observations (e.g. document-term matrix). 
 
-The fact that the support vector classifier’s decision rule is based only on a potentially small subset of the training observations (the support vectors) means that it is quite robust to the behavior of observations that are far away from the hyperplane. This property is distinct from some of the other classification methods, such as linear discriminant analysis, who depends on the mean of all the observations
+Low generalization error: the fact that the support vector classifier’s decision rule is based only on a potentially small subset of the training observations (the support vectors) means that it is quite robust to the behavior of observations that are far away from the hyperplane. This property is distinct from some of the other classification methods, such as linear discriminant analysis, who depends on the mean of all the observations
+
+Can do regression and classification (numerical and categorical attributes)
+Computationally efficient, fast in prediction
 
 Careful preprocessing of the data and tuning of the parameters is needed.
-Hard to interpret and explain.
+Designed for binary (non-probabilistic) classification.
 
 
 #### Notes
