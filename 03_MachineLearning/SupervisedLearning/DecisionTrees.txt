@@ -39,6 +39,8 @@ We can't use RSS so we need another metric based on probabilities. Assume a set 
   - p = (n + 1) / (n + m + 2)
   - Example: 1 positive, 0 negative, p = 1, smoothed p = 2/3
 
+- Note: predictors with a higher number of distinct values are favored (selection bias).
+
 #### Regrading overfitting
 There are two common strategies to prevent overfitting: stopping the creation of the tree early (also called pre-pruning), or building the tree but then removing or collapsing nodes that contain little information (also called post-pruning or just pruning). 
 
@@ -72,7 +74,8 @@ We can visualize the tree from a .dot format using the export_graphviz function 
 - By not considering the majority of the predictors, the trees will be different from each others. Thus they won't be correlated which reduces the variance.
   - Bagging is simply a special case of a random forest with m = p.
   - Several weak learners combined provide a strong learner (majority rule).
-  
+- Can be parallelized. Training is fast.
+
 
 ### Basic algorithm
 1. Start with all variables in one group
@@ -121,6 +124,14 @@ perf.rf <- performance(pred.rf, "tpr", "fpr")
 plot(perf.lm, xlim=c(0,1), ylim=c(0,1))
 plot(perf.rf, xlim=c(0,1), ylim=c(0,1), lty=2, add=TRUE)
 ```
+
+
+
+
+## Adaboost
+AdaBoost is a popular boosting technique which combines multiple “weak classifiers” into a single “strong classifier”. A weak classifier is simply a classifier that performs poorly, but performs better than random guessing. (e.g. a person is male if height is over 5’ 9”)
+
+AdaBoost can be applied to any classification algorithm, so it’s really a technique that builds on top of other classifiers as opposed to being a classifier itself.
 
 
 

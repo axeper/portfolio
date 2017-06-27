@@ -1,7 +1,80 @@
-http://www.kdnuggets.com/2016/10/beginners-guide-neural-networks-python-scikit-learn.html
+## Deep Learning
 
-http://www.kdnuggets.com/2016/03/must-know-tips-deep-learning-part-1.html
-
-http://www.kdnuggets.com/2016/03/must-know-tips-deep-learning-part-2.html
+Deep learning solves a central problem of the traditional Machine Learning pipeline‘representation’: it learns features from the data automatically. No feature extraction is needed.
 
 
+### Artificial neurons
+An Artificial neuron is:
+- Multiple input x_i with weight w_i 
+  - The weight changes the steepness of the activation function.
+- A bias with weight w_(n+1)
+  - The bias shifts the actvation function left or right.
+- An summation of the input 
+- An activation function
+  -  Sigmoid, tanh, relu
+- An output y
+  - y = tanh(sum(x_i * w_i) + 1.0 * w_(n+1))
+
+  
+### Muli-layer Perceptron (MLP)
+A MLP is comprised of:
+- An input layer
+- One or more hidden layer(s)
+- An output layer
+
+
+### Cost function 
+An ANN can be trained by minimizing the user-defined cost associated to the type of problem one is solving. A valid cost function for training ANN should be:
+1. differentiable for all values of input, and
+2. dependent on the ANN’s final output
+3. can be written as an average of individual training examples
+Example: J(W) = sum((hat(y) - y)^2)
+
+#### Minimizing cost function
+Update Weights via Stochastic Gradient Descent: 
+	W = W - eta * d/dW(J(W))
+where eta is the learning rate and d/dW(J(W)) is the gradient of the cost function.
+
+#### Updating the weights
+Backpropagation:
+- Compute forward propagation from input to output layer.
+  - e.g. a^1, a^2, a^3, a^4 are the vectorized values of each layers
+- Compute delta^j_l: "error" of node j in layer l
+  - delta^4 = a^4 - y, then compute delta^3 and delta^2
+- Compute the gradient Delta^l for each layer l
+  - Delta^l = Delta^l + a^l * delta^(l+1)
+
+
+### Convolutional Neural Network (CNN)
+There are three types of layers in a CNN:
+1. Convolutional Layers
+  - Apply a set of learnable filters to blur, sharpen, detect edges
+  - Often followed by a ReLU operations (remove negative values) or other non linear function (ReLU performs best on average).
+2. Pooling Layers
+  - Apply a non-linear down-sampling to reduce the size of a layer
+3. Fully-Connected Layers 
+  - Every neuron in layer l is connected to every neurons in layer l+1 
+
+
+### Effective training of NN
+1. Regularization
+  - L2, L1, L1 & L2 (careful tuning of lambda is needed)
+2. Early Stopping
+  - Stop when validation error is starting to go up
+3. Dropout
+  - Randomly selected neurons are ignored during training to prevent overfitting. 
+
+  
+### Regularization Type & Coefficient
+- Learning Rate
+- Mini-batch Size
+- Dropout Ratio
+- Optimizer Type
+- Number of Layers
+- Number of Units in each Layer
+- Activation Functions of each Layer
+
+
+### Extension
+- RNN
+- LTSM

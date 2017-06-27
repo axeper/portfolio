@@ -110,3 +110,4 @@ http://scikit-learn.org/stable/modules/decomposition.html
 - [Factor analysis](http://en.wikipedia.org/wiki/Factor_analysis)
 - [Independent components analysis](http://en.wikipedia.org/wiki/Independent_component_analysis)
 - [Latent semantic analysis](http://en.wikipedia.org/wiki/Latent_semantic_analysis)
+- [Seven Techniques for Data Dimensionality Reduction](http://www.kdnuggets.com/2015/05/7-methods-data-dimensionality-reduction.html)

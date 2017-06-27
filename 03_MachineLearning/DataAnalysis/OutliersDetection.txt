@@ -3,7 +3,7 @@
 ### Tukey fences detection:
 
 Note: The data must be normally distributed (symmetric, no long tail) and one-dimensional 
-- Calculate the 25th and 75th quartiles. Obtain the Interquantile Range (IQR) by subtracting the third quantile by th first.
+- Calculate the 25th and 75th quartiles. Obtain the Interquantile Range (IQR) by subtracting the third quantile by the first.
 - Lower inner fence, lower outer fence: First quartile - 1.5 * IQR, First quartile - 3 * IQR
 - Upper inner fence, upper outer fence: Third quartile + 1.5 * IQR, Third quartile + 3 * IQR
 - 1/100 is outside the inner fence but 1/500'000 is outside the outer fence
